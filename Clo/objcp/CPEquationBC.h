@@ -30,3 +30,11 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPINGEquationBC : CPCoreConstraint
+-(CPINGEquationBC*)initCPINGEquationBC: (id) x gequal:(ORInt) c;
+-(void) post;
+-(void) propagate;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

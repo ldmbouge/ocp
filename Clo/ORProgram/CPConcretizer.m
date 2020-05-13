@@ -603,6 +603,7 @@
       [left visit: self];
       id<CPConstraint> concreteCstr = [CPFactory lEqualc: (id<CPIntVar>) _gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitGEqualc: (id<ORGEqualc>) cstr
@@ -861,6 +862,24 @@
       [right visit: self];
       id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) _gamma[left.getId]
                                                    imply: (id<CPIntVar>) _gamma[right.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitSetContains: (id<ORSetContains>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntSet> set = [cstr set];
+      id<ORIntVar> value = [cstr value];
+      id<ORIntVar> right = [cstr right];
+      [set visit: self];
+      [value visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory contains: (id<CPIntVar>) _gamma[value.getId]
+                                                    inSet: set
+                                                    equal: (id<CPIntVar>) _gamma[right.getId]
                                        ];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -1900,7 +1919,7 @@
         MDDRecommendationStyle recommendationStyle = [cstr recommendationStyle];
         id<CPConstraint> concreteCstr;
         MDDStateSpecification* spec = [cstr specs];
-        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a relaxed:relaxed size:relaxationSize spec:spec usingArcs:usingArcs equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
+        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a relaxed:relaxed size:relaxationSize spec:spec usingArcs:usingArcs equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:_gamma];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

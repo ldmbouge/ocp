@@ -16,7 +16,7 @@
 @interface CPMDDRestrictionWithArcs : CPMDDRestriction
 @end
 @interface CPMDDRelaxationWithArcs : CPMDDRelaxation
+-(char*) calculateSinkStateIsMerged:(bool*)isMergedNode;
 -(void) recalcArc:(MDDArc*)arc parentProperties:(char*)parentProperties variable:(int)variable;
--(void) recalcArc:(MDDArc*)arc childProperties:(char*)childProperties variable:(int)variable;
 -(void) DEBUGTestParentArcIndices;
 @end

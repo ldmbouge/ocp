@@ -737,6 +737,12 @@ struct CPVarPair {
     id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
     [_terms addTerm:alpha by:1];
 }
+
+-(void) visitExprSetContainsI:(ORExprSetContainsI*)e
+{
+    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
+}
 @end
 
 // ========================================================================================================================
@@ -1332,5 +1338,16 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e
 {
     [[e expr] visit:self];
+}
+
+-(void) visitExprSetContainsI:(ORExprSetContainsI*)e
+{
+    id<ORIntLinear> linValue = [ORNormalizer intLinearFrom:[e value] model:_model];
+    id<ORIntVar> varValue = [ORNormalizer intVarIn:linValue for:_model];
+    [linValue release];
+    
+    if (_rv == nil)
+        _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
+    [_model addConstraint:[ORFactory contains:_model value:varValue inSet:[e set] equal:_rv]];
 }
 @end

@@ -156,10 +156,11 @@
 +(void) createCPMDDProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
 {
    //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
-   id<ORModel> fm = [model flatten: notes];   // models are AUTORELEASE
-   id<ORModel> mddm = [fm mddify: notes];
-   [self concretizeCP:mddm program:cpprogram annotation:notes];
-   //Copy of notes wasn't working properly. Look into this
+   id<ORAnnotation> ncpy   = [notes copy];
+   id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
+   id<ORModel> mddm = [fm mddify: ncpy];
+   [self concretizeCP:mddm program:cpprogram annotation:ncpy];
+   [ncpy release];
 }
 +(void) createCPAltMDDProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
 {

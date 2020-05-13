@@ -141,6 +141,7 @@
 -(void) visitAnd:( id<ORConstraint>)c;
 -(void) visitImply: (id<ORConstraint>)c;
 -(void) visitBinImply: (id<ORBinImply>)c;
+-(void) visitSetContains: (id<ORSetContains>)c;
 -(void) visitElementCst: (id<ORConstraint>)c;
 -(void) visitElementVar: (id<ORConstraint>)c;
 -(void) visitElementBitVar: (id<ORConstraint>)c;

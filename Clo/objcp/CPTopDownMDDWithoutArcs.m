@@ -16,8 +16,8 @@
 
 static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
 @implementation CPMDDWithoutArcs
--(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification *)spec {
-    self = [super initCPMDD:engine over:x spec:spec];
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification *)spec gamma:(id*)gamma {
+    self = [super initCPMDD:engine over:x spec:spec gamma:gamma];
     _nodeClass = [OldNode class];
     return self;
 }
@@ -173,8 +173,8 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
 @end
 
 @implementation CPMDDRelaxationWithoutArcs
--(id) initCPMDDRelaxation:(id<CPEngine>)engine over:(id<CPIntVarArray>)x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification *)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle {
-    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
+-(id) initCPMDDRelaxation:(id<CPEngine>)engine over:(id<CPIntVarArray>)x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification *)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma {
+    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
     _nodeClass = [OldNode class];
     _batchMergeStatesSel = @selector(batchMergeForStates:values:numEdgesPerParent:variable:isMerged:numParents:totalEdges:);
     _batchMergeStates = (BatchMergeStatesIMP)[_spec methodForSelector:_batchMergeStatesSel];
@@ -197,7 +197,8 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
 -(bool) parentIsChildless:(OldNode*)parent {
     return [parent isChildless];
 }
--(void) splitNodesOnLayer:(int)layer {
+-(bool) splitNodesOnLayer:(int)layer {
+    bool changed = false;
     BetterNodeHashTable* nodeHashTable = [[BetterNodeHashTable alloc] initBetterNodeHashTable:_hashWidth numBytes:_numTopDownBytes];
     SEL hasNodeSel = @selector(hasNodeWithStateProperties:hash:node:);
     HasNodeIMP hasNode = (HasNodeIMP)[nodeHashTable methodForSelector:hasNodeSel];
@@ -215,6 +216,7 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
     for (int nodeIndex = 0; nodeIndex < layerSize && layer_size[layer]._val < _relaxation_size; nodeIndex++) {
         OldNode* node = [layerNodes at:nodeIndex];
         if ([node isMerged]) {
+            changed = true;
             OldNode** existingNodeChildren = [node children];
             ORTRIdArrayI* parents = [node parents];
             while ([node numParents] && layer_size[layer]._val < _relaxation_size) {
@@ -242,7 +244,7 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
                             for (int domainVal = minDomain; domainVal <= maxDomain; domainVal++) {
                                 OldNode* oldNodeChild = existingNodeChildren[domainVal];
                                 if (oldNodeChild != nil) {
-                                    if ([_spec canChooseValue:domainVal forVariable:variableIndex fromParent:newProperties toChild:[(MDDStateValues*)getTopDownState(oldNodeChild) stateValues]]) {
+                                    if ([_spec canChooseValue:domainVal forVariable:variableIndex fromParent:newProperties toChild:nil]) {
                                         if (!nodeHasChildren) {
                                             [_trail trailRelease:newNode];
                                             [_trail trailRelease:newState];
@@ -327,6 +329,7 @@ static inline id getTopDownState(OldNode* n) { return n->_topDownState;}
         }
     }
     [nodeHashTable release];
+    return changed;
 }
 -(char*) calculateStateFromParentsOf:(OldNode*)node onLayer:(int)layer isMerged:(bool*)isMergedNode {
     *isMergedNode = false;

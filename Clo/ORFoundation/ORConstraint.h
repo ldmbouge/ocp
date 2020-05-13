@@ -223,6 +223,12 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORSetContains <ORConstraint>
+-(id<ORIntSet>)   set;
+-(id<ORIntVar>) value;
+-(id<ORIntVar>) right;
+@end
+
 @protocol ORElementCst <ORConstraint>
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
@@ -511,28 +517,32 @@ enum ORGroupType {
 -(id<MDDStateDescriptor>)stateDescriptor;
 -(bool)closuresDefined;
 -(id<ORExpr>)arcExists;
--(DDArcExistsClosure)topDownArcExistsClosure;
--(DDArcExistsClosure)bottomUpArcExistsClosure;
+-(DDArcExistsClosure)arcExistsClosure;
 -(id<ORExpr>*)transitionFunctions;
 -(DDArcTransitionClosure*)topDownTransitionClosures;
--(DDArcTransitionClosure*)bottomUpTransitionClosures;
+-(DDArcSetTransitionClosure*)bottomUpTransitionClosures;
 -(id<ORExpr>*)relaxationFunctions;
 -(DDMergeClosure*)topDownRelaxationClosures;
 -(DDMergeClosure*)bottomUpRelaxationClosures;
 -(id<ORExpr>*)differentialFunctions;
 -(DDOldMergeClosure*)differentialClosures;
+-(id<ORIntVar>)fixpointVar;
+-(DDFixpointBoundClosure)fixpointMin;
+-(DDFixpointBoundClosure)fixpointMax;
 -(DDSlackClosure)slackClosure;
 -(int)numTopDownProperties;
 -(int)numBottomUpProperties;
 -(void)setArcExistsFunction:(id<ORExpr>)arcExists;
--(void)setTopDownArcExistsClosure:(DDArcExistsClosure)arcExists;
--(void)setBottomUpArcExistsClosure:(DDArcExistsClosure)arcExists;
+-(void)setArcExistsClosure:(DDArcExistsClosure)arcExists;
 -(void)setSlackClosure:(DDSlackClosure)slack;
 -(void)setAsAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void) setAsSequenceConstraint:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void) setAsSequenceConstraintWithBitSequence:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void)setAsAllDifferent:(id<ORIntRange>)domain;
 -(void) setAsDualDirectionalAllDifferent:(int)numVariables domain:(id<ORIntRange>)domain;
+-(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights lower:(int)lb upper:(int)ub;
+-(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights equal:(id<ORIntVar>)equal;
+-(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weightMatrix:(int**)weights equal:(id<ORIntVar>)equal;
 -(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
 -(void)addTransitionClosure:(DDArcTransitionClosure)transitionFunction toStateValue:(int)lookup;
 -(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;

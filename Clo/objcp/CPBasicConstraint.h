@@ -389,6 +389,13 @@ typedef int (^intgetter) (void) ;
 -(ORBool)   isMinimization;
 @end
 
+@interface CPSetContains : CPCoreConstraint
+-(CPSetContains*) initCPSetContains:(id<CPIntVar>)value inSet:(id<ORIntSet>)set equal:(id<CPIntVar>)result;
+-(void) post;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
 @interface CPRelaxation : CPCoreConstraint
 -(CPRelaxation*) initCPRelaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 -(void)      dealloc;

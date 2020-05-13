@@ -2432,6 +2432,85 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 @end
 
+@implementation CPSetContains
+{
+    CPIntVar* _value;
+    ORIntSetI* _set;
+    CPIntVar* _result;
+}
+-(CPSetContains*) initCPSetContains:(id<CPIntVar>)value inSet:(id<ORIntSet>)set equal:(id<CPIntVar>)result {
+    self = [super initCPCoreConstraint:[value engine]];
+    _value = (CPIntVar*)value;
+    _set = (ORIntSetI*)set;
+    _result = (CPIntVar*)result;
+    return self;
+}
+-(void) post
+{
+   [self propagate];
+   if (!bound(_value))
+      [_value whenChangeBoundsPropagate:self];
+   if (!bound(_result))
+      [_result whenChangeBoundsPropagate:self];
+}
+-(void)propagate
+{
+   if (bound(_result)) {
+       if ([_result min] == 0) {
+           [_set enumerateWithBlock:^(ORInt i) {
+               if ([_value member:i]) {
+                   [_value remove:i];
+               }
+           }];
+       } else {
+           int maxDom = [_value max];
+           for (int i = [_value min]; i <= maxDom; i++) {
+               if ([_value member:i] && ![_set member:i]) {
+                   [_value remove:i];
+               }
+           }
+       }
+   } else {
+       bool foundValueInSet = false;
+       bool foundValueNotInSet = false;
+       int maxDom = [_value max];
+       for (int i = [_value min]; i <= maxDom; i++) {
+           if ([_value member:i]) {
+               if ([_set member:i]) {
+                   foundValueInSet = true;
+                   if (foundValueNotInSet) {
+                       break;
+                   }
+               } else {
+                   foundValueNotInSet = true;
+                   if (foundValueInSet) {
+                       break;
+                   }
+               }
+           }
+       }
+       if (!foundValueInSet) {
+           [_result remove:1];
+       }
+       if (!foundValueNotInSet) {
+           [_result remove:0];
+       }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_value,_result, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return !bound(_result) + !bound(_value);
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPSetContains: %02d %@ == (%@ contains %@)>",_name,_result,_set,_value];
+}
+@end
+
 @implementation CPRelaxation
 {
    NSArray* _mv;

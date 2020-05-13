@@ -479,6 +479,10 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitSetContains: (id<ORSetContains>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitElementCst: (id<ORElementCst>)c
 {
    _result = [_into addConstraint:c];

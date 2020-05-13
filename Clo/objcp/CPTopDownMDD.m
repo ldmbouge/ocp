@@ -14,14 +14,18 @@
 #import <objcp/CPTopDownMDD.h>
 #import "CPIntVarI.h"
 
-static inline id getTopDownState(Node* n) { return n->_topDownState;}
+static inline MDDStateValues* getTopDownState(Node* n) { return n->_topDownState;}
 @implementation CPMDD {
 @protected
     ORTRIdArrayI* *layers;
+    id<CPIntVar>* _fixpointVars;
+    DDFixpointBoundClosure* _fixpointMinFunctions;
+    DDFixpointBoundClosure* _fixpointMaxFunctions;
 }
 -(id) initCPMDD: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
 {
     self = [super initCPCoreConstraint: engine];
+    _engine = engine;
     _nodeClass = [Node class];
     _trail = [engine trail];
     _x = x;
@@ -51,22 +55,35 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     _valueNotMember -= min_variable_index;
     _layerBound = malloc(_numVariables * sizeof(TRInt));
     
-    _canCreateStateSel = @selector(canCreateState:fromParent:assigningVariable:toValue:);
+    _canCreateStateSel = @selector(canCreateState:fromParent:assigningVariable:toValue:objectiveMins:objectiveMaxes:);
     _hashValueSel = @selector(hashValueFor:);
     _removeParentlessSel = @selector(removeParentlessNodeFromMDD:fromLayer:);
     _removeParentlessNode = (RemoveParentlessIMP)[self methodForSelector:_removeParentlessSel];
     _afterPropagationSel = @selector(afterPropagation);
-    _afterPropagation = (NoParametersVoidIMP)[self methodForSelector:_afterPropagationSel];
+    _afterPropagation = (NoParametersBoolIMP)[self methodForSelector:_afterPropagationSel];
     
     return self;
 }
--(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec {
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec gamma:(id*)gamma {
     self = [self initCPMDD:engine over:x];
     _spec = [spec retain];
     _hashWidth = 100;
     [_spec finalizeSpec:_trail hashWidth:_hashWidth];
     _numTopDownBytes = [_spec numTopDownBytes];
-    _numBottomUpBytes = [_spec numBottomUpBytes];
+    
+    _numSpecs = [_spec numSpecs];
+    id<ORIntVar>* fixpointVars = [_spec fixpointVars];
+    _fixpointVars = calloc(_numSpecs, sizeof(id<CPIntVar>));
+    for (int i = 0; i < _numSpecs; i++) {
+        if (fixpointVars[i] != nil) {
+            _fixpointVars[i] = gamma[[fixpointVars[i] getId]];
+        }
+    }
+    _fixpointMinFunctions = [_spec fixpointMins];
+    _fixpointMaxFunctions = [_spec fixpointMaxes];
+    
+    _fixpointMinValues = malloc(_numSpecs * sizeof(TRInt));
+    _fixpointMaxValues = malloc(_numSpecs * sizeof(TRInt));
     
     _hashValueFor = (HashValueIMP)[_spec methodForSelector:_hashValueSel];
     _canCreateState = (CanCreateStateIMP)[_spec methodForSelector:_canCreateStateSel];
@@ -96,18 +113,26 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     SEL assignVariableSel = @selector(assignVariableToLayer:);
     AssignVariableIMP assignVariableToLayer = (AssignVariableIMP)[self methodForSelector:assignVariableSel];
     SEL buildLayerSel = @selector(buildLayerByNode:);
-    BuildLayerByValueIMP buildLayerByValue = (BuildLayerByValueIMP)[self methodForSelector:buildLayerSel];
+    BuildLayerByNodeIMP buildLayerByNode = (BuildLayerByNodeIMP)[self methodForSelector:buildLayerSel];
+    
+    for (int i = 0; i < _numSpecs; i++) {
+        if (_fixpointVars[i] != nil) {
+            _fixpointMinValues[i] = makeTRInt(_trail, [_fixpointVars[i] min]);
+            _fixpointMaxValues[i] = makeTRInt(_trail, [_fixpointVars[i] max]);
+        } else {
+            _fixpointMinValues[i] = makeTRInt(_trail, INT_MIN);
+            _fixpointMaxValues[i] = makeTRInt(_trail, INT_MAX);
+        }
+    }
     
     _inPost = true;
     [self createRootAndSink];
     for (int layer = 1; layer < _numVariables; layer++) {
         assignVariableToLayer(self,assignVariableSel,layer);
-        buildLayerByValue(self,buildLayerSel,layer);
+        buildLayerByNode(self,buildLayerSel,layer);
         [self cleanLayer: layer];
     }
     [self buildLastLayer];
-    
-    [self performBottomUp];
     
     [self addPropagationsAndTrimDomains];
     
@@ -141,16 +166,15 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
 -(int) variableIndexForLayer:(int)layer {
     return _layer_to_variable[layer];
 }
+-(Node*) createNode:(MDDStateValues*)state minDomain:(int)minDomain maxDomain:(int)maxDomain {
+    return [[_nodeClass alloc] initNode:_trail minChildIndex:minDomain maxChildIndex:maxDomain state:state hashWidth:_hashWidth];
+}
 -(void) createRootAndSink
 {
     [self assignVariableToLayer:0];
     
     MDDStateValues* rootState = [_spec createRootState];
-    Node* root = [[_nodeClass alloc] initNode: _trail
-                          minChildIndex:_min_domain_for_layer[0]
-                          maxChildIndex:_max_domain_for_layer[0]
-                                  state:rootState
-                              hashWidth:_hashWidth];
+    Node* root = [self createNode:rootState minDomain:_min_domain_for_layer[0] maxDomain:_max_domain_for_layer[0]];
     [self addNode:root toLayer:0];
     [rootState release];
     [root release];
@@ -162,7 +186,39 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     [sink release];
 }
 -(void) cleanLayer:(int)layer { return; }
--(void) afterPropagation { return; }
+-(bool) afterPropagation {
+    _objectiveBoundsChanged = false;
+    Node* sink = [layers[(int)_numVariables] at:0];
+    char* sinkState = [getTopDownState(sink) stateValues];
+    for (int i = 0; i < _numSpecs; i++) {
+        if (_fixpointVars[i] != nil) {
+            int newMin = _fixpointMinFunctions[i](sinkState);
+            int newMax = _fixpointMaxFunctions[i](sinkState);
+            if (_fixpointMinValues[i]._val < newMin) {
+                assignTRInt(&_fixpointMinValues[i], newMin, _trail);
+                _objectiveBoundsChanged = true;
+            }
+            if (_fixpointMaxValues[i]._val > newMax) {
+                assignTRInt(&_fixpointMaxValues[i], newMax, _trail);
+                _objectiveBoundsChanged = true;
+            }
+        }
+    }
+    if (_objectiveBoundsChanged) {
+        _highestLayerChanged = 0;
+        _lowestLayerChanged = (int)_numVariables-1;
+    }
+    return _objectiveBoundsChanged;
+}
+-(void) onFixpoint {
+    for (int i = 0; i < _numSpecs; i++) {
+        if (_fixpointVars[i] != nil) {
+            [_fixpointVars[i] updateMin:_fixpointMinValues[i]._val];
+            [_fixpointVars[i] updateMax:_fixpointMaxValues[i]._val];
+        }
+    }
+    return;
+}
 -(void) connect:(Node*)parent to:(Node*)child value:(int)value {
     @throw [[ORExecutionError alloc] initORExecutionError: "CPTopDownMDD: Method connect not implemented"];
 }
@@ -204,7 +260,6 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     int minDomain = _min_domain_for_layer[parentLayer];
     int maxDomain = _max_domain_for_layer[parentLayer];
     int parentLayerSize = layer_size[parentLayer]._val;
-    int hashWidth = _hashWidth;
     int childMinDomain = _min_domain_for_layer[parentLayer+1];
     int childMaxDomain = _max_domain_for_layer[parentLayer+1];
     id<CPIntVar> parentVariable = _x[parentVariableIndex];
@@ -220,17 +275,13 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
                 Node* parentNode = [parentNodes at: parentNodeIndex];
                 MDDStateValues* parentState = getTopDownState(parentNode);
                 char* newStateProperties;
-                if (_canCreateState(_spec, _canCreateStateSel, &newStateProperties, parentState, parentVariableIndex, edgeValue)) {
+                if (_canCreateState(_spec, _canCreateStateSel, &newStateProperties, parentState, parentVariableIndex, edgeValue, _fixpointMinValues, _fixpointMaxValues)) {
                     NSUInteger hashValue = _hashValueFor(_spec,_hashValueSel,newStateProperties);
                     Node* childNode;
                     bool nodeExists = hasNode(nodeHashTable, hasNodeSel, newStateProperties, hashValue, &childNode);
                     if (!nodeExists) {
                         MDDStateValues* newState = [[MDDStateValues alloc] initState:newStateProperties numBytes:_numTopDownBytes hashWidth:_hashWidth trail:_trail];
-                        childNode = [[_nodeClass alloc] initNode: _trail
-                                             minChildIndex:childMinDomain
-                                             maxChildIndex:childMaxDomain
-                                                     state:newState
-                                                 hashWidth:hashWidth];
+                        childNode = [self createNode:newState minDomain:childMinDomain maxDomain:childMaxDomain];
                         [self addNode:childNode toLayer:layer];
                         [nodeHashTable addState:newState];
                         [newState release];
@@ -269,7 +320,6 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     int maxDomain = _max_domain_for_layer[parentLayer];
     int domSize = maxDomain - minDomain + 1;
     int parentLayerSize = layer_size[parentLayer]._val;
-    int hashWidth = _hashWidth;
     int childMinDomain = _min_domain_for_layer[parentLayer+1];
     int childMaxDomain = _max_domain_for_layer[parentLayer+1];
     id<CPIntVar> parentVariable = _x[parentVariableIndex];
@@ -294,17 +344,13 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
         for (int edgeValue = minDomain; edgeValue <= maxDomain; edgeValue++) {
             if (inDomain[edgeValue]) {
                 char* newStateProperties;
-                if (_canCreateState(_spec,_canCreateStateSel,&newStateProperties,parentState,parentVariableIndex,edgeValue)) {
+                if (_canCreateState(_spec,_canCreateStateSel,&newStateProperties,parentState,parentVariableIndex,edgeValue, _fixpointMinValues, _fixpointMaxValues)) {
                     NSUInteger hashValue = _hashValueFor(_spec,_hashValueSel,newStateProperties);
                     Node* childNode;
                     bool nodeExists = hasNode(nodeHashTable, hasNodeSel, newStateProperties, hashValue, &childNode);
                     if (!nodeExists) {
                         MDDStateValues* newState = [[MDDStateValues alloc] initState:newStateProperties numBytes:_numTopDownBytes hashWidth:_hashWidth trail:_trail];
-                        childNode = [[_nodeClass alloc] initNode: _trail
-                                             minChildIndex:childMinDomain
-                                             maxChildIndex:childMaxDomain
-                                                     state:newState
-                                                 hashWidth:hashWidth];
+                        childNode = [self createNode:newState minDomain:childMinDomain maxDomain:childMaxDomain];
                         [self addNode:childNode toLayer:layer];
                         [nodeHashTable addState:newState];
                         [newState release];
@@ -330,9 +376,6 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
         failNow();
     }
     [nodeHashTable release];
-}
--(void) performBottomUp {
-    @throw [[ORExecutionError alloc] initORExecutionError: "CPTopDownMDD: Method performBottomUp not implemented"];
 }
 -(void) addPropagationsAndTrimDomains
 {
@@ -395,7 +438,29 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
                     }
                 }
                 
-                _afterPropagation(self,_afterPropagationSel);
+                _objectiveBoundsChanged = false;
+                for (int i = 0; i < _numSpecs; i++) {
+                    if (_fixpointVars[i] != nil) {
+                        int newMin = [_fixpointVars[i] min];
+                        int newMax = [_fixpointVars[i] max];
+                        if (_fixpointMinValues[i]._val != newMin) {
+                            assignTRInt(&_fixpointMinValues[i], newMin, _trail);
+                            _objectiveBoundsChanged = true;
+                        }
+                        if (_fixpointMaxValues[i]._val != newMax) {
+                            assignTRInt(&_fixpointMaxValues[i], newMax, _trail);
+                            _objectiveBoundsChanged = true;
+                        }
+                    }
+                }
+                
+                if (_objectiveBoundsChanged) {
+                    _highestLayerChanged = 0;
+                    _lowestLayerChanged = (int)_numVariables-1;
+                }
+                
+                while(_afterPropagation(self,_afterPropagationSel));
+                [self onFixpoint];
                 
                 if (_lowestLayerChanged == _numVariables) {
                     _lowestLayerChanged--;
@@ -477,8 +542,6 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
         [self removeChild:node fromParent:parent parentLayer:layer];
         if ([self parentIsChildless:parent]) {
             highestLayerChanged = min(highestLayerChanged,[self removeChildlessFromMDD:parent fromLayer:layer]);
-        } else {
-            [parent setBottomUpRecalcRequired:true];
         }
     }
     return highestLayerChanged;
@@ -574,6 +637,9 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     free(_min_domain_for_layer);
     free(_max_domain_for_layer);
     free(_layerBound);
+    free(_fixpointVars);
+    free(_fixpointMinValues);
+    free(_fixpointMaxValues);
     [_spec release];
     [super dealloc];
 }
@@ -855,7 +921,7 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     _relaxation_size = relaxationSize;
     return self;
 }
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle {
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma {
     self = [super initCPMDD:engine over:x];
     _spec = [spec retain];
     _relaxation_size = relaxationSize;
@@ -865,7 +931,20 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     _hashWidth = relaxationSize * 2;
     [_spec finalizeSpec:_trail hashWidth:_hashWidth];
     _numTopDownBytes = [_spec numTopDownBytes];
-    _numBottomUpBytes = [_spec numBottomUpBytes];
+    
+    _numSpecs = [_spec numSpecs];
+    id<ORIntVar>* fixpointVars = [_spec fixpointVars];
+    _fixpointVars = malloc(_numSpecs * sizeof(id<CPIntVar>));
+    for (int i = 0; i < _numSpecs; i++) {
+        if (fixpointVars[i] != nil) {
+            _fixpointVars[i] = gamma[[fixpointVars[i] getId]];
+        }
+    }
+    _fixpointMinFunctions = [_spec fixpointMins];
+    _fixpointMaxFunctions = [_spec fixpointMaxes];
+    
+    _fixpointMinValues = malloc(_numSpecs * sizeof(TRInt));
+    _fixpointMaxValues = malloc(_numSpecs * sizeof(TRInt));
     
     _splitNodesOnLayerSel = @selector(splitNodesOnLayer:);
     _splitNodesOnLayer = (SplitNodesOnLayerIMP)[self methodForSelector:_splitNodesOnLayerSel];
@@ -909,24 +988,46 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     _highestLayerChanged = min(_highestLayerChanged,highestLayerChanged);
     assignTRInt(&layer_variable_count[layer_index][value],0, _trail);
 }
--(void) afterPropagation
-{
-    for (int layer = max(_highestLayerChanged,1); layer <=  min(_lowestLayerChanged+1,(int)_numVariables-1); layer++) {
-        [self recalcNodesOnLayer:layer];
-        _splitNodesOnLayer(self,_splitNodesOnLayerSel,layer);
-        [self recalcNodesOnLayer:layer];
+-(bool) afterPropagation {
+    bool changed = false;
+    for (int layer = max(_highestLayerChanged,1); layer <= _lowestLayerChanged+1; layer++) {
+        if (layer == _numVariables) {
+            changed = [self recalcSink] || changed;
+            break;
+        }
+        changed = [self recalcTopDownNodesOnLayer:layer] || changed;
+        changed = [self recheckArcsWithParentLayer:layer] || changed;
+        changed = _splitNodesOnLayer(self, _splitNodesOnLayerSel, layer) || changed;
+        //changed = [self recalcNodesOnLayer:layer] || changed;
+        //changed = _splitNodesOnLayer(self,_splitNodesOnLayerSel,layer) || changed;
+        //changed = [self recalcNodesOnLayer:layer] || changed;
         
         if (layer_size[layer+1]._val == 0) {
             failNow();
         }
     }
-    [self performBottomUp];
-    return;
+    return [super afterPropagation] || changed;
 }
--(void) splitNodesOnLayer:(int)layer {
+-(bool) splitNodesOnLayer:(int)layer {
     @throw [[ORExecutionError alloc] initORExecutionError: "CPTopDownMDD: Method splitNodesOnLayer not implemented"];
+    return false;
 }
--(void) recalcNode:(Node*)node onLayer:(int)layer {
+-(bool) recalcSink {
+    int layer = (int)_numVariables;
+    Node* sink = [layers[layer] at:0];
+    bool isMergedNode;
+    MDDStateValues* sinkState = getTopDownState(sink);
+    char* newStateProperties = _calculateStateFromParents(self, _calculateStateFromParentsSel, sink, layer-1, &isMergedNode);
+    [sink setIsMergedNode:isMergedNode];
+    if (memcmp(newStateProperties, [sinkState stateValues], _numTopDownBytes) != 0) {
+        [sinkState replaceStateWith:newStateProperties trail:_trail];
+        free(newStateProperties);
+        return true;
+    }
+    return false;
+}
+-(bool) recalcNode:(Node*)node onLayer:(int)layer {
+    bool changed = false;
     ORInt variableIndex = [self variableIndexForLayer:layer];
     bool isMergedNode;
     MDDStateValues* nodeState = getTopDownState(node);
@@ -935,29 +1036,74 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
     [node setIsMergedNode:isMergedNode];
     if (memcmp(oldStateProperties, newStateProperties, _numTopDownBytes) != 0) {
         [nodeState replaceStateWith:newStateProperties trail:_trail];
-        [self reevaluateChildrenAfterParentStateChange:node onLayer:layer andVariable:variableIndex];
+        changed = [self reevaluateChildrenAfterParentStateChange:node onLayer:layer andVariable:variableIndex];
         _lowestLayerChanged = max(_lowestLayerChanged, layer+1);
+    } else if (_objectiveBoundsChanged) {
+        changed = [self reevaluateChildrenAfterParentStateChange:node onLayer:layer andVariable:variableIndex];
     }
     free(newStateProperties);
+    return changed;
 }
--(void) recalcNodesOnLayer:(int)layer
+-(bool) recalcTopDownNode:(Node*)node onLayer:(int)layer {
+    bool isMergedNode;
+    MDDStateValues* nodeState = getTopDownState(node);
+    char* oldStateProperties = [nodeState stateValues];
+    char* newStateProperties = _calculateStateFromParents(self, _calculateStateFromParentsSel, node, layer-1, &isMergedNode);
+    [node setIsMergedNode:isMergedNode];
+    if (memcmp(oldStateProperties, newStateProperties, _numTopDownBytes) == 0) {
+        free(newStateProperties);
+        return false;
+    }
+    [node updateTopDownState:newStateProperties];
+    _lowestLayerChanged = max(_lowestLayerChanged, layer+1);
+    free(newStateProperties);
+    return true;
+}
+-(bool) recalcTopDownNodesOnLayer:(int)layer
 {
-    if (layer == 0 || layer == (int)_numVariables) return;
+    if (layer == 0 || layer == (int)_numVariables) return false;
+    bool changed = false;
     ORTRIdArrayI* layerArray = layers[layer];
     int layerSize = layer_size[layer]._val;
     for (int node_index = 0; node_index < layerSize; node_index++) {
         Node* node = [layerArray at:node_index];
         if ([node topDownRecalcRequired]) {
-            [self recalcNode:node onLayer:layer];
+            changed = [self recalcTopDownNode:node onLayer:layer] || changed;
+            [node setTopDownRecalcRequired:false];
+        }
+    }
+    return changed;
+}
+-(bool) recalcNodesOnLayer:(int)layer
+{
+    if (layer == 0) return false;
+    bool changed = false;
+    ORTRIdArrayI* layerArray = layers[layer];
+    int layerSize = layer_size[layer]._val;
+    int variableIndex = _layer_to_variable[layer];
+    for (int node_index = 0; node_index < layerSize; node_index++) {
+        Node* node = [layerArray at:node_index];
+        if ([node topDownRecalcRequired]) {
+            changed = [self recalcNode:node onLayer:layer] || changed;
             if ([node isChildless]) {
                 [self removeChildlessNodeFromMDD:node fromLayer:layer];
                 node_index--;
                 layerSize--;
+                changed = true;
             } else {
                 [node setTopDownRecalcRequired:false];
             }
+        } else if (_objectiveBoundsChanged) {
+            changed = [self reevaluateChildrenAfterParentStateChange:node onLayer:layer andVariable:variableIndex] || changed;
+            if ([node isChildless]) {
+                [self removeChildlessNodeFromMDD:node fromLayer:layer];
+                node_index--;
+                layerSize--;
+                changed = true;
+            }
         }
     }
+    return changed;
 }
 -(char*) calculateStateFromParentsOf:(Node*)node onLayer:(int)layer isMerged:(bool*)isMergedNode {
     @throw [[ORExecutionError alloc] initORExecutionError: "CPTopDownMDD: Method calculateStateFromParentsOf not implemented"];
@@ -968,7 +1114,70 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
 -(void) recalcFor:(id)child parentProperties:(char*)nodeProperties variable:(int)variableIndex {
     @throw [[ORExecutionError alloc] initORExecutionError: "CPTopDownMDD: Method recalcFor not implemented"];
 }
--(void) reevaluateChildrenAfterParentStateChange:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex {
+-(void) removeParentlessAndChildlessNodesWithParentLayer:(int)layer_index {
+    int childLayerIndex = layer_index + 1;
+    ORTRIdArrayI* parentLayer = layers[layer_index];
+    int parentLayerSize = layer_size[layer_index]._val;
+    ORTRIdArrayI* childLayer = layers[childLayerIndex];
+    int childLayerSize = layer_size[childLayerIndex]._val;
+    for (int parent_index = 0; parent_index < parentLayerSize; parent_index++) {
+        Node* parent = [parentLayer at:parent_index];
+        if ([parent isChildless]) {
+            [self removeChildlessNodeFromMDD:parent fromLayer:layer_index];
+            parentLayerSize--;
+            parent_index--;
+        } else {
+            [parent setTopDownStateChanged:false];
+        }
+    }
+    for (int child_index = 0; child_index < childLayerSize; child_index++) {
+        Node* child = [childLayer at:child_index];
+        if ([child isParentless]) {
+            [self removeParentlessNodeFromMDD:child fromLayer:childLayerIndex];
+            childLayerSize--;
+            child_index--;
+        } else {
+            [child setBottomUpStateChanged:false];
+        }
+    }
+}
+-(bool) recheckArcsWithParentLayer:(int)layer_index {
+    bool changed = false;
+    int variableIndex = _layer_to_variable[layer_index];
+    ORTRIdArrayI* parentLayer = layers[layer_index];
+    int parentLayerSize = layer_size[layer_index]._val;
+    bool nextLayerIsSink = layer_index == _numVariables - 1;
+    TRInt* variableCount = layer_variable_count[layer_index];
+    for (int parent_index = 0; parent_index < parentLayerSize; parent_index++) {
+        Node* parent = [parentLayer at:parent_index];
+        if (_objectiveBoundsChanged || [parent topDownStateChanged]) {
+            char* parentState = [getTopDownState(parent) stateValues];
+            TRId* children = [parent children];
+            int numChildren = [parent numChildren];
+            for (int child_index = _min_domain_for_layer[layer_index]; numChildren; child_index++) {
+                id child = children[child_index];
+                if (child != nil) {
+                    numChildren--;
+                    if ([_spec canChooseValue:child_index forVariable:variableIndex withStateProperties:parentState]) {
+                        if (!nextLayerIsSink && [parent topDownStateChanged]) {
+                            [self recalcFor:child parentProperties:parentState variable:variableIndex];
+                        }
+                    } else {
+                        [parent removeChildAt:child_index inPost:_inPost];
+                        [child removeParent:parent inPost:_inPost];
+                        assignTRInt(&variableCount[child_index], variableCount[child_index]._val-1, _trail);
+                        [child setTopDownRecalcRequired:true];
+                        changed = true;
+                    }
+                }
+            }
+        }
+    }
+    [self removeParentlessAndChildlessNodesWithParentLayer:layer_index];
+    return changed;
+}
+-(bool) reevaluateChildrenAfterParentStateChange:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex {
+    bool changed = false;
     TRId* children = [node children];
     MDDStateValues* nodeState = getTopDownState(node);
     char* nodeProperties = [nodeState stateValues];
@@ -984,7 +1193,6 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
                 }
             } else {
                 [node removeChildAt:child_index inPost:_inPost];
-                [node setBottomUpRecalcRequired:true];
                 [child removeParent:node inPost:_inPost];
                 assignTRInt(&variable_count[child_index], variable_count[child_index]._val-1, _trail);
                 if ([child isParentless]) {
@@ -992,9 +1200,11 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
                 } else {
                     [child setTopDownRecalcRequired:true];
                 }
+                changed = true;
             }
         }
     }
+    return changed;
 }
 -(void) cleanLayer:(int)layer
 {
@@ -1125,7 +1335,7 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
         
         
         MDDStateValues* newState = [[MDDStateValues alloc] initState:newProperties numBytes:_numTopDownBytes hashWidth:_hashWidth trail:_trail];
-        Node* newNode = [[_nodeClass alloc] initNode:_trail minChildIndex:minDomain maxChildIndex:maxDomain state:newState hashWidth:_hashWidth];
+        Node* newNode = [self createNode:newState minDomain:minDomain maxDomain:maxDomain];
         [_trail trailRelease:newState];
         [_trail trailRelease:newNode];
         [newNode takeParentsFrom:existingNode];
@@ -1164,7 +1374,7 @@ static inline id getTopDownState(Node* n) { return n->_topDownState;}
             char* newProperties = malloc(_numTopDownBytes * sizeof(char));
             memcpy(newProperties,[existingState stateValues],_numTopDownBytes);
             MDDStateValues* newState = [[MDDStateValues alloc] initState:newProperties numBytes:_numTopDownBytes hashWidth:_hashWidth trail:_trail];
-            Node* newNode = [[_nodeClass alloc] initNode:_trail minChildIndex:minDomain maxChildIndex:maxDomain state:newState hashWidth:_hashWidth];
+            Node* newNode = [self createNode:newState minDomain:minDomain maxDomain:maxDomain];
             [_trail trailRelease:newState];
             [_trail trailRelease:newNode];
             [newNode takeParentsFrom:existingNode];

@@ -456,6 +456,11 @@ extension ORMDDSpecs {
             self.addStateBitSequence(ORInt(key), withDefaultValue: value, size:Int32(size), topDown: false)
         }
     }
+    func bottomUpState<Key,Value>(_ d : [(Key,Value)]) -> Void where Key : BinaryInteger,Value : BinaryInteger {
+        for (k,v) in d {
+            self.addStateCounter(ORInt(k), withDefaultValue: ORInt(v), topDown: false)
+        }
+    }
     /*func state<Key>(_ d : Dictionary<Key,Set<AnyHashable>?>) -> Void where Key : BinaryInteger {
         for (k,v) in d {
             self.addStateSet(ORInt(k), withDefaultValue: v)
@@ -471,7 +476,7 @@ extension ORMDDSpecs {
         self.setArcExistsFunction(f)
     }
     func arc(_ f : @escaping DDArcExistsClosure) -> Void {
-        self.setTopDownArcExistsClosure(f)
+        self.setArcExistsClosure(f)
     }
     func setAsAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
         self.setAsAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
@@ -765,6 +770,64 @@ public func allDiffDualDirectionalMDDWithSetsAndClosures(_ vars : ORIntVarArray)
     return mdd
 }
 
+public func sumMDD(m : ORTracker,vars : ORIntVarArray, weights : [Int], lb : Int32, ub : Int32) -> ORMDDSpecs {
+    let udom = arrayDomains(vars)
+    let maxDom = udom.up(),
+        numVars = Int(vars.count())
+    let minDown = 0, maxDown = 1, numAssignedDown = 2,
+        minUp = 0, maxUp = 1
+    var int32Weights : [Int32] = []
+    for weight in weights { int32Weights.append(Int32(weight)) }
+    let weightsPointer = UnsafeMutablePointer<Int32>.allocate(capacity: numVars)
+    weightsPointer.initialize(from: int32Weights, count: numVars)
+        
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, numTopDownProperties: 3, numBottomUpProperties: 2)
+    mdd.state([(minDown, 0), (maxDown, 0), (numAssignedDown, 0)])
+    mdd.bottomUpState([(minUp, 0), (maxUp, 0)])
+    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weights: weightsPointer, lower: lb, upper: ub)
+    return mdd
+}
+public func sumMDD(m : ORTracker,vars : ORIntVarArray, weights : [Int], equal : ORIntVar) -> ORMDDSpecs {
+    let udom = arrayDomains(vars)
+    let maxDom = udom.up(),
+        numVars = Int(vars.count())
+    let minDown = 0, maxDown = 1, numAssignedDown = 2,
+        minUp = 0, maxUp = 1
+    var int32Weights : [Int32] = []
+    for weight in weights { int32Weights.append(Int32(weight)) }
+    let weightsPointer = UnsafeMutablePointer<Int32>.allocate(capacity: numVars)
+    weightsPointer.initialize(from: int32Weights, count: numVars)
+        
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, numTopDownProperties: 3, numBottomUpProperties: 2)
+    mdd.state([(minDown, 0), (maxDown, 0), (numAssignedDown, 0)])
+    mdd.bottomUpState([(minUp, 0), (maxUp, 0)])
+    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weights: weightsPointer, equal: equal)
+    return mdd
+}
+public func sumMDD(m : ORTracker,vars : ORIntVarArray, weightMatrix : [[Int]], equal : ORIntVar) -> ORMDDSpecs {
+    let udom = arrayDomains(vars)
+    let maxDom = udom.up(),
+        domSize = udom.size(),
+        numVars = Int(vars.count())
+    let minDown = 0, maxDown = 1, numAssignedDown = 2,
+        minUp = 0, maxUp = 1
+    let weightMatrixPointer = UnsafeMutablePointer<UnsafeMutablePointer<Int32>?>.allocate(capacity: numVars)
+    weightMatrixPointer.initialize(repeating: UnsafeMutablePointer<Int32>.allocate(capacity: Int(domSize)), count: numVars)
+    for i in 0..<numVars {
+        var int32Weights : [Int32] = []
+        for weight in weightMatrix[i] { int32Weights.append(Int32(weight)) }
+        let weightsPointer : UnsafeMutablePointer<Int32> = UnsafeMutablePointer<Int32>.allocate(capacity: Int(domSize))
+        weightsPointer.initialize(from: int32Weights, count: Int(domSize))
+        weightMatrixPointer[i] = weightsPointer
+    }
+        
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, numTopDownProperties: 3, numBottomUpProperties: 2)
+    mdd.state([(minDown, 0), (maxDown, 0), (numAssignedDown, 0)])
+    mdd.bottomUpState([(minUp, 0), (maxUp, 0)])
+    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weightMatrix: weightMatrixPointer, equal: equal)
+    return mdd
+}
+
 public func knapsackMDD(_ vars : ORIntVarArray,weights : ORIntArray,capacity : ORInt) -> ORMDDSpecs {
     let m = vars.tracker()
     let minRemainingCapacityIndex = 0, maxRemainingCapacityIndex = 1, remainingWeightsIndex = 2
@@ -840,6 +903,20 @@ public func seqMDDClosures(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,va
     return mdd;
 }
 public func seqMDDClosuresWithBitSequence(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        minCounts = 0,
+        maxCounts = 1,
+        numAssigned = 2,
+        valueSet = ORFactory.intSet(m, set: values)
+    let udom = arrayDomains(vars)
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: vars, stateSize: 3)
+    //Each bit sequence is a len*2 shorts
+    mdd.state([(minCounts, false, len * 16), (maxCounts, false, len * 16)])
+    mdd.state([numAssigned:0])
+    mdd.setAsSequenceWithBitSequence(udom, len, lb, ub, valueSet)
+    return mdd;
+}
+public func seqDualDirectionalMDDClosuresWithBitSequence(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
     let m = vars.tracker(),
         minCounts = 0,
         maxCounts = 1,

@@ -1543,6 +1543,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
+
++(id<ORConstraint>) contains:(id<ORTracker>)model value:(id<ORIntVar>)value inSet:(id<ORIntSet>)set equal:(id<ORIntVar>)y
+{
+    id<ORConstraint> o = [[ORSetContains alloc] initORSetContains:set value:value equal:y];
+    [model trackObject:o];
+    return o;
+}
+
 +(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y
 {
    id<ORConstraint> o = [[ORElementCst alloc]  initORElement:x array:c equal:y];

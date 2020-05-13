@@ -17,11 +17,16 @@
     MDDStateValues* _bottomUpState;
     TRInt _isMergedNode;
     bool _topDownRecalcRequired;
-    bool _bottomUpRecalcRequired;
+    TRInt _bottomUpRecalcRequired;
+    
+    bool _topDownStateChanged;
+    bool _bottomUpStateChanged;
 }
 -(id) initSinkNode: (id<ORTrail>) trail state:(MDDStateValues*)state hashWidth:(int)hashWidth;
 -(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex state:(MDDStateValues*)state hashWidth:(int)hashWidth;
--(void) initializeBottomUpState:(MDDStateValues*)bottomUpState;
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex state:(MDDStateValues*)state hashWidth:(int)hashWidth numBottomUpBytes:(size_t)numBottomUpBytes;
+-(void) initializeTopDownState:(MDDStateValues*)topDownState;
+-(void) updateTopDownState:(char*)bottomUpState;
 -(void) updateBottomUpState:(char*)bottomUpState;
 -(void) addChild:(id)child at:(int)index inPost:(bool)inPost;
 -(void) removeChildAt: (int) index inPost:(bool)inPost;
@@ -37,6 +42,10 @@
 -(void) setTopDownRecalcRequired:(bool)recalcRequired;
 -(bool) bottomUpRecalcRequired;
 -(void) setBottomUpRecalcRequired:(bool)recalcRequired;
+-(bool) topDownStateChanged;
+-(void) setTopDownStateChanged:(bool)stateChanged;
+-(bool) bottomUpStateChanged;
+-(void) setBottomUpStateChanged:(bool)stateChanged;
 -(bool) isChildless;
 -(bool) isParentless;
 -(TRId*) children;
@@ -83,7 +92,9 @@
     size_t _numTopDownBytes;
     size_t _numBottomUpBytes;
 }
+-(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost;
 -(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost numBottomUpBytes:(size_t)numBottomUpBytes;
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numTopDownBytes:(size_t)numTopDownBytes;
 -(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numTopDownBytes:(size_t)numTopDownBytes numBottomUpBytes:(size_t)numBottomUpBytes;
 -(MDDNode*) parent;
 -(MDDNode*) child;
@@ -130,16 +141,16 @@
 -(NSMutableArray**) hashTable;
 @end
 
-typedef bool (*CanCreateStateIMP)(id,SEL,char**,MDDStateValues*,int,int);
+typedef bool (*CanCreateStateIMP)(id,SEL,char**,MDDStateValues*,int,int,TRInt*,TRInt*);
 typedef NSUInteger (*HashValueIMP)(id,SEL,char*);
 typedef bool (*HasNodeIMP)(id,SEL,char*,NSUInteger,Node**);
 typedef int (*RemoveParentlessIMP)(id,SEL,Node*,int);
-typedef void (*BuildLayerByValueIMP)(id,SEL,int);
+typedef void (*BuildLayerByNodeIMP)(id,SEL,int);
 typedef void (*AssignVariableIMP)(id,SEL,int);
 typedef char* (*ComputeStateFromPropertiesIMP)(id,SEL,char*,int,int);
 typedef char* (*CalculateStateFromParentsIMP)(id,SEL,Node*,int,bool*);
 typedef char* (*BatchMergeStatesIMP)(id,SEL,char**,int**,int*,int,bool*,int,int);
 typedef void (*ReplaceStateIMP)(id,SEL,MDDStateValues*,char*);
 typedef bool (*ReplaceArcStateIMP)(id,SEL,MDDArc*,char*,int);
-typedef void (*SplitNodesOnLayerIMP)(id,SEL,int);
-typedef void (*NoParametersVoidIMP)(id,SEL);
+typedef bool (*SplitNodesOnLayerIMP)(id,SEL,int);
+typedef bool (*NoParametersBoolIMP)(id,SEL);

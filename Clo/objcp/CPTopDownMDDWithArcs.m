@@ -15,16 +15,15 @@
 #import "CPTopDownMDDWithArcs.h"
 
 static inline id getTopDownState(MDDNode* n) { return n->_topDownState;}
-static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 @implementation CPMDDWithArcs
--(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification *)spec {
-    self = [super initCPMDD:engine over:x spec:spec];
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification *)spec  gamma:(id*)gamma {
+    self = [super initCPMDD:engine over:x spec:spec gamma:gamma];
     _nodeClass = [MDDNode class];
     return self;
 }
 -(void) connect:(MDDNode*)parent to:(MDDNode*)child value:(int)value {
     //Note that this only works if child is a newly created, exact node
-    [[MDDArc alloc] initArc:_trail from:parent to:child value:value inPost:_inPost state:[(MDDStateValues*)getTopDownState(child) stateValues] numTopDownBytes:_numTopDownBytes numBottomUpBytes:_numBottomUpBytes];
+    [[MDDArc alloc] initArc:_trail from:parent to:child value:value inPost:_inPost state:[(MDDStateValues*)getTopDownState(child) stateValues] numTopDownBytes:_numTopDownBytes];
 }
 -(void) removeParentlessFromMDD:(MDDArc*)child fromLayer:(int)childLayer {
     [self removeParentlessNodeFromMDD:[child child] fromLayer:childLayer];
@@ -54,7 +53,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 }
 -(void) connect:(MDDNode*)parent to:(MDDNode*)child value:(int)value {
     //Note that this only works if child is a newly created, exact node
-    [[MDDArc alloc] initArc:_trail from:parent to:child value:value inPost:_inPost state:[(MDDStateValues*)getTopDownState(child) stateValues] numTopDownBytes:_numTopDownBytes numBottomUpBytes:_numBottomUpBytes];
+    [[MDDArc alloc] initArc:_trail from:parent to:child value:value inPost:_inPost state:[(MDDStateValues*)getTopDownState(child) stateValues] numTopDownBytes:_numTopDownBytes];
 }
 -(void) removeParentlessFromMDD:(MDDArc*)child fromLayer:(int)childLayer {
     [self removeParentlessNodeFromMDD:[child child] fromLayer:childLayer];
@@ -77,11 +76,56 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 @end
 
 @implementation CPMDDRelaxationWithArcs
--(id) initCPMDDRelaxation:(id<CPEngine>)engine over:(id<CPIntVarArray>)x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification *)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle {
-    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
+-(id) initCPMDDRelaxation:(id<CPEngine>)engine over:(id<CPIntVarArray>)x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification *)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma {
+    self = [super initCPMDDRelaxation:engine over:x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
     _nodeClass = [MDDNode class];
     return self;
 }
+
+-(void) buildLastLayer {
+    int parentLayer = (int)_numVariables-1;
+    int minDomain = _min_domain_for_layer[parentLayer];
+    int maxDomain = _max_domain_for_layer[parentLayer];
+    int parentVariableIndex = _layer_to_variable[parentLayer];
+    int parentLayerSize = layer_size[parentLayer]._val;
+    id<CPIntVar> parentVariable = _x[parentVariableIndex];
+    ORTRIdArrayI* parentNodes = [self getLayer:parentLayer];
+    MDDNode* sink = [[self getLayer:(int)_numVariables] at: 0];
+    char* sinkTopDown = malloc(_numTopDownBytes * sizeof(char));
+    bool firstArc = true;
+    for (int edgeValue = minDomain; edgeValue <= maxDomain; edgeValue++) {
+        if ([parentVariable member: edgeValue]) {
+            for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
+                MDDNode* parentNode = [parentNodes at: parentNodeIndex];
+                MDDStateValues* parentState = getTopDownState(parentNode);
+                char* arcState;
+                if(_canCreateState(_spec, _canCreateStateSel, &arcState, parentState, parentVariableIndex, edgeValue, _fixpointMinValues, _fixpointMaxValues)) {
+                    if (firstArc) {
+                        memcpy(sinkTopDown, arcState, _numTopDownBytes);
+                        firstArc = false;
+                    } else {
+                        [_spec mergeTempStateProperties:sinkTopDown with:arcState];
+                    }
+                    [[MDDArc alloc] initArc:_trail from:parentNode to:sink value:edgeValue inPost:_inPost state:arcState numTopDownBytes:_numTopDownBytes];
+                    assignTRInt(&layer_variable_count[parentLayer][edgeValue], layer_variable_count[parentLayer][edgeValue]._val+1, _trail);
+                }
+            }
+        } else {
+            _valueNotMember[parentVariableIndex][edgeValue] = makeTRInt(_trail, 1);
+        }
+    }
+    MDDStateValues* sinkTopDownState = [[MDDStateValues alloc] initState:sinkTopDown numBytes:_numTopDownBytes hashWidth:_hashWidth trail:_trail];
+    [sink initializeTopDownState:sinkTopDownState];
+    for (int parentNodeIndex = 0; parentNodeIndex < parentLayerSize; parentNodeIndex++) {
+        Node* parentNode = [parentNodes at: parentNodeIndex];
+        if ([parentNode isChildless]) {
+            [self removeChildlessNodeFromMDD:parentNode fromLayer:parentLayer];
+            parentNodeIndex--;
+            parentLayerSize--;
+        }
+    }
+}
+
 -(void) recalcArc:(MDDArc*)arc parentProperties:(char*)parentProperties variable:(int)variable {
     char* arcState = arc.topDownState;
     int value = arc.arcValue;
@@ -91,14 +135,14 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     char* newState = malloc(_numTopDownBytes * sizeof(char));
     if ([_spec numSpecs] == 1) {
         for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
-            transitionFunctions[propertyIndex](newState, parentProperties, variable, value);
+            transitionFunctions[propertyIndex](newState, parentProperties, nil, variable, value);
         }
     } else {
         memcpy(newState, parentProperties, _numTopDownBytes);
         bool* propertyUsed = [_spec topDownPropertiesUsed:variable];
         for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
             if (propertyUsed[propertyIndex]) {
-                transitionFunctions[propertyIndex](newState, parentProperties, variable, value);
+                transitionFunctions[propertyIndex](newState, parentProperties, nil, variable, value);
             }
         }
     }
@@ -109,42 +153,15 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     }
     free(newState);
 }
--(void) recalcArc:(MDDArc*)arc childProperties:(char*)childProperties variable:(int)variable {
-    char* arcState = arc.topDownState;
-    int value = arc.arcValue;
-    bool stateChanged = false;
-    int numProperties = [_spec numBottomUpProperties];
-    DDArcTransitionClosure* transitionFunctions = [_spec bottomUpTransitionFunctions];
-    char* newState = malloc(_numBottomUpBytes * sizeof(char));
-    if ([_spec numSpecs] == 1) {
-        for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
-            transitionFunctions[propertyIndex](newState, childProperties, variable, value);
-        }
-    } else {
-        memcpy(newState, childProperties, _numBottomUpBytes);
-        bool* propertyUsed = [_spec bottomUpPropertiesUsed:variable];
-        for (int propertyIndex = 0; propertyIndex < numProperties; propertyIndex++) {
-            if (propertyUsed[propertyIndex]) {
-                transitionFunctions[propertyIndex](newState, childProperties, variable, value);
-            }
-        }
-    }
-    stateChanged = arcState == nil || memcmp(arcState, newState, _numBottomUpBytes) != 0;
-    if (stateChanged) {
-        [arc replaceBottomUpStateWith:newState trail:_trail];
-        [[arc parent] setBottomUpRecalcRequired:true];
-    }
-    free(newState);
-}
 -(void) connect:(MDDNode*)parent to:(MDDNode*)child value:(int)value {
     //Note that this only works if child is a newly created, exact node
     MDDStateValues* childState = getTopDownState(child);
     if (childState == nil) {
-        [self recalcArc:[[MDDArc alloc] initArcToSink:_trail from:parent to:child value:value inPost:_inPost numBottomUpBytes:_numBottomUpBytes] childProperties:[getBottomUpState(child) stateValues] variable:_layer_to_variable[_numVariables-1]];
+        [[MDDArc alloc] initArcToSink:_trail from:parent to:child value:value inPost:_inPost];
     } else {
         char* arcState = malloc(_numTopDownBytes * sizeof(char));
         memcpy(arcState, [childState stateValues], _numTopDownBytes);
-        [[MDDArc alloc] initArc:_trail from:parent to:child value:value inPost:_inPost state:arcState numTopDownBytes:_numTopDownBytes numBottomUpBytes:_numBottomUpBytes];
+        [[MDDArc alloc] initArc:_trail from:parent to:child value:value inPost:_inPost state:arcState numTopDownBytes:_numTopDownBytes];
     }
 }
 -(void) removeParentlessFromMDD:(MDDArc*)child fromLayer:(int)childLayer {
@@ -162,7 +179,8 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 -(bool) parentIsChildless:(MDDArc*)parent {
     return [[parent parent] isChildless];
 }
--(void) splitNodesOnLayer:(int)layer {
+-(bool) splitNodesOnLayer:(int)layer {
+    bool changed = false;
     BetterNodeHashTable* nodeHashTable = [[BetterNodeHashTable alloc] initBetterNodeHashTable:_hashWidth numBytes:_numTopDownBytes];
     SEL hasNodeSel = @selector(hasNodeWithStateProperties:hash:node:);
     HasNodeIMP hasNode = (HasNodeIMP)[nodeHashTable methodForSelector:hasNodeSel];
@@ -179,6 +197,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     for (int nodeIndex = 0; nodeIndex < layerSize && layer_size[layer]._val < _relaxation_size; nodeIndex++) {
         MDDNode* node = [layerNodes at:nodeIndex];
         if ([node isMerged]) {
+            changed = true;
             MDDArc** existingNodeChildrenArcs = [node children];
             ORTRIdArrayI* parentArcs = [node parents];
             while ([node numParents] && layer_size[layer]._val < _relaxation_size) {
@@ -202,8 +221,7 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
                     for (int domainVal = minDomain; domainVal <= maxDomain; domainVal++) {
                         MDDArc* existingChildArc = existingNodeChildrenArcs[domainVal];
                         if (existingChildArc != nil) {
-                            char* childState = [(MDDStateValues*)getBottomUpState([existingChildArc child]) stateValues];
-                            if ([_spec canChooseValue:domainVal forVariable:variableIndex fromParent:newProperties toChild:childState]) {
+                            if ([_spec canChooseValue:domainVal forVariable:variableIndex fromParent:newProperties toChild:nil]) {
                                 if (!nodeHasChildren) {
                                     [_trail trailRelease:newNode];
                                     [_trail trailRelease:newState];
@@ -211,9 +229,9 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
                                 }
                                 MDDNode* child = [existingChildArc child];
                                 if (childLayer == (int)_numVariables) {
-                                    [self recalcArc:[[MDDArc alloc] initArcToSink:_trail from:newNode to:child value:domainVal inPost:_inPost numBottomUpBytes:_numBottomUpBytes] childProperties:childState variable:variableIndex];
+                                    [[MDDArc alloc] initArcToSink:_trail from:newNode to:child value:domainVal inPost:_inPost];
                                 } else {
-                                    [self recalcArc:[[MDDArc alloc] initArc:_trail from:newNode to:child value:domainVal inPost:_inPost state:_computeStateFromProperties(_spec, _computeStateFromPropertiesSel, newProperties, variableIndex, domainVal) numTopDownBytes:_numTopDownBytes numBottomUpBytes:_numBottomUpBytes] childProperties:childState variable:variableIndex];
+                                    [[MDDArc alloc] initArc:_trail from:newNode to:child value:domainVal inPost:_inPost state:_computeStateFromProperties(_spec, _computeStateFromPropertiesSel, newProperties, variableIndex, domainVal) numTopDownBytes:_numTopDownBytes];
                                     [child setTopDownRecalcRequired:true];
                                 }
                                 assignTRInt(&variableCount[domainVal], variableCount[domainVal]._val+1, _trail);
@@ -281,8 +299,12 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
         }
     }
     [nodeHashTable release];
+    return changed;
 }
 -(char*) calculateStateFromParentsOf:(MDDNode*)node onLayer:(int)layer isMerged:(bool*)isMergedNode {
+    if (layer == (int)_numVariables-1) {
+        return [self calculateSinkStateIsMerged:isMergedNode];
+    }
     *isMergedNode = false;
     int numParents = [node numParents];
     ORTRIdArrayI* parentArcs = [node parents];
@@ -301,22 +323,36 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     }
     return newStateProperties;
 }
--(char*) calculateStateFromChildrenOf:(MDDNode*)node onLayer:(int)layer {
-    int numChildren = [node numChildren];
-    TRId* childArcs = [node children];
-    char* newStateProperties = malloc(_numBottomUpBytes * sizeof(char));
+-(char*) calculateSinkStateIsMerged:(bool*)isMergedNode {
+    *isMergedNode = false;
+    int parentLayerIndex = (int)_numVariables-1;
+    int parentVariable = _layer_to_variable[parentLayerIndex];
+    int numParents = layer_size[parentLayerIndex]._val;
+    ORTRIdArrayI* parentLayer = [self getLayer:parentLayerIndex];
+    int minChildIndex = _min_domain_for_layer[parentLayerIndex];
+    int maxChildIndex = _max_domain_for_layer[parentLayerIndex];
     bool first = true;
-    for (int childIndex = _min_domain_for_layer[layer]; numChildren; childIndex++) {
-        if (childArcs[childIndex] != nil) {
-            MDDArc* childArc = childArcs[childIndex];
-            char* passedBottomUpState = [childArc bottomUpState];
-            if (first) {
-                memcpy(newStateProperties, passedBottomUpState, _numBottomUpBytes);
-                first = false;
-            } else {
-                [_spec mergeTempBottomUpStateProperties:newStateProperties with:passedBottomUpState];
+    char* newStateProperties = malloc(_numTopDownBytes * sizeof(char));
+    for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
+        MDDNode* parent = [parentLayer at:parentIndex];
+        char* parentState = [getTopDownState(parent) stateValues];
+        Node** children = [parent children];
+        for (int childIndex = minChildIndex; childIndex <= maxChildIndex; childIndex++) {
+            if (children[childIndex] != nil) {
+                char* passedState = [_spec computeTopDownStateFromProperties:parentState assigningVariable:parentVariable withValue:childIndex];
+                if (first) {
+                    memcpy(newStateProperties, passedState, _numTopDownBytes);
+                    first = false;
+                } else {
+                    if (*isMergedNode) {
+                        [_spec mergeTempStateProperties:newStateProperties with:passedState];
+                    } else if (memcmp(newStateProperties, passedState, _numTopDownBytes) != 0) {
+                        *isMergedNode = true;
+                        [_spec mergeTempStateProperties:newStateProperties with:passedState];
+                    }
+                }
+                free(passedState);
             }
-            numChildren--;
         }
     }
     return newStateProperties;
@@ -326,76 +362,6 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
 }
 -(char*) childState:(MDDArc*) child {
     return [(MDDStateValues*)[[child child] getState] stateValues];
-}
--(void) performBottomUp {
-    for (int layer_index = (int)_numVariables-1; layer_index > 0; layer_index--) {
-        ORTRIdArrayI* layer = [self getLayer:layer_index];
-        int layerSize = layer_size[layer_index]._val;
-        TRInt* variableCount = layer_variable_count[layer_index-1];
-        int variableIndex = _layer_to_variable[layer_index-1];
-        
-        for (int node_index = 0; node_index < layerSize; node_index++) {
-            MDDNode* node = [layer at:node_index];
-            ORTRIdArrayI* parents = [node parents];
-            int numParents = [node numParents];
-            char* bottomUpStateValues;
-            bool needToFreeStateValues = false;
-            bool stateChanged = false;
-            
-            //Recalc node's bottom-up info if needed
-            if ([node bottomUpRecalcRequired]) {
-                bottomUpStateValues = [self calculateStateFromChildrenOf:node onLayer:layer_index];
-                if (getBottomUpState(node) == nil) {
-                    MDDStateValues* bottomUpState = [[MDDStateValues alloc] initState:bottomUpStateValues numBytes:_numBottomUpBytes hashWidth:_hashWidth trail:_trail];
-                    [node initializeBottomUpState:bottomUpState];
-                    stateChanged = true;
-                } else {
-                    char* oldValues = [getBottomUpState(node) stateValues];
-                    if (memcmp(oldValues, bottomUpStateValues, _numBottomUpBytes) != 0) {
-                        [node updateBottomUpState:bottomUpStateValues];
-                        stateChanged = true;
-                    }
-                    needToFreeStateValues = true;
-                }
-                [node setBottomUpRecalcRequired:false];
-            } else {
-                bottomUpStateValues = [getBottomUpState(node) stateValues];
-            }
-
-            //Check if every parent arc should still exist
-            for (int parent_index = 0; parent_index < numParents; parent_index++) {
-                MDDArc* parentArc = [parents at:parent_index];
-                int arcValue = [parentArc arcValue];
-                MDDNode* parent = [parentArc parent];
-                if (![_spec canChooseValue:arcValue forVariable:variableIndex fromParent:[getTopDownState(parent) stateValues] toChild:bottomUpStateValues]) {
-                    assignTRInt(&variableCount[arcValue], variableCount[arcValue]._val-1, _trail);
-                    [parent removeChildAt:arcValue inPost:_inPost];
-                    [node removeParentArc:parentArc inPost:_inPost];
-                    parent_index--;
-                    numParents--;
-                    if ([parent isChildless]) {
-                        [self removeChildlessNodeFromMDD:parent fromLayer:layer_index-1];
-                    } else {
-                        [parent setBottomUpRecalcRequired:true];
-                    }
-                } else if (stateChanged) {
-                    [self recalcArc:parentArc childProperties:bottomUpStateValues variable:variableIndex];
-                }
-            }
-            
-            if (needToFreeStateValues) {
-                free(bottomUpStateValues);
-            }
-            
-            if ([node isParentless]) {
-                [self removeParentlessNodeFromMDD:node fromLayer:layer_index];
-                node_index--;
-                layerSize--;
-            } else {
-                [node setTopDownRecalcRequired:true];
-            }
-        }
-    }
 }
 
 -(void) DEBUGTestParentArcIndices {
@@ -417,4 +383,3 @@ static inline id getBottomUpState(MDDNode* n) { return n->_bottomUpState;}
     }
 }
 @end
-

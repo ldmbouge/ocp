@@ -20,6 +20,7 @@
 
 @interface CPMDD : CPCoreConstraint {
 @protected
+    id<CPEngine> _engine;
     Class _nodeClass;
     
     int _nextVariable;
@@ -40,8 +41,12 @@
     bool _inPost;
     int _hashWidth;
     size_t _numTopDownBytes;
-    size_t _numBottomUpBytes;
     MDDRecommendationStyle _recommendationStyle;
+    
+    int _numSpecs;
+    TRInt* _fixpointMinValues;
+    TRInt* _fixpointMaxValues;
+    bool _objectiveBoundsChanged;
     
     TRInt** _valueNotMember;
     TRInt* _layerBound;
@@ -53,10 +58,10 @@
     SEL _removeParentlessSel;
     RemoveParentlessIMP _removeParentlessNode;
     SEL _afterPropagationSel;
-    NoParametersVoidIMP _afterPropagation;
+    NoParametersBoolIMP _afterPropagation;
 }
 -(id) initCPMDD:(id<CPEngine>) engine over:(id<CPIntVarArray>)x;
--(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec;
+-(id) initCPMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x spec:(MDDStateSpecification*)spec gamma:(id*)gamma;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(NSString*) description;
@@ -65,14 +70,15 @@
 -(void) removeChild:(Node*)node fromParent:(id)parent parentLayer:(int)parentLayer;
 -(int) layerIndexForVariable:(int)variableIndex;
 -(int) variableIndexForLayer:(int)layer;
+-(Node*) createNode:(MDDStateValues*)state minDomain:(int)minDomain maxDomain:(int)maxDomain;
 -(void) createRootAndSink;
 -(void) cleanLayer:(int)layer;
--(void) afterPropagation;
+-(void) onFixpoint;
+-(bool) afterPropagation;
 -(void) connect:(Node*)parent to:(Node*)child value:(int)value;
 -(void) buildLastLayer;
 -(void) buildLayerByValue:(int)layer;
 -(void) buildLayerByNode:(int)layer;
--(void) performBottomUp;
 -(void) addPropagationsAndTrimDomains;
 -(void) trimDomainsFromLayer:(ORInt)layer;
 -(void) addPropagationToLayer:(ORInt)layer;
@@ -116,12 +122,17 @@
     SplitNodesOnLayerIMP _splitNodesOnLayer;
 }
 -(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize;
--(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
--(void) splitNodesOnLayer:(int)layer;
--(void) recalcNode:(Node*)node onLayer:(int)layer;
--(void) recalcNodesOnLayer:(int)layer_index;
+-(id) initCPMDDRelaxation: (id<CPEngine>) engine over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma;
+-(bool) splitNodesOnLayer:(int)layer;
+-(bool) recalcSink;
+-(bool) recalcNode:(Node*)node onLayer:(int)layer;
+-(bool) recalcNodesOnLayer:(int)layer_index;
+-(bool) recalcTopDownNode:(Node*)node onLayer:(int)layer;
+-(bool) recalcTopDownNodesOnLayer:(int)layer_index;
 -(char*) calculateStateFromParentsOf:(Node*)node onLayer:(int)layer isMerged:(bool*)isMerged;
 -(char*) calculateStateFromChildrenOf:(Node*)node onLayer:(int)layer;
--(void) reevaluateChildrenAfterParentStateChange:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex;
+-(void) removeParentlessAndChildlessNodesWithParentLayer:(int)layer_index;
+-(bool) recheckArcsWithParentLayer:(int)layer_index;
+-(bool) reevaluateChildrenAfterParentStateChange:(Node*)node onLayer:(int)layer_index andVariable:(int)variableIndex;
 -(void) mergeNodesToWidthOnLayer:(int)layer;
 @end

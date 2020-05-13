@@ -327,6 +327,9 @@
    else
       return [_original levelFor:cstr];
 }
+-(ORInt) findGeneric:(GenericIndex) index {
+    return [_original findGeneric:index];
+}
 -(void) transfer: (id<ORConstraint>) src toConstraint: (id<ORConstraint>) d
 {
    NSArray* allNotes = src ? [_original findConstraintNotes:src] : nil;

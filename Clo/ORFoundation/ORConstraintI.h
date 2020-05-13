@@ -301,6 +301,13 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORSetContains : ORConstraintI<ORSetContains>
+-(ORSetContains*)initORSetContains:(id<ORIntSet>)set value:(id<ORIntVar>)value equal:(id<ORIntVar>)z;
+-(id<ORIntVar>)right;
+-(id<ORIntVar>)value;
+-(id<ORIntSet>)set;
+@end
+
 @interface ORElementCst : ORConstraintI<ORElementCst>
 -(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
 -(id<ORIntArray>) array;

@@ -31,6 +31,7 @@
 
 #import "CPTopDownMDDWithoutArcs.h"
 #import "CPTopDownMDDWithArcs.h"
+#import "CPDualDirectionalMDD.h"
 
 @implementation CPFactory (Constraint)
 
@@ -603,6 +604,14 @@
    [[x tracker] trackMutable:o];
    return o;   
 }
+
++(id<CPConstraint>) contains:(id<CPIntVar>)value inSet:(id<ORIntSet>)set equal:(id<CPIntVar>)y
+{
+    id<CPConstraint> o = [[CPSetContains alloc] initCPSetContains:value inSet:set equal:y];
+   [[value tracker] trackMutable:o];
+   return o;
+}
+
 +(id<ORConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<CPIntVar>)y annotation:(ORCLevel)n
 {
    id<ORConstraint> o = nil;
@@ -730,20 +739,25 @@
     return o;
 }*/
 
-+(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle
++(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma
 {
     id<CPConstraint> o;
-    if (relaxed) {
+    if ([spec numBottomUpProperties]) {
+        if (!usingArcs) {
+           @throw [[ORExecutionError alloc] initORExecutionError: "CPConstraint.m: Method MDDStateSpecification not implemented for dual-directional without arcs"];
+        }
+        o = [[CPDualDirectionalMDD alloc] initCPDualDirectionalMDD: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
+    } else if (relaxed) {
         if (usingArcs) {
-            o = [[CPMDDRelaxationWithArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
+            o = [[CPMDDRelaxationWithArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
         } else {
-            o = [[CPMDDRelaxationWithoutArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
+            o = [[CPMDDRelaxationWithoutArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
         }
     } else {
         if (usingArcs) {
-            o = [[CPMDDWithArcs alloc] initCPMDD: cp over: x spec: spec];
+            o = [[CPMDDWithArcs alloc] initCPMDD: cp over: x spec: spec gamma:gamma];
         } else {
-            o = [[CPMDDWithoutArcs alloc] initCPMDD: cp over: x spec: spec];
+            o = [[CPMDDWithoutArcs alloc] initCPMDD: cp over: x spec: spec gamma:gamma];
         }
     }
     [[x tracker] trackMutable:o];

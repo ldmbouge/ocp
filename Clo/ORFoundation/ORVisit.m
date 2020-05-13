@@ -376,6 +376,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BinImply: visit method not defined"];
 }
+-(void) visitSetContains: (id<ORSetContains>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "SetContains: visit method not defined"];
+}
 -(void) visitElementCst: (id<ORElementCst>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementCst: visit method not defined"]; 
@@ -990,6 +994,7 @@
 -(void) visitAnd:( id<ORAnd>)c  {}
 -(void) visitImply: (id<ORImply>)c  {}
 -(void) visitBinImply: (id<ORBinImply>)c  {}
+-(void) visitSetContains: (id<ORSetContains>)c  {}
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
 -(void) visitElementBitVar: (id<ORElementBitVar>)c  {}

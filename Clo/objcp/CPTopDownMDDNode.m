@@ -19,8 +19,11 @@ const short BytesPerMagic = 4;
     _numParents = makeTRInt(_trail, 0);
     _isMergedNode = makeTRInt(_trail, 0);
     _topDownRecalcRequired = false;
-    _bottomUpRecalcRequired = true;
+    _bottomUpRecalcRequired = makeTRInt(_trail, 1);
+    _bottomUpStateChanged = false;
+    _topDownStateChanged = false;
     _bottomUpState = [state retain];
+    [_bottomUpState setNode:self];
     
     return self;
 }
@@ -44,8 +47,17 @@ const short BytesPerMagic = 4;
     _numParents = makeTRInt(_trail, 0);
     _isMergedNode = makeTRInt(_trail, 0);
     _topDownRecalcRequired = false;
-    _bottomUpRecalcRequired = true;
+    _bottomUpRecalcRequired = makeTRInt(_trail, 1);
+    _bottomUpStateChanged = false;
+    _topDownStateChanged = false;
     [_topDownState setNode:self];
+    return self;
+}
+-(id) initNode: (id<ORTrail>) trail minChildIndex:(int) minChildIndex maxChildIndex:(int) maxChildIndex state:(MDDStateValues*)state hashWidth:(int)hashWidth numBottomUpBytes:(size_t)numBottomUpBytes
+{
+    self = [self initNode:trail minChildIndex:minChildIndex maxChildIndex:maxChildIndex state:state hashWidth:hashWidth];
+    _bottomUpState = [[MDDStateValues alloc] initState:malloc(numBottomUpBytes * sizeof(char)) numBytes:numBottomUpBytes hashWidth:hashWidth trail:trail];
+    [_bottomUpState setNode:self];
     return self;
 }
 -(void) dealloc {
@@ -64,11 +76,16 @@ const short BytesPerMagic = 4;
     [super dealloc];
 }
 
--(void) initializeBottomUpState:(MDDStateValues*)bottomUpState {
-    _bottomUpState = bottomUpState;
+-(void) initializeTopDownState:(MDDStateValues*)topDownState {
+    _topDownState = topDownState;
+}
+-(void) updateTopDownState:(char*)topDownState {
+    [_topDownState replaceStateWith:topDownState trail:_trail];
+    _topDownStateChanged = true;
 }
 -(void) updateBottomUpState:(char*)bottomUpState {
     [_bottomUpState replaceStateWith:bottomUpState trail:_trail];
+    _bottomUpStateChanged = true;
 }
 -(void) addParent:(id) parent inPost:(bool)inPost {
     @throw [[ORExecutionError alloc] initORExecutionError: "Node: Method addParent not implemented"];
@@ -127,11 +144,15 @@ const short BytesPerMagic = 4;
     _topDownRecalcRequired = value;
 }
 -(bool) bottomUpRecalcRequired {
-    return _bottomUpRecalcRequired;
+    return _bottomUpRecalcRequired._val;
 }
 -(void) setBottomUpRecalcRequired:(bool)value {
-    _bottomUpRecalcRequired = value;
+    assignTRInt(&_bottomUpRecalcRequired, value, _trail);
 }
+-(bool) topDownStateChanged { return _topDownStateChanged; }
+-(void) setTopDownStateChanged:(bool)stateChanged { _topDownStateChanged = stateChanged; }
+-(bool) bottomUpStateChanged { return _bottomUpStateChanged; }
+-(void) setBottomUpStateChanged:(bool)stateChanged { _bottomUpStateChanged = stateChanged; }
 -(int) numParents {
     return _numParents._val;
 }
@@ -410,6 +431,18 @@ const short BytesPerMagic = 4;
 @end
 
 @implementation MDDArc
+-(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost {
+    self = [super init];
+    _trail = trail;
+    _parent = parent;
+    _child = makeTRId(_trail, [child retain]);
+    _arcValue = arcValue;
+    _arcIndexForChild = makeTRInt(_trail, [_child numParents]);
+    [_parent addChild:self at:arcValue inPost:inPost];
+    [_child addParent:self inPost:inPost];
+    [self release];
+    return self;
+}
 -(id) initArcToSink:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost numBottomUpBytes:(size_t)numBottomUpBytes {
     self = [super init];
     _trail = trail;
@@ -424,6 +457,24 @@ const short BytesPerMagic = 4;
     _bottomUpMagic = malloc(_numBottomUpBytes/BytesPerMagic * sizeof(ORUInt));
     for (int i = 0; i < (_numBottomUpBytes/BytesPerMagic); i++) {
         _bottomUpMagic[i] = [trail magic];
+    }
+    [self release];
+    return self;
+}
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numTopDownBytes:(size_t)numTopDownBytes {
+    self = [super init];
+    _trail = trail;
+    _parent = parent;
+    _child = makeTRId(_trail, [child retain]);
+    _arcValue = arcValue;
+    _arcIndexForChild = makeTRInt(_trail, [_child numParents]);
+    [_parent addChild:self at:arcValue inPost:inPost];
+    [_child addParent:self inPost:inPost];
+    _numTopDownBytes = numTopDownBytes;
+    _passedTopDownState = state;
+    _topDownMagic = malloc(_numTopDownBytes/BytesPerMagic * sizeof(ORUInt));
+    for (int i = 0; i < (_numTopDownBytes/BytesPerMagic); i++) {
+        _topDownMagic[i] = [trail magic];
     }
     [self release];
     return self;

@@ -26,8 +26,7 @@
 @protected
     MDDStateDescriptor* _topDownStateDescriptor;
     MDDStateDescriptor* _bottomUpStateDescriptor;
-    DDArcExistsClosure _topDownArcExists;
-    DDArcExistsClosure _bottomUpArcExists;
+    DDArcExistsClosure _arcExists;
     id<ORTrail> _trail;
     bool _relaxed;
     id<ORIntVarArray> _vars;
@@ -35,8 +34,7 @@
     bool** _topDownPropertiesUsedPerVariable;
     bool** _bottomUpPropertiesUsedPerVariable;
     
-    int* _numTopDownArcExistsForVariable;
-    int* _numBottomUpArcExistsForVariable;
+    int* _numArcExistsForVariable;
     
     int _numTopDownPropertiesAdded, _numBottomUpPropertiesAdded;
     int _numSpecsAdded;
@@ -54,18 +52,24 @@
 -(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDOldMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
 -(void) addMDDSpec:(id<ORMDDSpecs>)MDDSpec mapping:(int*)mapping;
+-(bool) dualDirectional;
 -(MDDStateValues*) createRootState;
 -(MDDStateValues*) createSinkState;
 -(char*) computeTopDownStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value;
 -(char*) computeBottomUpStateFromProperties:(char*)childState assigningVariable:(int)variable withValue:(int)value;
+-(char*) computeBottomUpStateFromProperties:(char*)childTopDown bottomUp:(char*)childBottomUp assigningVariable:(int)variable withValues:(ORIntSetI*)valueSet;
 -(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(void) mergeTempStateProperties:(char*)leftState with:(char*)rightState;
 -(void) mergeTempBottomUpStateProperties:(char*)leftState with:(char*)rightState;
 -(char*) batchMergeForStates:(char**)parentStates values:(int**)edgesUsedByParent numEdgesPerParent:(int*)numEdgesPerParent variable:(int)variableIndex isMerged:(bool*)isMerged numParents:(int)numParents totalEdges:(int)totalEdges;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
+-(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues objectiveMins:(int*)objectiveMins objectiveMaxes:(int*)objectiveMaxes;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state;
+-(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state objectiveMins:(int*)objectiveMins objectiveMaxes:(int*)objectiveMaxes;
 -(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState;
+-(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
 -(bool) canCreateState:(char**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value;
+-(bool) canCreateState:(char**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
 -(long) slack:(char*)stateProperties;
 -(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
 -(int) numTopDownProperties;
@@ -78,7 +82,10 @@
 -(bool*) topDownPropertiesUsed:(int)variableIndex;
 -(bool*) bottomUpPropertiesUsed:(int)variableIndex;
 -(DDArcTransitionClosure*) topDownTransitionFunctions;
--(DDArcTransitionClosure*) bottomUpTransitionFunctions;
+-(DDArcSetTransitionClosure*) bottomUpTransitionFunctions;
+-(id<ORIntVar>*) fixpointVars;
+-(DDFixpointBoundClosure*) fixpointMins;
+-(DDFixpointBoundClosure*) fixpointMaxes;
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
 -(NSUInteger) hashValueFor:(char*)stateProperties;
 -(int) hashWidth;

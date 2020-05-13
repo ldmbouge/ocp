@@ -13,8 +13,8 @@ import ORProgram
 
 autoreleasepool {
     let m  = ORFactory.createModel(),
-        minDom = 1,maxDom = 3,
-        minVar = 1,maxVar = 5,
+        minDom = 1,maxDom = 5,
+        minVar = 1,maxVar = 10,
         R0 = range(m, minDom...maxDom),
         R1 = range(m, minVar...maxVar),
         notes = ORFactory.annotation(),
@@ -25,11 +25,20 @@ autoreleasepool {
 
     let setOfTwo = ORFactory.intSet(m, set: [2])
     let setOfThree = ORFactory.intSet(m, set: [3])
-    m.add(amongMDD(m: m, x: vars, lb: 2, ub: 2, values: setOfTwo))
-    m.add(amongMDD(m: m, x: vars, lb: 2, ub: 2, values: setOfThree))
+    let setOfFour = ORFactory.intSet(m, set: [4])
+    let setOfFive = ORFactory.intSet(m, set: [5])
+    m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 2, values: setOfTwo))
+    m.add(amongMDDClosures(m: m, x: vars, lb: 2, ub: 2, values: setOfThree))
+    m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 3, values: setOfFour))
+    m.add(amongMDDClosures(m: m, x: vars, lb: 3, ub: 3, values: setOfFive))
     
-    notes.ddWidth(4)
-    notes.ddRelaxed(false)
+    notes.ddWidth(8)
+    notes.ddRelaxed(true)
+    notes.dd(withArcs: true)
+    notes.dd(usingSlack: false)
+    notes.ddEqualBuckets(true)
+    notes.ddVariableOverlap(0)
+    notes.ddRecommendationStyle(MinDomain)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
     //let cp = ORFactory.createCPProgram(m)
     cp.search {
