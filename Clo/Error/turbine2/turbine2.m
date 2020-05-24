@@ -94,9 +94,47 @@ void turbine2_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void turbine2_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:-4.5 up:-0.3 name:@"v"];
+      id<ORDoubleVar> w = [ORFactory doubleInputVar:mdl low:0.4 up:0.9 name:@"w"];
+      id<ORDoubleVar> r = [ORFactory doubleInputVar:mdl low:3.8 up:7.8 name:@"r"];
+      id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.5 string:@"1/2" name:@"a"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Declaration of constraints */
+      [mdl add:[z set: [[[@(6.0) mul: v] sub: [[[a mul: v] mul: [[[w mul: w] mul: r] mul: r]] div: [@(1.0) sub: v]]] sub: @(2.5)]]];
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"v : [%f;%f]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
+         NSLog(@"w : [%f;%f]±[%@;%@] (%s)",[cp minD:w],[cp maxD:w],[cp minDQ:w],[cp maxDQ:w],[cp bound:w] ? "YES" : "NO");
+         NSLog(@"r : [%f;%f]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+            if (search) check_it_turbine2_d(getDmin(v), getDmin(w), getDmin(r), getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"p"){
-   turbine2_d(0, argc, argv);
+      //turbine2_d(0, argc, argv);
+      turbine2_d_c(0, argc, argv);
    }
    return 0;
 }

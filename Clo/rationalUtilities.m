@@ -153,7 +153,7 @@
    /* Show floating-point approximation form of rational */
    [buf appendFormat:@"%+1.20e",[self get_d]];
    /* Show exact fraction form of rational */
-   //[buf appendFormat:@"%s",[self get_str]];
+   //[buf appendFormat:@"(%s)",[self get_str]];
    /* DEBUG only */
    //[buf appendFormat:@"(%1.20e - %d)",[self get_d], _type];
    return buf;
@@ -177,19 +177,6 @@
    } else {
       _type = mpq_sgn(_rational);
    }
-   return self;
-}
--(id)setConstant:(double)d and:(char*)s
-{
-   id<ORRational> q = [[ORRational alloc] init];
-   id<ORRational> f = [[ORRational alloc] init];
-   [q set_str:s];
-   [f set_d:d];
-   [self set:[f add: [q sub: f]]];
-   
-   [q release];
-   [f release];
-   
    return self;
 }
 -(id)setInput:(double)d with:(id<ORRational>)e

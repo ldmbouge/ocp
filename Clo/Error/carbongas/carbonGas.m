@@ -50,6 +50,114 @@ void check_it_d(double p, double a, double b, double t, double n, double k, doub
     mpq_clears(pq, aq, bq, tq, nq, kq, vq, rq, tmp0, tmp1, NULL);
 }
 
+void motivating_d_c(int search, int argc, const char * argv[]) {
+    @autoreleasepool {
+        /* Creation of model */
+        id<ORModel> mdl = [ORFactory createModel];
+        
+        /* Declaration of rational numbers */
+        id<ORRational> zero = [[ORRational alloc] init];
+        
+        /* Initialization of rational numbers */
+        [zero setZero];
+        
+        /* Declaration of model variables */
+        id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:7.0 up:9.0 name:@"x"];
+        id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:3.0 up:5.0 name:@"y"];
+       id<ORDoubleVar> w = [ORFactory doubleInputVar:mdl low:2.6666666666666666666 up:4.0 name:@"w"];
+        id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+        //id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.11 string:@"111/100" name:@"k"];
+        id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+        id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+        id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
+        
+        /* Initialization of constants */
+        [mdl add:[p set: @(3.0)]];
+        
+        /* Declaration of constraints */
+        [mdl add:[r set:[[[x mul: p] plus: y] div: w]]];
+        //[mdl add:[r leq:@(10.0)]];
+       
+        NSLog(@"model: %@",mdl);
+        id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+        id<ORDoubleVarArray> vs = [mdl doubleVars];
+        id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       
+        [cp solve:^{
+            if (search)
+               [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+                    [cp floatSplit:i withVars:x];
+                }];
+            NSLog(@"%@",cp);
+            /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+            /* Use printRational(ORRational r) to print a rational inside the solver */
+           NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+           NSLog(@"y : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:y],[cp maxD:y],[cp minDQ:y],[cp maxDQ:y],[cp bound:y] ? "YES" : "NO");
+           NSLog(@"w : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:w],[cp maxD:w],[cp minDQ:w],[cp maxDQ:w],[cp bound:w] ? "YES" : "NO");
+           NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+            //if (search)
+                //check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
+        }];
+    }
+}
+
+void carbonGas_d_c(int search, int argc, const char * argv[]) {
+    @autoreleasepool {
+        /* Creation of model */
+        id<ORModel> mdl = [ORFactory createModel];
+        
+        /* Declaration of rational numbers */
+        id<ORRational> zero = [[ORRational alloc] init];
+        
+        /* Initialization of rational numbers */
+        [zero setZero];
+        
+        /* Declaration of model variables */
+        id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:0.1 up:0.5 name:@"v"];
+        id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
+        id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.401 string:@"401/1000" name:@"a"];
+        id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:42.7e-6 string:@"427/10000000" name:@"b"];
+        id<ORDoubleVar> t = [ORFactory doubleVar:mdl name:@"t"];
+        id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
+        id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.3806503e-23 string:@"13806503/1000000000000000000000000000000" name:@"k"];
+        id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+        
+        /* Initialization of constants */
+        [mdl add:[p set: @(3.5e7)]];
+        [mdl add:[t set: @(300.0)]];
+        [mdl add:[n set: @(1000.0)]];
+        
+        /* Declaration of constraints */
+        [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
+
+        NSLog(@"model: %@",mdl);
+        id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+        id<ORDoubleVarArray> vs = [mdl doubleVars];
+        id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       
+        [cp solve:^{
+            if (search)
+               [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+                    [cp floatSplit:i withVars:x];
+                }];
+            NSLog(@"%@",cp);
+            /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+            /* Use printRational(ORRational r) to print a rational inside the solver */
+           NSLog(@"p : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:p],[cp maxD:p],[cp minDQ:p],[cp maxDQ:p],[cp bound:p] ? "YES" : "NO");
+           NSLog(@"a : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:a],[cp maxD:a],[cp minDQ:a],[cp maxDQ:a],[cp bound:a] ? "YES" : "NO");
+           NSLog(@"b : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:b],[cp maxD:b],[cp minDQ:b],[cp maxDQ:b],[cp bound:b] ? "YES" : "NO");
+           NSLog(@"t : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t],[cp maxD:t],[cp minDQ:t],[cp maxDQ:t],[cp bound:t] ? "YES" : "NO");
+           NSLog(@"n : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:n],[cp maxD:n],[cp minDQ:n],[cp maxDQ:n],[cp bound:n] ? "YES" : "NO");
+           NSLog(@"k : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:k],[cp maxD:k],[cp minDQ:k],[cp maxDQ:k],[cp bound:k] ? "YES" : "NO");
+           NSLog(@"v : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
+           NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+            if (search)
+                check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
+        }];
+    }
+}
+
+
 void carbonGas_d(int search, int argc, const char * argv[]) {
     @autoreleasepool {
         id<ORModel> mdl = [ORFactory createModel];
@@ -278,7 +386,9 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"foo"){
       //carbonGas_f(0, argc, argv);
-      carbonGas_d(0, argc, argv);
+      //carbonGas_d(0, argc, argv);
+      carbonGas_d_c(0, argc, argv);
+      //motivating_d_c(0, argc, argv);
       //carbonGas_d_QF(1, argc, argv);
    }
     return 0;

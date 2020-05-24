@@ -93,9 +93,54 @@ void kepler0_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void kepler0_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x1 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x1"];
+      id<ORDoubleVar> x2 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x2"];
+      id<ORDoubleVar> x3 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x3"];
+      id<ORDoubleVar> x4 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x4"];
+      id<ORDoubleVar> x5 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x5"];
+      id<ORDoubleVar> x6 = [ORFactory doubleInputVar:mdl low:4 up:159/25 name:@"x6"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Declaration of constraints */
+      //(x2*x5) + (x3*x6) - (x2*x3) - (x5*x6) + (x1* (-x1+x2+x3-x4+x5+x6))
+      [mdl add:[z set: [[[[[x2 mul: x5] plus: [x3 mul: x6]] sub: [x2 mul: x3]] sub: [x5 mul: x6]] plus: [x1 mul: [[[[[[x1 minus] plus: x2] plus: x3] sub: x4] plus: x5] plus: x6]]]]];
+            
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x1 : [%f;%f]±[%@;%@] (%s)",[cp minD:x1],[cp maxD:x1],[cp minDQ:x1],[cp maxDQ:x1],[cp bound:x1] ? "YES" : "NO");
+         NSLog(@"x2 : [%f;%f]±[%@;%@] (%s)",[cp minD:x2],[cp maxD:x2],[cp minDQ:x2],[cp maxDQ:x2],[cp bound:x2] ? "YES" : "NO");
+         NSLog(@"x3 : [%f;%f]±[%@;%@] (%s)",[cp minD:x3],[cp maxD:x3],[cp minDQ:x3],[cp maxDQ:x3],[cp bound:x3] ? "YES" : "NO");
+         NSLog(@"x4 : [%f;%f]±[%@;%@] (%s)",[cp minD:x4],[cp maxD:x4],[cp minDQ:x4],[cp maxDQ:x4],[cp bound:x4] ? "YES" : "NO");
+         NSLog(@"x5 : [%f;%f]±[%@;%@] (%s)",[cp minD:x5],[cp maxD:x5],[cp minDQ:x5],[cp maxDQ:x5],[cp bound:x5] ? "YES" : "NO");
+         NSLog(@"x6 : [%f;%f]±[%@;%@] (%s)",[cp minD:x6],[cp maxD:x6],[cp minDQ:x6],[cp maxDQ:x6],[cp bound:x6] ? "YES" : "NO");
+
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         //if (search) check_it_sineOrder3_d(getDmin(x1), getDmin(x1) getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"kepler0"){
-   kepler0_d(0, argc, argv);
+      //kepler0_d(0, argc, argv);
+      kepler0_d_c(0, argc, argv);
    }
    return 0;
 }

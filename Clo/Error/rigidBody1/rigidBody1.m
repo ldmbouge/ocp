@@ -91,6 +91,42 @@ void rigidBody1_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void rigidBody1_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x1 = [ORFactory doubleInputVar:mdl low:-15.0 up:15.0 name:@"x1"];
+      id<ORDoubleVar> x2 = [ORFactory doubleInputVar:mdl low:-15.0 up:15.0 name:@"x2"];
+      id<ORDoubleVar> x3 = [ORFactory doubleInputVar:mdl low:-15.0 up:15.0 name:@"x3"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Declaration of constraints */
+      [mdl add:[z set: [[[[[x1 mul: x2] minus] sub: [[@(2.0) mul: x2] mul: x3]] sub: x1] sub: x3]]];
+            
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x1 : [%f;%f]±[%@;%@] (%s)",[cp minD:x1],[cp maxD:x1],[cp minDQ:x1],[cp maxDQ:x1],[cp bound:x1] ? "YES" : "NO");
+         NSLog(@"x2 : [%f;%f]±[%@;%@] (%s)",[cp minD:x2],[cp maxD:x2],[cp minDQ:x2],[cp maxDQ:x2],[cp bound:x2] ? "YES" : "NO");
+         NSLog(@"x3 : [%f;%f]±[%@;%@] (%s)",[cp minD:x3],[cp maxD:x3],[cp minDQ:x3],[cp maxDQ:x3],[cp bound:x3] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_rigidBody1_d(getDmin(x1), getDmin(x2), getDmin(x3), getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 void rigidBody1_f(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
@@ -188,7 +224,8 @@ void rigidBody1_d_QF(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"d"){
-   rigidBody1_d(0, argc, argv);
+   //rigidBody1_d(0, argc, argv);
+   rigidBody1_d_c(0, argc, argv);
    //rigidBody1_f(0, argc, argv);
    //rigidBody1_d_QF(1, argc, argv);
    }

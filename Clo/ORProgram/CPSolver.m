@@ -533,7 +533,8 @@
       branchAndBoundTime = [NSDate date];
       //SolWrapper* s = [[SolWrapper alloc] init:[_sPool objectAtIndexedSubscript:[_sPool count] - 1]];
       //[s print:[_model variables] for:@"Input Values:"];
-      NSLog(@"Optimal Solution: %@ (%@) thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
+      NSLog(@"Optimal Solution: %@ (%@) [%1.1f] thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[[[[_objective dualBound] rationalValue] div: [[_objective primalBound] rationalValue]] get_d],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
+      NSLog(@"%@", primalSolution);
       //}
    }
    else {
@@ -1873,7 +1874,9 @@ onFailure: (ORInt2Void) onFailure
    boundDiscardedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
    boundDegeneratedBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
    boundTopOfQueue = [[[[ORRational alloc] init] setNegInf] autorelease];
+   boundRatioOfTwoBoxes = [[[[ORRational alloc] init] setNegInf] autorelease];
    branchAndBoundStart = [NSDate date];
+   primalSolution = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    
    id<ORSelect> select = [ORFactory select: _engine // need to be out of inner loop to go through all possible variables
                                      range: RANGE(self,[x low],[x up])
@@ -1889,12 +1892,37 @@ onFailure: (ORInt2Void) onFailure
                           ];
    
    indexSplit = makeTRInt(_trail,[select min].index);
+//   NSArray *varList = @[@0,@1,@2,@3];
+//   NSArray *varList = @[@0,@1,@3,@2];
+//   NSArray *varList = @[@0,@2,@1,@3];
+//   NSArray *varList = @[@0,@2,@3,@1];
+//   NSArray *varList = @[@0,@3,@1,@2];
+//   NSArray *varList = @[@0,@3,@2,@1];
+//   NSArray *varList = @[@1,@0,@2,@3];
+//   NSArray *varList = @[@1,@0,@3,@2];
+//   NSArray *varList = @[@1,@2,@0,@3];
+//   NSArray *varList = @[@1,@2,@3,@0];
+//   NSArray *varList = @[@1,@3,@0,@2];
+//   NSArray *varList = @[@1,@3,@2,@0];
+//   NSArray *varList = @[@2,@0,@1,@3];
+//   NSArray *varList = @[@2,@0,@3,@1];
+//   NSArray *varList = @[@2,@1,@0,@3];
+//   NSArray *varList = @[@2,@1,@3,@0];
+//   NSArray *varList = @[@2,@3,@0,@1];
+//   NSArray *varList = @[@2,@3,@1,@0];
+//   NSArray *varList = @[@3,@0,@1,@2];
+//   NSArray *varList = @[@3,@0,@2,@1];
+//   NSArray *varList = @[@3,@1,@0,@2];
+//   NSArray *varList = @[@3,@1,@2,@0];
+//   NSArray *varList = @[@3,@2,@0,@1];
+//   NSArray *varList = @[@3,@2,@1,@0];
    
    NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arraySolutionVarValue = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arraySolutionVarError = [[NSMutableArray alloc] initWithCapacity:0];
-
+   id<ORRational> two = [[ORRational alloc] init];
+   [two set_d:2.0];
    do {
       nbBoxExplored++;
       [self errorGEqualImpl:_gamma[getId(ez)] with:[[[_engine objective] primalBound] rationalValue]];
@@ -2067,14 +2095,22 @@ onFailure: (ORInt2Void) onFailure
                [[_engine objective] tightenPrimalBound:objv];
                // START print solution
                NSUInteger index = 0;
+               [primalSolution setString:@"Input Values:\r"];
                for(id<ORDoubleVar> v in x){
                   id<CPDoubleVar> currentVar = _gamma[[v getId]];
                   if([currentVar isInputVar] && ![currentVar bound]){
-                     NSLog(@"%@: %1.20e%@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);
+                     [primalSolution appendFormat:@"%@: %1.20e %@\r", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]];
+                     //NSLog(@"%@: %1.20e %@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);
+                     //NSLog(@"%@: %1.53e %@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);
+                     //NSLog(@"%@: %a %@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);
                      index++;
                   }
                }
-               NSLog(@"output: %1.20e%@", [[arraySolutionVarValue lastObject] doubleValue], [arraySolutionVarError lastObject]);
+               [primalSolution appendFormat:@"output: %1.20e %@", [[arraySolutionVarValue lastObject] doubleValue], [arraySolutionVarError lastObject]];
+               //NSLog(@"output: %1.20e %@", [[arraySolutionVarValue lastObject] doubleValue], [arraySolutionVarError lastObject]);
+               //NSLog(@"output: %1.53e %@", [[arraySolutionVarValue lastObject] doubleValue], [arraySolutionVarError lastObject]);
+               //NSLog(@"output: %a %@", [[arraySolutionVarValue lastObject] doubleValue], [arraySolutionVarError lastObject]);
+               NSLog(@"%@", primalSolution);
                // END print solution
             }
             [arraySolutionVarValue removeAllObjects];
@@ -2117,6 +2153,7 @@ onFailure: (ORInt2Void) onFailure
          // Temporary fix - change so that indexSplit do not backtrack after split
          // exemple rigidBody1/2: indexSplit only take 0 or 1 (never 2) so solving do not end
          ORInt oldVal = indexSplit._val;
+//         b([[varList objectAtIndex:(ORUInt)indexSplit._val] intValue], x);
          b(indexSplit._val, x);
          indexSplit._val = oldVal;
          nbBoxGenerated += 2;
@@ -2127,7 +2164,11 @@ onFailure: (ORInt2Void) onFailure
          else
             assignTRInt(&indexSplit, indexSplit._val+1, _trail);
       }
-   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
+   //} while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
+   } while ([[[[_objective dualBound] rationalValue] div: [[_objective primalBound] rationalValue]] geq: two]);
+   
+   if([[[[_engine objective] dualValue] rationalValue] gt: boundRatioOfTwoBoxes])
+      [boundRatioOfTwoBoxes set: [[[_engine objective] dualValue] rationalValue]];
 }
 
 -(void) branchAndBoundSearch:  (id<ORDisabledVarArray>) x out: (id<ORRationalVar>) ez do:(void(^)(ORUInt,id<ORDisabledVarArray>))b compute:(id<ORRational>(^)(NSMutableArray*,NSMutableArray*))errorComputed
@@ -2154,8 +2195,6 @@ onFailure: (ORInt2Void) onFailure
                           ];
 
    indexSplit = makeTRInt(_trail,[select min].index);
-   //assignTRInt(&indexSplit, 0, _trail);
-   //limitCounter = makeTRInt(_trail, 0);
 
    NSMutableArray* arrayVarValue = [[NSMutableArray alloc] initWithCapacity:0];
    NSMutableArray* arrayVarError = [[NSMutableArray alloc] initWithCapacity:0];

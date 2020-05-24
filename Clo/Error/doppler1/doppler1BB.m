@@ -31,10 +31,10 @@ id<ORRational> (^doppler1Error)(NSMutableArray* arrayValue, NSMutableArray* arra
    [uQ setInput:u with:[arrayError objectAtIndex:0]];
    [vQ setInput:v with:[arrayError objectAtIndex:1]];
    [tQ setInput:t with:[arrayError objectAtIndex:2]];
-   [aQ setConstant:a and:"1657/5"];
-   [bQ setConstant:b and:"3/5"];
+   [aQ set_str:"1657/5"];
+   [bQ set_str:"3/5"];
    
-   ORDouble t1 = 331.4 + (0.6 * t);
+   ORDouble t1 = a + (b * t);
    ORDouble z = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
    [zF set_d:z];
    
@@ -193,7 +193,7 @@ void doppler1_d_c_3B(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    //doppler1_f(1, argc, argv);
    //doppler1_d(1, argc, argv);
-   //doppler1_d_c(1, argc, argv);
-   doppler1_d_c_3B(1, argc, argv);
+   doppler1_d_c(1, argc, argv);
+   //doppler1_d_c_3B(1, argc, argv);
    return 0;
 }

@@ -34,8 +34,8 @@ id<ORRational> (^turbine3Error)(NSMutableArray* arrayValue, NSMutableArray* arra
    [vQ setInput:v with:[arrayError objectAtIndex:0]];
    [wQ setInput:w with:[arrayError objectAtIndex:1]];
    [rQ setInput:r with:[arrayError objectAtIndex:2]];
-   [aQ setConstant:a and:"1/8"];
-   [bQ setConstant:b and:"1/2"];
+   [aQ set_str:"1/8"];
+   [bQ set_str:"1/2"];
    
    ORDouble z = 3 - 2/(r*r) - a * (1+2*v) * (w*w*r*r) / (1-v) - b;
    

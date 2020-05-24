@@ -35,8 +35,8 @@ id<ORRational> (^turbine1Error)(NSMutableArray* arrayValue, NSMutableArray* arra
    [vQ setInput:v with:[arrayError objectAtIndex:0]];
    [wQ setInput:w with:[arrayError objectAtIndex:1]];
    [rQ setInput:r with:[arrayError objectAtIndex:2]];
-   [aQ setConstant:a and:"1/8"];
-   [bQ setConstant:b and:"9/2"];
+   [aQ set_str:"1/8"];
+   [bQ set_str:"9/2"];
    
    ORDouble z = (((3.0 + (2.0 / (r * r))) - (((a * (3.0 - (2.0 * v))) * (((w * w) * r) * r)) / (1.0 - v))) - b);
    [zF set_d:z];
@@ -252,8 +252,8 @@ void turbine1_d_c_test6(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //turbine1_d(1, argc, argv);
-   //turbine1_d_c(1, argc, argv);
-   turbine1_d_c_3B(1, argc, argv);
+   turbine1_d_c(1, argc, argv);
+   //turbine1_d_c_3B(1, argc, argv);
    //turbine1_d_c_test6(1, argc, argv);
    return 0;
 }

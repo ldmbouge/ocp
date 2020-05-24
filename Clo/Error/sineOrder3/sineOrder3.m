@@ -83,9 +83,47 @@ void sineOrder3_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void sineOrder3_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:-2 up:2 name:@"x"];
+      id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.954929658551372 string:@"238732414637843/250000000000000" name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:0.12900613773279798 string:@"6450306886639899/50000000000000000" name:@"b"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Declaration of constraints */
+      [mdl add:[z set: [[a mul: x] sub: [b mul: [[x mul: x] mul: x]]]]];
+      
+      [mdl add:[z lt: @(1.0)]];
+      [mdl add:[z gt: @(-1.0)]];
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_sineOrder3_d(getDmin(x), getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"p"){
-   sineOrder3_d(0, argc, argv);
+      //sineOrder3_d(0, argc, argv);
+      sineOrder3_d_c(0, argc, argv);
    }
    return 0;
 }

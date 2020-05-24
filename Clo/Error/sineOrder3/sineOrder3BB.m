@@ -23,8 +23,8 @@ id<ORRational> (^sineOrder3Error)(NSMutableArray* arrayValue, NSMutableArray* ar
    id<ORRational> ez = [[[ORRational alloc] init] autorelease];
    
    [xQ setInput:x with:[arrayError objectAtIndex:0]];
-   [aQ setConstant:a and:"238732414637843/250000000000000"];
-   [bQ setConstant:b and:"6450306886639899/50000000000000000"];
+   [aQ set_str:"238732414637843/250000000000000"];
+   [bQ set_str:"6450306886639899/50000000000000000"];
    
    ORDouble z = a * x - b*(x*x*x);
    
@@ -170,7 +170,7 @@ void sineOrder3_d_c_3B(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //sineOrder3_d(1, argc, argv);
-   //sineOrder3_d_c(1, argc, argv);
-   sineOrder3_d_c_3B(1, argc, argv);
+   sineOrder3_d_c(1, argc, argv);
+   //sineOrder3_d_c_3B(1, argc, argv);
    return 0;
 }

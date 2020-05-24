@@ -25,7 +25,7 @@ id<ORRational> (^predatorPreyError)(NSMutableArray* arrayValue, NSMutableArray* 
    
    [oneQ setOne];
    [rQ set_d:4.0];
-   [kQ set_d:k];
+   [kQ set_str:"111/100"];
    [xQ setInput:x with:[arrayError objectAtIndex:0]];
    
    ORDouble z = ((r*x)*x) / (1.0 + ((x/k)*(x/k)));
@@ -231,8 +231,8 @@ void predatorPrey_d_c_3B(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    //predatorPrey_f(1, argc, argv);
    //predatorPrey_d(1, argc, argv);
-   //predatorPrey_d_c(1, argc, argv);
-   predatorPrey_d_c_3B(1, argc, argv);
+   predatorPrey_d_c(1, argc, argv);
+   //predatorPrey_d_c_3B(1, argc, argv);
    return 0;
 }
 

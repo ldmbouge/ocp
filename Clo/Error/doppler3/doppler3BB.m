@@ -31,10 +31,10 @@ id<ORRational> (^doppler3Error)(NSMutableArray* arrayValue, NSMutableArray* arra
    [uQ setInput:u with:[arrayError objectAtIndex:0]];
    [vQ setInput:v with:[arrayError objectAtIndex:1]];
    [tQ setInput:t with:[arrayError objectAtIndex:2]];
-   [aQ setConstant:a and:"1657/5"];
-   [bQ setConstant:b and:"3/5"];
+   [aQ set_str:"1657/5"];
+   [bQ set_str:"3/5"];
    
-   ORDouble t1 = 331.4 + (0.6 * t);
+   ORDouble t1 = a + (b * t);
    ORDouble z = ((-1.0 * t1) * v) / ((t1 + u) * (t1 + u));
    [zF set_d:z];
    
@@ -99,8 +99,8 @@ void doppler3_d_c(int search, int argc, const char * argv[]) {
       
       /* Declaration of model variables */
       id<ORDoubleVar> u = [ORFactory doubleInputVar:mdl low:-30.0 up:120.0 name:@"u"];
-      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:320.0 up:20300.0 name:@"u"];
-      id<ORDoubleVar> t = [ORFactory doubleInputVar:mdl low:-50.0 up:30.0 name:@"u"];
+      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:320.0 up:20300.0 name:@"v"];
+      id<ORDoubleVar> t = [ORFactory doubleInputVar:mdl low:-50.0 up:30.0 name:@"t"];
       id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:331.4 string:@"1657/5" name:@"a"];
       id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:0.6 string:@"3/5" name:@"b"];
       id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl name:@"t1"];

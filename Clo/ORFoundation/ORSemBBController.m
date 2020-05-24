@@ -264,9 +264,10 @@ NSString * const ORStatus_toString_BB[] = {
          id<ORRational> primalBound = [[[_engine objective] primalBound] rationalValue];
          id<ORRational> dualBound = [[[_engine objective] dualBound] rationalValue];
          if([primalBound lt: dualBound]){
-            if([[bestKey.bound rationalValue] gt: primalBound] && // Beskey -> dual de la boite sélectionné
-            [[bestKey.bound rationalValue] gt: boundDiscardedBoxes] &&
-            [[bestKey.bound rationalValue] gt: boundDegeneratedBoxes]){
+            if([[bestKey.bound rationalValue] geq: primalBound] && // bestkey -> dual de la boite sélectionné
+            [[bestKey.bound rationalValue] geq: boundDiscardedBoxes] &&
+            [[bestKey.bound rationalValue] geq: boundDegeneratedBoxes] &&
+               [[bestKey.bound rationalValue] geq: boundRatioOfTwoBoxes]){
                BBNode* nd = [_buf extractBest];
                [boundTopOfQueue set:[((BBKey*)[_buf peekAtKey]).bound rationalValue]];
                

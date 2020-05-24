@@ -93,9 +93,47 @@ void sqroot_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void sqroot_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.0 up:1.0 name:@"x"];
+      id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.5 string:@"1/2" name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:0.125 string:@"1/8" name:@"b"];
+      id<ORDoubleVar> c = [ORFactory doubleConstantVar:mdl value:0.0625 string:@"1/16" name:@"c"];
+      id<ORDoubleVar> d = [ORFactory doubleConstantVar:mdl value:0.0390625 string:@"5/128" name:@"d"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Declaration of constraints */
+      //((((1.0 + (0.5 * x)) - ((0.125 * x) * x)) + (((0.0625 * x) * x) * x)) - ((((0.0390625 * x) * x) * x) * x));
+      [mdl add:[z set: [[[[@(1.0) plus: [a mul: x]] sub: [[b mul: x] mul: x]] plus: [[[c mul: x] mul: x] mul: x]] sub: [[[[d mul: x] mul: x] mul: x] mul: x]]]];
+            
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x : [%f;%f]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"z : [%f;%f]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_sqroot_d(getDmin(x), getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"s"){
-      sqroot_d(0, argc, argv);
+      //sqroot_d(0, argc, argv);
+      sqroot_d_c(0, argc, argv);
    }
    return 0;
 }

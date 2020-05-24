@@ -40,11 +40,14 @@ extern ORBool RUN_3B_ERROR;
 
 extern id<CPEngine> errorGroup;
 extern ORGammaError* _gammaE;
+// Save print of best solution for primal
+extern NSMutableString* primalSolution;
 
 
 extern id<ORRational> boundDiscardedBoxes;
 extern id<ORRational> boundDegeneratedBoxes;
 extern id<ORRational> boundTopOfQueue;
+extern id<ORRational> boundRatioOfTwoBoxes;
 
 extern NSDate *branchAndBoundStart;
 extern NSDate *branchAndBoundTime;

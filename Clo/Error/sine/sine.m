@@ -164,6 +164,41 @@ void sine_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void sine_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:-1.57079632679 up:1.57079632679 name:@"x"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Declaration of constraints */
+      [mdl add:[z set: [[[x sub: [ [[x mul: x] mul: x] div: @(6.0)]] plus: [[[[[x mul: x] mul: x] mul: x] mul: x] div: @(120.0)]] sub: [[[[[[[x mul: x] mul: x] mul: x] mul: x] mul: x] mul: x] div: @(5040.0)]]]];
+      
+      [mdl add:[z lt: @(1.0)]];
+      [mdl add:[z gt: @(-1.0)]];
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_sine_d([cp minD:x], [cp minD:z], [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 void sine_f(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
@@ -200,7 +235,8 @@ void sine_f(int search, int argc, const char * argv[]) {
 }
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"p"){
-      sine_d(0, argc, argv);
+      //sine_d(0, argc, argv);
+      sine_d_c(0, argc, argv);
    }
    return 0;
 }

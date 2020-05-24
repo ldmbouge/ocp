@@ -27,7 +27,7 @@ id<ORRational> (^verhulstError)(NSMutableArray* arrayValue, NSMutableArray* arra
    
    [one setOne];
    [rQ set_d:4.0];
-   [kQ setConstant:k and:"111/100"];
+   [kQ set_str:"111/100"];
    [xQ setInput:x with:[arrayError objectAtIndex:0]];
    
    ORDouble z = ((r * x) / (1.0 + (x / k)));

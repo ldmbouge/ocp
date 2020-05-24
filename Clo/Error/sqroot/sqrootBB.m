@@ -31,10 +31,10 @@ id<ORRational> (^sqrootError)(NSMutableArray* arrayValue, NSMutableArray* arrayE
    
    [one setOne];
    [xQ setInput:x with:[arrayError objectAtIndex:0]];
-   [aQ setConstant:a and:"1/2"];
-   [bQ setConstant:b and:"1/8"];
-   [cQ setConstant:c and:"1/16"];
-   [dQ setConstant:d and:"5/128"];
+   [aQ set_str:"1/2"];
+   [bQ set_str:"1/8"];
+   [cQ set_str:"1/16"];
+   [dQ set_str:"5/128"];
    
    ORDouble z = ((((1.0 + (a * x)) - ((b * x) * x)) + (((c * x) * x) * x)) - ((((d * x) * x) * x) * x));
    
@@ -230,10 +230,10 @@ void sqroot_f(int search, int argc, const char * argv[]) {
                
                [one setOne];
                [xQ setInput:x with:[arrayError objectAtIndex:0]];
-               [aQ setConstant:a and:"1/2"];
-               [bQ setConstant:b and:"1/8"];
-               [cQ setConstant:c and:"1/16"];
-               [dQ setConstant:d and:"5/128"];
+               [aQ set_str:"1/2"];
+               [bQ set_str:"1/8"];
+               [cQ set_str:"1/16"];
+               [dQ set_str:"5/128"];
                
                ORDouble z = ((((1.0 + (a * x)) - ((b * x) * x)) + (((c * x) * x) * x)) - ((((d * x) * x) * x) * x));
                
@@ -259,8 +259,8 @@ void sqroot_f(int search, int argc, const char * argv[]) {
 
 int main(int argc, const char * argv[]) {
    //sqroot_d(1, argc, argv);
-   //sqroot_d_c(1, argc, argv);
+   sqroot_d_c(1, argc, argv);
    //sqroot_f(1, argc, argv);
-   sqroot_d_c_3B(1, argc, argv);
+   //sqroot_d_c_3B(1, argc, argv);
    return 0;
 }

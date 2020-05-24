@@ -21,6 +21,59 @@ NSLog(@"'%@' took %.3fs", (__message), (endTime##__LINE__ = CFAbsoluteTimeGetCur
 #define getDmin(var) [(id<CPDoubleVar>)[cp concretize:var] min]
 #define getDminErr(var) *[(id<CPDoubleVar>)[cp concretize:var] minErr]
 
+id<ORRational> (^rumpError)(NSMutableArray* arrayValue, NSMutableArray* arrayError) = ^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+   ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+   ORDouble y = [[arrayValue objectAtIndex:1] doubleValue];
+   ORDouble a = 333.75;
+   ORDouble b = 11;
+   ORDouble c = 121;
+   ORDouble d = 2;
+   ORDouble e = 5.5;
+
+
+   
+   id<ORRational> aQ = [[ORRational alloc] init];
+   id<ORRational> bQ = [[ORRational alloc] init];
+   id<ORRational> cQ = [[ORRational alloc] init];
+   id<ORRational> dQ = [[ORRational alloc] init];
+   id<ORRational> eQ = [[ORRational alloc] init];
+   id<ORRational> xQ = [[ORRational alloc] init];
+   id<ORRational> yQ = [[ORRational alloc] init];
+   id<ORRational> zQ = [[ORRational alloc] init];
+   id<ORRational> zF = [[ORRational alloc] init];
+   id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+   
+   [aQ set_d:a];
+   [bQ set_d:a];
+   [cQ set_d:a];
+   [dQ set_d:a];
+   [eQ set_d:a];
+   [xQ setInput:x with:[arrayError objectAtIndex:0]];
+   [yQ setInput:x with:[arrayError objectAtIndex:1]];
+   
+   ORDouble z = a*y*y*y*y*y*y + x*x*(b*x*x*y*y - y*y*y*y*y*y - c*y*y*y*y - d) + e*y*y*y*y*y*y*y*y + x/(d*y);
+   [zF set_d:z];
+   
+   [zQ set: [[[[[[[[[yQ mul: aQ] mul: yQ] mul: yQ] mul: yQ] mul: yQ] mul: yQ] add: [[xQ mul: xQ] mul: [[[[[[[xQ mul: bQ] mul: xQ] mul: yQ] mul: yQ] sub: [[[[[yQ mul: yQ] mul: yQ] mul: yQ] mul: yQ] mul: yQ]] sub: [[[[yQ mul: cQ] mul: yQ] mul: yQ] mul: yQ]] sub: dQ]]] add: [[[[[[[[yQ mul: eQ] mul: yQ] mul: yQ] mul: yQ] mul: yQ] mul: yQ] mul: yQ] mul: yQ]] add: [xQ div: [yQ mul: dQ]]]];
+   
+   [ez set: [zQ sub: zF]];
+   
+   [aQ release];
+   [bQ release];
+   [cQ release];
+   [dQ release];
+   [eQ release];
+   [xQ release];
+   [yQ release];
+   [zQ release];
+   [zF release];
+   
+   [arrayValue addObject:[NSNumber numberWithDouble:z]];
+   [arrayError addObject:ez];
+   return ez;
+
+};
+
 
 void check_it_d(double x, double y, double z, id<ORRational> ez) {
     // 333.75 b^6 + a^2 (11 a^2 b^2 - b^6 - 121 b^4 - 2 ) + 5.5 b^8 + a / (2b)
@@ -76,7 +129,7 @@ void rump_d(int search, int argc, const char * argv[]) {
        
         [mdl add:[x_0 set: @(77617.0)]];
         [mdl add:[y_0 set: @(33096.0)]];
-        [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0)]]] plus: [[[[[[[[y_0 mul: @(5.5)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.0)]]]]];
+       [mdl add:[r_0 set: [[[[[[[[[@(333.75) mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0)]]] plus: [[[[[[[[y_0 mul: @(5.5)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.0)]]]]];
         //assert((r_0 >= 0));
         //[mdl add:[r_0 set:[x_0 plus: y_0]]];
         //[mdl add:[r_0 geq:@(0.0f)]];
@@ -105,20 +158,16 @@ void rump_d_bb(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> x_0 = [ORFactory doubleVar:mdl low:nextafter(77617.0, -INFINITY) up:nextafter(77617.0, +INFINITY) elow:zero eup:zero name:@"x"];
-      id<ORDoubleVar> y_0 = [ORFactory doubleVar:mdl low:nextafter(33096.0, -INFINITY) up:nextafter(33096.0, +INFINITY) elow:zero eup:zero name:@"y"];
+      id<ORDoubleVar> x_0 = [ORFactory doubleInputVar:mdl low:77600.0 up:77700.0 name:@"x"];
+      id<ORDoubleVar> y_0 = [ORFactory doubleInputVar:mdl low:33000.0 up:33100.0 name:@"y"];
       id<ORDoubleVar> r_0 = [ORFactory doubleVar:mdl];
       id<ORRationalVar> er = [ORFactory errorVar:mdl of:r_0];
       id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"er_0Abs"];
       [zero release];
       
-      [mdl add:[x_0 set: @(77617.0)]];
-      [mdl add:[y_0 set: @(33096.0)]];
+      //[mdl add:[x_0 set: @(77617.0)]];
+      //[mdl add:[y_0 set: @(33096.0)]];
       [mdl add:[r_0 set: [[[[[[[[[y_0 mul: @(333.75)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] plus: [[x_0 mul: x_0] mul: [[[[[[[x_0 mul: @(11.0)] mul: x_0] mul: y_0] mul: y_0] sub: [[[[[y_0 mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] sub: [[[[y_0 mul: @(121.0)] mul: y_0] mul: y_0] mul: y_0]] sub: @(2.0)]]] plus: [[[[[[[[y_0 mul: @(5.5)] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0] mul: y_0]] plus: [x_0 div: [y_0 mul: @(2.0)]]]]];
-      //assert((r_0 >= 0));
-      //[mdl add:[r_0 set:[x_0 plus: y_0]]];
-      //[mdl add:[r_0 geq:@(0.0f)]];
-      //[model add:[[r_0 lt:@(0.0f)] lor:[r_0 gt:@(0.0f)]]];
       
       [mdl add: [erAbs eq: [er abs]]];
       [mdl maximize:erAbs];
@@ -129,10 +178,10 @@ void rump_d_bb(int search, int argc, const char * argv[]) {
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
 
       [cp solve:^{
-         if (search)
             [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
                [cp floatSplit:i withVars:x];
-            }];
+            }
+                              compute:rumpError];
       }];
    }
 }
@@ -205,9 +254,9 @@ void rump_f(int search, int argc, const char * argv[]) {
 
         [cp solve:^{
            if (search)
-              /*[cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+              [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
                  [cp floatSplit:i withVars:x];
-              }];*/
+              }];
             NSLog(@"%@",cp);
            NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:x_0],[cp maxF:x_0],[cp minFQ:x_0],[cp maxFQ:x_0],[cp bound:x_0] ? "YES" : "NO");
            NSLog(@"y : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minF:y_0],[cp maxF:y_0],[cp minFQ:y_0],[cp maxFQ:y_0],[cp bound:y_0] ? "YES" : "NO");
@@ -245,14 +294,10 @@ void rump_f_bb(int search, int argc, const char * argv[]) {
 
       NSLog(@"model: %@",mdl);
       id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
-      id<ORFloatVarArray> vs = [mdl floatVars];
-      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      //id<ORFloatVarArray> vs = [mdl floatVars];
+      //id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
 
       [cp solve:^{
-         if (search)
-            [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
-               [cp floatSplit:i withVars:x];
-            }];
       }];
    }
 }
@@ -264,12 +309,12 @@ void exitfunc(int sig)
 }
 
 int main(int argc, const char * argv[]) {
-   sranddev();
-   signal(SIGKILL, exitfunc);
-   alarm(60);
+   //sranddev();
+   //signal(SIGKILL, exitfunc);
+   //alarm(60);
    //rump_f(1, argc, argv);
    //rump_f_bb(1, argc, argv);
-    //rump_d(0, argc, argv);
-    //rump_d_bb(1, argc, argv);
+    rump_d(0, argc, argv);
+    //rump_d_bb(0, argc, argv);
     return 0;
 }

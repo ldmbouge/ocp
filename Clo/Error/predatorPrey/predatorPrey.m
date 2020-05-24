@@ -92,6 +92,52 @@ void predatorPrey_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void predatorPrey_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of rational numbers */
+      id<ORRational> zero = [[ORRational alloc] init];
+      
+      /* Initialization of rational numbers */
+      [zero setZero];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.1 up:0.3 name:@"x"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORDoubleVar> K = [ORFactory doubleConstantVar:mdl value:1.11 string:@"111/100" name:@"K"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Initialization of constants */
+      [mdl add:[r set: @(4.0)]];
+      
+      /* Declaration of constraints */
+      [mdl add:[z set:[[[r mul: x] mul: x] div: [@(1.0) plus: [[x div: K] mul: [x div: K]]]]]];
+            
+      /* Memory release of rational numbers */
+      [zero release];
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         NSLog(@"x : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:x],[cp maxD:x],[cp minDQ:x],[cp maxDQ:x],[cp bound:x] ? "YES" : "NO");
+         NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+         NSLog(@"K : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:K],[cp maxD:K],[cp minDQ:K],[cp maxDQ:K],[cp bound:K] ? "YES" : "NO");
+         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_d([cp minD:r],[cp minD:K],[cp minD:x],[cp minD:z],[cp minErrorDQ:z]);
+      }];
+   }
+}
+
 void predatorPrey_d_QF(int search, int argc, const char * argv[]) {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
@@ -126,8 +172,6 @@ void predatorPrey_d_QF(int search, int argc, const char * argv[]) {
       
       [mdl add:[ez eq: [zQ sub: zq]]];
 
-
-      
       //[mdl add:[[z error] geq:c]];
       NSLog(@"model: %@",mdl);
       id<ORDoubleVarArray> vs = [mdl doubleVars];
@@ -200,7 +244,6 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
       id<ORFloatVar> K = [ORFactory floatVar:mdl name:@"K"];
       id<ORFloatVar> z = [ORFactory floatVar:mdl name:@"z"];
       id<ORFloatVar> x = [ORFactory floatVar:mdl low:0.1f up:0.3f elow:zero eup:zero name:@"x"];
-      id<ORRationalVar> ez = [ORFactory errorVar:mdl of:z];
       [zero release];
       
       [mdl add:[r set: @(4.0f)]];
@@ -234,7 +277,8 @@ void predatorPrey_f(int search, int argc, const char * argv[]) {
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"predPrey"){
       //predatorPrey_f(1, argc, argv);
-      predatorPrey_d(1, argc, argv);
+      //predatorPrey_d(1, argc, argv);
+      predatorPrey_d_c(0, argc, argv);
       //predatorPrey_d_QF(0, argc, argv);
    }
    return 0;

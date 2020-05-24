@@ -96,9 +96,54 @@ void doppler2_d(int search, int argc, const char * argv[]) {
    }
 }
 
+void doppler2_d_c(int search, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+      
+      /* Declaration of model variables */
+      id<ORDoubleVar> u = [ORFactory doubleInputVar:mdl low:-125.0 up:125.0 name:@"u"];
+      id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:15.0 up:25000.0 name:@"v"];
+      id<ORDoubleVar> t = [ORFactory doubleInputVar:mdl low:-40.0 up:60.0 name:@"t"];
+      id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:331.4 string:@"1657/5" name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleConstantVar:mdl value:0.6 string:@"3/5" name:@"b"];
+      id<ORDoubleVar> t1 = [ORFactory doubleVar:mdl name:@"t1"];
+      id<ORDoubleVar> z = [ORFactory doubleVar:mdl name:@"z"];
+      
+      /* Declaration of constraints */
+      [mdl add:[t1 set: [a plus:[b mul: t]]]];
+      [mdl add:[z set: [[[t1 minus] mul: v] div: [[t1 plus: u] mul: [t1 plus: u]]]]];
+            
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      [cp solve:^{
+         if (search)
+            [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+               [cp floatSplit:i withVars:x];
+            }];
+         NSLog(@"%@",cp);
+         //NSLog(@"%@ (%s)",[p concretize:x],[p bound:x] ? "YES" : "NO");
+         /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+         /* Use printRational(ORRational r) to print a rational inside the solver */
+         NSLog(@"u : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:u],[cp maxD:u],[cp minDQ:u],[cp maxDQ:u],[cp bound:u] ? "YES" : "NO");
+         NSLog(@"v : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
+         NSLog(@"t : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t],[cp maxD:t],[cp minDQ:t],[cp maxDQ:t],[cp bound:t] ? "YES" : "NO");
+         NSLog(@"t1 : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:t1],[cp maxD:t1],[cp minDQ:t1],[cp maxDQ:t1],[cp bound:t1] ? "YES" : "NO");
+         NSLog(@"z : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:z],[cp maxD:z],[cp minDQ:z],[cp maxDQ:z],[cp bound:z] ? "YES" : "NO");
+         if (search) check_it_doppler2_d(getDmin(u), getDmin(v), getDmin(t), getDmin(t1), getDmin(z), [cp minErrorDQ:z]);
+      }];
+   }
+}
+
+
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"r"){
-   doppler2_d(0, argc, argv);
+      //doppler2_d(0, argc, argv);
+      doppler2_d_c(0, argc, argv);
    }
    return 0;
 }
