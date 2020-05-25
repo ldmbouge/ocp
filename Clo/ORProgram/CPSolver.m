@@ -535,7 +535,6 @@
       //[s print:[_model variables] for:@"Input Values:"];
       NSLog(@"Optimal Solution: %@ (%@) [%1.1f] thread: %d time: %.3f\n",[_objective primalBound],[_objective dualBound],[[[[_objective dualBound] rationalValue] div: [[_objective primalBound] rationalValue]] get_d],[NSThread threadID],[branchAndBoundTime timeIntervalSinceDate:branchAndBoundStart]);
       NSLog(@"%@", primalSolution);
-      //}
    }
    else {
       _oneSol = YES;
@@ -2095,11 +2094,11 @@ onFailure: (ORInt2Void) onFailure
                [[_engine objective] tightenPrimalBound:objv];
                // START print solution
                NSUInteger index = 0;
-               [primalSolution setString:@"Input Values:\r"];
+               [primalSolution setString:@"Input Values:\n"];
                for(id<ORDoubleVar> v in x){
                   id<CPDoubleVar> currentVar = _gamma[[v getId]];
                   if([currentVar isInputVar] && ![currentVar bound]){
-                     [primalSolution appendFormat:@"%@: %1.20e %@\r", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]];
+                     [primalSolution appendFormat:@"%@: %1.20e %@\n", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]];
                      //NSLog(@"%@: %1.20e %@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);
                      //NSLog(@"%@: %1.53e %@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);
                      //NSLog(@"%@: %a %@", [v prettyname], [[arraySolutionVarValue objectAtIndex:index] doubleValue], [arraySolutionVarError objectAtIndex:index]);

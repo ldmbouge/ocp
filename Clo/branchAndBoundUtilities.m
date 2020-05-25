@@ -83,7 +83,7 @@
 /* Try to improve computed error in GuessError, once all variables are set */
 ORBool RUN_IMPROVE_GUESS = true;
 /* Discard box if half-ulp limit is reached on all constraints */
-ORBool RUN_DISCARDED_BOX = false;
+ORBool RUN_DISCARDED_BOX = true;
 
 /* Run 3B filtering over errors - state constraint over rational to compute error operation at the constraint level */
 ORBool RUN_3B_ERROR = false;
