@@ -1568,7 +1568,7 @@
 -(void) updateDualBound
 {
    [bound set: [_x min]];
-   if ([bound gt: _dualBound] && [bound lt: boundDiscardedBoxes] && [bound lt: boundDegeneratedBoxes]){
+   if ([bound gt: _dualBound] && [bound lt: boundSidelinedBoxes] && [bound lt: boundDegeneratedBoxes]){
       nbDualUpdate++;
       [_dualBound set: bound];
       branchAndBoundTime = [NSDate date];
@@ -1589,7 +1589,7 @@
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
       [b set: [(id<ORObjectiveValueRational>) newBound value]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1599,7 +1599,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
       [b set_d:[(id<ORObjectiveValueInt>)newBound value]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1609,7 +1609,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
       [b set_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1619,7 +1619,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
       [b set_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
       ORStatus ok = [b gt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b gt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes]){
+      if (ok && [b gt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1755,7 +1755,7 @@
 -(void) updateDualBound
 {
    [bound set: [_x max]];
-   if ([bound lt: _dualBound] && [bound gt: boundDiscardedBoxes] && [bound gt: boundDegeneratedBoxes] && [bound gt: boundTopOfQueue]){
+   if ([bound lt: _dualBound] && [bound gt: boundSidelinedBoxes] && [bound gt: boundDegeneratedBoxes] && [bound gt: boundTopOfQueue]){
       nbDualUpdate++;
       [_dualBound set: bound];
       branchAndBoundTime = [NSDate date];
@@ -1778,7 +1778,7 @@
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueRational)]) {
       [b set: [(id<ORObjectiveValueRational>) newBound value]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+      if (ok && [b lt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1788,7 +1788,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
       [b set_d: [(id<ORObjectiveValueInt>)newBound value]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+      if (ok && [b lt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1798,7 +1798,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
       [b set_d:[(id<ORObjectiveValueFloat>)newBound floatValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+      if (ok && [b lt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];
@@ -1808,7 +1808,7 @@
    } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
       [b set_d:[(id<ORObjectiveValueReal>)newBound doubleValue]];
       ORStatus ok = [b lt: _primalBound] ? ORFailure : ORSuspend;
-      if (ok && [b lt: _dualBound] && [b gt: boundDiscardedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
+      if (ok && [b lt: _dualBound] && [b gt: boundSidelinedBoxes] && [b gt: boundDegeneratedBoxes] && [b gt: boundTopOfQueue]){
          [_dualBound set: b];
          nbDualUpdate++;
          branchAndBoundTime = [NSDate date];

@@ -83,7 +83,7 @@
 /* Try to improve computed error in GuessError, once all variables are set */
 ORBool RUN_IMPROVE_GUESS = true;
 /* Discard box if half-ulp limit is reached on all constraints */
-ORBool RUN_DISCARDED_BOX = true;
+ORBool RUN_SIDELINED_BOX = true;
 
 /* Run 3B filtering over errors - state constraint over rational to compute error operation at the constraint level */
 ORBool RUN_3B_ERROR = false;
@@ -97,7 +97,7 @@ ORGammaError* _gammaE = nil;
 NSDate *branchAndBoundStart = nil;
 NSDate *branchAndBoundTime = nil;
 
-/* Global variables to compute when a box can be discarded */
+/* Global variables to compute when a box can be sidelined */
 ORDouble boxCardinality = -1;
 TRInt limitCounter;
 TRInt indexSplit;
@@ -107,7 +107,7 @@ ORInt nbBoxExplored = 0;
 ORInt nbBoxGenerated = 1;
 
 
-id<ORRational> boundDiscardedBoxes = nil;
+id<ORRational> boundSidelinedBoxes = nil;
 id<ORRational> boundDegeneratedBoxes = nil;
 id<ORRational> boundTopOfQueue = nil;
 id<ORRational> boundRatioOfTwoBoxes = nil;

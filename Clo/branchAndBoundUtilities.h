@@ -34,7 +34,7 @@
 @end
 
 extern ORBool RUN_IMPROVE_GUESS;
-extern ORBool RUN_DISCARDED_BOX;
+extern ORBool RUN_SIDELINED_BOX;
 extern ORBool RUN_3B_ERROR;
 
 
@@ -44,7 +44,7 @@ extern ORGammaError* _gammaE;
 extern NSMutableString* primalSolution;
 
 
-extern id<ORRational> boundDiscardedBoxes;
+extern id<ORRational> boundSidelinedBoxes;
 extern id<ORRational> boundDegeneratedBoxes;
 extern id<ORRational> boundTopOfQueue;
 extern id<ORRational> boundRatioOfTwoBoxes;

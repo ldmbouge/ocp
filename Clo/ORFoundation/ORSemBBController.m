@@ -265,7 +265,7 @@ NSString * const ORStatus_toString_BB[] = {
          id<ORRational> dualBound = [[[_engine objective] dualBound] rationalValue];
          if([primalBound lt: dualBound]){
             if([[bestKey.bound rationalValue] geq: primalBound] && // bestkey -> dual de la boite sélectionné
-            [[bestKey.bound rationalValue] geq: boundDiscardedBoxes] &&
+            [[bestKey.bound rationalValue] geq: boundSidelinedBoxes] &&
             [[bestKey.bound rationalValue] geq: boundDegeneratedBoxes] &&
                [[bestKey.bound rationalValue] geq: boundRatioOfTwoBoxes]){
                BBNode* nd = [_buf extractBest];
@@ -296,8 +296,8 @@ NSString * const ORStatus_toString_BB[] = {
             NSLog(@"EQUAL BOUND");
             NSLog(@"    primalBound <=                 dualBound: %@ <= %@", [[_engine objective] primalBound], [[_engine objective] dualBound]);
             NSLog(@"    primalBound <=          dualBoundNextBox: %@ <= %@", [[_engine objective] primalBound], [bestKey.bound rationalValue]);
-            if(![boundDiscardedBoxes isNegInf])
-               NSLog(@"    primalBound <=   dualBoundDiscardedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDiscardedBoxes);
+            if(![boundSidelinedBoxes isNegInf])
+               NSLog(@"    primalBound <=   dualBoundSidelinedBoxes: %@ <= %@", [[_engine objective] primalBound], boundSidelinedBoxes);
             if(![boundDegeneratedBoxes isNegInf])
                NSLog(@"    primalBound <= dualBoundDegeneratedBoxes: %@ <= %@", [[_engine objective] primalBound], boundDegeneratedBoxes);
             if(![boundTopOfQueue isNegInf])
