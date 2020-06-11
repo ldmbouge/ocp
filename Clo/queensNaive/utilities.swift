@@ -481,6 +481,9 @@ extension ORMDDSpecs {
     func setAsAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
         self.setAsAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
     }
+    func setAsDualDirectionalAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
+        self.setAsDualDirectionalAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
+    }
     func setAsSequence(_ domainRange : ORIntRange!, _ length : Int, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
         self.setAsSequenceConstraint(domainRange, length: Int32(length), lb: Int32(lb), ub: Int32(ub), values:values)
     }
@@ -685,14 +688,13 @@ public func amongMDD(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values :
     }
 }*/
 public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
-    let minC = 0,maxC = 1,rem = 2
+    let minC = 0,maxC = 1
     let udom = arrayDomains(x)
-    let mdd = ORFactory.mddSpecs(withClosures: m, variables: x, stateSize: 3)
-    mdd.state([(minC, 0),(maxC, 0)
-        , (rem, x.size)])
-    //Need this to be ordered so the properties are indexed correctly.
+    let mdd = ORFactory.mddSpecs(withClosures: m, variables: x, numTopDownProperties: 2, numBottomUpProperties: 2)
+    mdd.state([(minC, 0),(maxC, 0)])
+    mdd.bottomUpState([(minC, 0),(maxC, 0)])
     
-    mdd.setAsAmong(udom,lb,ub,values)
+    mdd.setAsDualDirectionalAmong(udom,lb,ub,values)
     return mdd
 }
 

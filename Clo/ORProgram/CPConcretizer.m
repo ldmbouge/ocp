@@ -1911,15 +1911,11 @@
     if (_gamma[cstr.getId] == NULL) {
         id<ORIntVarArray>   or = [cstr vars];
         id<CPIntVarArray>    a = [self concreteArray: (id)or];
-        bool relaxed           = [cstr relaxed];
         ORInt relaxationSize   = [cstr relaxationSize];
-        bool usingArcs         = [cstr usingArcs];
-        bool equalBuckets      = [cstr equalBuckets];
-        bool usingSlack        = [cstr usingSlack];
         MDDRecommendationStyle recommendationStyle = [cstr recommendationStyle];
         id<CPConstraint> concreteCstr;
         MDDStateSpecification* spec = [cstr specs];
-        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a relaxed:relaxed size:relaxationSize spec:spec usingArcs:usingArcs equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:_gamma];
+        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a size:relaxationSize spec:spec recommendationStyle:recommendationStyle gamma:_gamma];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

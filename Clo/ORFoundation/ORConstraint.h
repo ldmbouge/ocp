@@ -462,12 +462,8 @@ enum ORGroupType {
 
 @protocol ORMDDStateSpecification <ORConstraint>
 -(id<ORIntVarArray>) vars;
--(bool) relaxed;
 -(ORInt) relaxationSize;
 -(id) specs;
--(bool) usingArcs;
--(bool) equalBuckets;
--(bool) usingSlack;
 -(int) recommendationStyle;
 @end
 
@@ -536,6 +532,7 @@ enum ORGroupType {
 -(void)setArcExistsClosure:(DDArcExistsClosure)arcExists;
 -(void)setSlackClosure:(DDSlackClosure)slack;
 -(void)setAsAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
+-(void)setAsDualDirectionalAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void) setAsSequenceConstraint:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void) setAsSequenceConstraintWithBitSequence:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void)setAsAllDifferent:(id<ORIntRange>)domain;

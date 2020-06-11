@@ -283,22 +283,12 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORVar>)x equal:(id<ORVar>)res;
 +(id<ORConstraint>) geq:(id<ORTracker>)model  x: (id<ORIntVar>)x y: (id<ORIntVar>) y plus:(ORInt)c;
 
-//+(id<ORConstraint>) ExactMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced;
-//+(id<ORConstraint>) RestrictedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced;
-//+(id<ORConstraint>) RelaxedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced;
-//+(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:( bool* _Nonnull * _Nonnull)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
-//+(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:( bool* _Nonnull * _Nonnull)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
-//+(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:( bool* _Nonnull * _Nonnull)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue;
-//+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass topDown:(bool)topDown;
-//+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState topDown:(bool)topDown;
-//+(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objective maximize:(bool)maximize stateClass:(Class)stateClass;
-+(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var: (id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(id)specs topDown:(bool)topDown usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(id)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
 +(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
 +(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
 +(id<MDDStateDescriptor>) MDDStateDescriptor;
-//+(id<ORAltMDDSpecs>) AltMDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x;
 
 
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;

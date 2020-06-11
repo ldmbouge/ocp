@@ -1,44 +1,6 @@
 #import <ORFoundation/ORCustomMDDStates.h>
 
 const short BytesPerMagic = 4;
-/*
-@implementation CustomState
--(id) initClassState {
-    return self;
-}
--(id) initRootState:(int)variableIndex {
-    _variableIndex = variableIndex;
-    return self;
-}
--(id) initRootState:(CustomState*)classState variableIndex:(int)variableIndex {
-    _variableIndex = variableIndex;
-    return self;
-}
--(id) initState:(CustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue {
-    _variableIndex = variableIndex;
-    return self;
-}
--(id) initState:(CustomState*)parentNodeState variableIndex:(int)variableIndex {
-    _variableIndex = variableIndex;
-    return self;
-}
--(int) variableIndex { return _variableIndex; }
--(void) mergeStateWith:(CustomState *)other {
-    return;
-}
--(void) replaceStateWith:(CustomState *)other {
-    return;
-}
--(bool) canChooseValue:(int)value forVariable:(int)variable {
-    return true;
-}
--(int) stateDifferential:(CustomState*)other {
-    return 1;
-}
--(bool) equivalentTo:(CustomState*)other {
-    return false;
-}
-@end*/
 
 @implementation MDDStateSpecification {
 @protected
@@ -473,16 +435,16 @@ typedef int (*GetPropIMP)(id,SEL,char*);
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues {
     return [self canChooseValue:value forVariable:variable withState:stateValues objectiveMins:nil objectiveMaxes:nil];
 }
--(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues objectiveMins:(int*)objectiveMins objectiveMaxes:(int*)objectiveMaxes {
+-(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes {
     if (_numSpecsAdded == 1) {
-        return _arcExists([stateValues stateValues],nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[0],objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]);
+        return _arcExists([stateValues stateValues],nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[0]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]._val);
     }
     char* state = [stateValues stateValues];
     int numArcExists = _numArcExistsForVariable[variable];
     int* arcExistFunctionIndices = _arcExistFunctionIndicesForVariable[variable];
     for (int i = 0; i < numArcExists; i++) {
         int specIndex = arcExistFunctionIndices[i];
-        if (!_arcExistFunctions[specIndex](state,nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[specIndex],objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex])) {
+        if (!_arcExistFunctions[specIndex](state,nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[specIndex]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex]._val)) {
             return false;
         }
     }
@@ -491,15 +453,15 @@ typedef int (*GetPropIMP)(id,SEL,char*);
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state {
     return [self canChooseValue:value forVariable:variable withStateProperties:state objectiveMins:nil objectiveMaxes:nil];
 }
--(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state objectiveMins:(int*)objectiveMins objectiveMaxes:(int*)objectiveMaxes {
+-(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes {
     if (_numSpecsAdded == 1) {
-        return _arcExists(state,nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[0],objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]);
+        return _arcExists(state,nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[0]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]._val);
     }
     int numArcExists = _numArcExistsForVariable[variable];
     int* arcExistFunctionIndices = _arcExistFunctionIndicesForVariable[variable];
     for (int i = 0; i < numArcExists; i++) {
         int specIndex = arcExistFunctionIndices[i];
-        if (!_arcExistFunctions[specIndex](state,nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[specIndex],objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex])) {
+        if (!_arcExistFunctions[specIndex](state,nil,variable,value,objectiveMins == nil ? INT_MIN : objectiveMins[specIndex]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex]._val)) {
             return false;
         }
     }
@@ -633,6 +595,7 @@ typedef int (*GetPropIMP)(id,SEL,char*);
     return hashValue;
 }
 -(int) hashWidth { return _hashWidth; }
++(short) bytesPerMagic { return BytesPerMagic; }
 @end
 
 @implementation MDDStateValues

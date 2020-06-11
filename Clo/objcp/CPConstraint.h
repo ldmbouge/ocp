@@ -101,16 +101,7 @@
 
 +(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 
-//+(id<CPConstraint>) ExactMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced;
-//+(id<CPConstraint>) RelaxedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced;
-//+(id<CPConstraint>) RestrictedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced;
-//+(id<CPConstraint>) ExactMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue;
-//+(id<CPConstraint>) RestrictedMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue;
-//+(id<CPConstraint>) RelaxedMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue;
-//+(id<CPConstraint>) CustomAltMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
-//+(id<CPConstraint>) CustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState;
-//+(id<CPConstraint>) CustomMDDWithObjective: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
-+(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize spec:(id)spec usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma;
++(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma;
 @end
 
 @interface CPFactory (ORReal)

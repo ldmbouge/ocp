@@ -1112,86 +1112,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
-+(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize specs:(MDDStateSpecification*)specifications topDown:(bool)topDown usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle
 {
-    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x relaxed:relaxed size:relaxationSize specs:specifications usingArcs:usingArcs equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle];
+    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x size:relaxationSize specs:spec recommendationStyle:recommendationStyle];
     [model trackObject:o];
     return o;
 }
-/*+(id<ORConstraint>) ExactMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x reduced:(bool)reduced
-{
-    id<ORConstraint> o = [[ORExactMDDAllDifferent alloc] initORExactMDDAllDifferent:x reduced:reduced];
-    [model trackObject:o];
-    return o;
-}
-
-+(id<ORConstraint>) RestrictedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced
-{
-    id<ORConstraint> o = [[ORRestrictedMDDAllDifferent alloc] initORRestrictedMDDAllDifferent:x size: restrictionSize reduced:reduced];
-    [model trackObject:o];
-    return o;
-}
-
-+(id<ORConstraint>) RelaxedMDDAllDifferent:(id<ORTracker>)model  var: (id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced
-{
-    id<ORConstraint> o = [[ORRelaxedMDDAllDifferent alloc] initORRelaxedMDDAllDifferent:x size:relaxationSize reduced:reduced];
-    [model trackObject:o];
-    return o;
-}
-
-
-+(id<ORConstraint>) ExactMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
-{
-    id<ORConstraint> o = [[ORExactMDDMISP alloc] initORExactMDDMISP:x reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
-    [model trackObject:o];
-    return o;
-}
-
-+(id<ORConstraint>) RestrictedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
-{
-    id<ORConstraint> o = [[ORRestrictedMDDMISP alloc] initORRestrictedMDDMISP:x size:restrictionSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
-    [model trackObject:o];
-    return o;
-}
-
-+(id<ORConstraint>) RelaxedMDDMISP:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>)weights objective:(id<ORIntVar>)objectiveValue
-{
-    id<ORConstraint> o = [[ORRelaxedMDDMISP alloc] initORRelaxedMDDMISP:x size:relaxationSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
-    [model trackObject:o];
-    return o;
-}*/
-
-
-/*+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass topDown:(bool)topDown
-{
-    id<ORConstraint> o;
-    //AltCustomState* altClass = [[AltCustomState alloc] init];
-    //if (!topDown) {
-        //o = [[ORCustomAltMDD alloc] initORCustomAltMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
-    //} else {
-        o = [[ORCustomMDD alloc] initORCustomMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
-    //}
-    [model trackObject:o];
-    return o;
-}
-+(id<ORConstraint>) CustomMDD:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState topDown:(bool)topDown
-{
-    id<ORConstraint> o;
-    //AltCustomState* altClass = [[AltCustomState alloc] init];
-    //if (!topDown) {
-        //o = [[ORCustomAltMDD alloc] initORCustomAltMDD:x relaxed:relaxed size:relaxationSize stateClass:stateClass];
-    //} else {
-        o = [[ORCustomMDD alloc] initORCustomMDD:x relaxed:relaxed size:relaxationSize classState:classState];
-    //}
-    [model trackObject:o];
-    return o;
-}
-+(id<ORConstraint>) CustomMDDWithObjective:(id<ORTracker>)model var:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
-{
-    id<ORConstraint> o = [[ORCustomMDDWithObjective alloc] initORCustomMDDWithObjective:x relaxed:(bool)relaxed size:relaxationSize reduced:true objective:objectiveValue maximize:maximize stateClass:stateClass];
-    [model trackObject:o];
-    return o;
-}*/
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {

@@ -29,9 +29,7 @@
 #import "CPRealConstraint.h"
 #import "CPIntSetConstraint.h"
 
-#import "CPTopDownMDDWithoutArcs.h"
-#import "CPTopDownMDDWithArcs.h"
-#import "CPDualDirectionalMDD.h"
+#import "CPMDD.h"
 
 @implementation CPFactory (Constraint)
 
@@ -677,89 +675,8 @@
    return o;
 }
 
-/*+(id<CPConstraint>) ExactMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced
-{
-    id<CPConstraint> o = [[CPExactMDDAllDifferent alloc] initCPExactMDDAllDifferent: cp over: x reduced:reduced];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-
-+(id<CPConstraint>) RelaxedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxationSize:(ORInt)relaxationSize reduced:(bool)reduced
-{
-    id<CPConstraint> o = [[CPRelaxedMDDAllDifferent alloc] initCPRelaxedMDDAllDifferent:cp over: x relaxationSize:relaxationSize reduced:reduced];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-
-+(id<CPConstraint>) RestrictedMDDAllDifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x restrictionSize:(ORInt)restrictionSize reduced:(bool)reduced
-{
-    id<CPConstraint> o = [[CPRestrictedMDDAllDifferent alloc] initCPRestrictedMDDAllDifferent: cp over: x restrictionSize:restrictionSize reduced:reduced];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-
-+(id<CPConstraint>) ExactMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue
-{
-    id<CPConstraint> o = [[CPExactMDDMISP alloc] initCPExactMDDMISP: cp over: x reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-
-+(id<CPConstraint>) RestrictedMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)restrictionSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue
-{
-    id<CPConstraint> o = [[CPRestrictedMDDMISP alloc] initCPRestrictedMDDMISP: cp over: x size:restrictionSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-
-+(id<CPConstraint>) RelaxedMDDMISP: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize reduced:(bool)reduced adjacencies:(bool**)adjacencyMatrix weights:(id<ORIntArray>) weights objective:(id<CPIntVar>)objectiveValue
-{
-    id<CPConstraint> o = [[CPRelaxedMDDMISP alloc] initCPRelaxedMDDMISP: cp over: x size:relaxationSize reduced:reduced adjacencies:adjacencyMatrix weights:weights objective:objectiveValue];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-
-
-+(id<CPConstraint>) CustomAltMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass
-{
-    id<CPConstraint> o = [[CPCustomAltMDD alloc] initCPCustomAltMDD: cp over: x relaxed:relaxed size:relaxationSize stateClass:(Class)stateClass];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-+(id<CPConstraint>) CustomMDD: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize classState:(id)classState
-{
-    id<CPConstraint> o = [[CPCustomMDD alloc] initCPCustomMDD: cp over: x relaxed:relaxed size:relaxationSize classState:classState];
-    [[x tracker] trackMutable:o];
-    return o;
-}
-+(id<CPConstraint>) CustomMDDWithObjective: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<CPIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass
-{
-    id<CPConstraint> o = [[CPCustomMDDWithObjective alloc] initCPCustomMDDWithObjective: cp over: x relaxed:relaxed size:relaxationSize reduced:reduced objective:objectiveValue maximize:maximize stateClass:(Class)stateClass];
-    [[x tracker] trackMutable:o];
-    return o;
-}*/
-
-+(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x relaxed:(bool) relaxed size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec usingArcs:(bool)usingArcs equalBuckets:(bool)equalBuckets usingSlack:(bool)usingSlack recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma
-{
-    id<CPConstraint> o;
-    if ([spec numBottomUpProperties]) {
-        if (!usingArcs) {
-           @throw [[ORExecutionError alloc] initORExecutionError: "CPConstraint.m: Method MDDStateSpecification not implemented for dual-directional without arcs"];
-        }
-        o = [[CPDualDirectionalMDD alloc] initCPDualDirectionalMDD: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
-    } else if (relaxed) {
-        if (usingArcs) {
-            o = [[CPMDDRelaxationWithArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
-        } else {
-            o = [[CPMDDRelaxationWithoutArcs alloc] initCPMDDRelaxation: cp over: x relaxationSize:relaxationSize spec:spec equalBuckets:equalBuckets usingSlack:usingSlack recommendationStyle:recommendationStyle gamma:gamma];
-        }
-    } else {
-        if (usingArcs) {
-            o = [[CPMDDWithArcs alloc] initCPMDD: cp over: x spec: spec gamma:gamma];
-        } else {
-            o = [[CPMDDWithoutArcs alloc] initCPMDD: cp over: x spec: spec gamma:gamma];
-        }
-    }
++(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma {
+    id<CPConstraint> o = [[CPIRMDD alloc] initCPIRMDD:cp over:x relaxationSize:relaxationSize spec:spec recommendationStyle:recommendationStyle gamma:gamma];
     [[x tracker] trackMutable:o];
     return o;
 }

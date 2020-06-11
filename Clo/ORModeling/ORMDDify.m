@@ -197,14 +197,14 @@
     if ([_mddSpecConstraints count] > 0) {
         if (_variableOverlap == 0) {
             [self combineMDDSpecs:m];
-            id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables relaxed:_relaxed size:_width specs:_mddSpecification topDown:_topDown usingArcs:_usingArcs equalBuckets:_equalBuckets usingSlack:_usingSlack recommendationStyle:_recommendationStyle];
+            id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables size:_width specs:_mddSpecification recommendationStyle:_recommendationStyle];
             [_into trackConstraintInGroup: mddConstraint];
             [_into addConstraint: mddConstraint];
         } else {
             MDDStateSpecification** specs = [self createMDDSpecs:m];
             for (int i = 0; i < _numSpecs; i++) {
                 MDDStateSpecification* spec = specs[i];
-                id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:[spec vars] relaxed:_relaxed size:_width specs:spec topDown:_topDown usingArcs:_usingArcs equalBuckets:_equalBuckets usingSlack:_usingSlack recommendationStyle:_recommendationStyle];
+                id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:[spec vars] size:_width specs:spec recommendationStyle:_recommendationStyle];
                 [_into trackConstraintInGroup: mddConstraint];
                 [_into addConstraint: mddConstraint];
             }

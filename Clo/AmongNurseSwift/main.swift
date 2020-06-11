@@ -16,20 +16,16 @@ autoreleasepool {
     let numArguments = arguments.count
     
     //let fileName = numArguments > 1 ? arguments[1] : ""
-    let mode = numArguments > 2 ? Int(arguments[2]) : 2
-    let relaxationSize = numArguments > 3 ? Int32(arguments[3]) : 1
-    let withArcs = numArguments > 4 ? Bool(arguments[4]) : true
-    let usingClosures = numArguments > 5 ? Bool(arguments[5]) : true
+    let mode = numArguments > 2 ? Int(arguments[2]) : 1
+    let relaxationSize = numArguments > 3 ? Int32(arguments[3]) : 64
     let usingFirstFail = numArguments > 6 ? Bool(arguments[6]) : false
-    let equalBuckets = numArguments > 7 ? Bool(arguments[7]) : true
-    let usingSlack = numArguments > 8 ? Bool(arguments[8]) : false
     let recommendationStyle = numArguments > 9 ? Int(arguments[9]) : 0
     let variableOverlap = numArguments > 10 ? Int32(arguments[10]) : 0
     
     //mode = 0, classic constraint
     //mode = 1, among MDD
     //mode = 2, sequence MDD
-    let constraintClass = 0,
+    let constraintClass = 1,
         singleCumulative = false
     
     let programStart    = ORRuntimeMonitor.cputime()
@@ -54,15 +50,9 @@ autoreleasepool {
     let maxWorkDaysPerWeek = 5
     
     if mode! > 0 {
-        if (!usingClosures!) {
-            print("Must use closures")
-        }
         
         notes.ddWidth(relaxationSize!)
         notes.ddRelaxed(relaxationSize! > 0)
-        notes.ddEqualBuckets(equalBuckets!)
-        notes.dd(withArcs: withArcs!)
-        notes.dd(usingSlack: usingSlack!)
         notes.ddRecommendationStyle(MDDRecommendationStyle(rawValue: MDDRecommendationStyle.RawValue(recommendationStyle!)))
         notes.ddVariableOverlap(variableOverlap!)
     }
@@ -126,12 +116,12 @@ autoreleasepool {
     } else if (mode == 1) {
         //Max Work
         let maxWorkRange = range(m, 0...maxWorkDayRange[constraintClass]-1)
-        for i in 1...planningHorizon-maxWorkDayRange[constraintClass] {
+        for i in 1...planningHorizon-maxWorkDayRange[constraintClass]+1 {
             m.add(amongMDDClosures(m: m, x: all(m, maxWorkRange, {j in vars[i + Int(j)]}), lb: 0, ub: maxWorkDays[constraintClass], values: intSetOfOne))
         }
         //Min Work
         let minWorkRange = range(m, 0...minWorkDayRange[constraintClass]-1)
-        for i in 1...planningHorizon-minWorkDayRange[constraintClass] {
+        for i in 1...planningHorizon-minWorkDayRange[constraintClass]+1 {
             m.add(amongMDDClosures(m: m, x: all(m, minWorkRange, {j in vars[i + Int(j)]}), lb: minWorkDays[constraintClass], ub: minWorkDayRange[constraintClass], values: intSetOfOne))
         }
         //Calendar Week
@@ -178,7 +168,8 @@ autoreleasepool {
                 }
         }
     } else {
-        cp.search {
+        var numSolns = 0
+        cp.searchAll {
             Do(cp) {
                 postEnd = ORRuntimeMonitor.cputime()
             }
@@ -186,11 +177,13 @@ autoreleasepool {
             labelArray(cp, vars)
                 »
                 Do(cp) {
-                    let qs = (1...planningHorizon).map { i in cp.intValue(vars[ORInt(i)]) }
-                    print("sol is: \(qs)")
-                    nbSol.incr(cp)
+                    //let qs = (1...planningHorizon).map { i in cp.intValue(vars[ORInt(i)]) }
+                    //print("sol is: \(qs)")
+                    //nbSol.incr(cp)
+                    numSolns += 1
                 }
         }
+        print("Num solns: \(numSolns)\n")
     }
     let programEnd     = ORRuntimeMonitor.cputime()
     print("Solver status: \(cp)\n")

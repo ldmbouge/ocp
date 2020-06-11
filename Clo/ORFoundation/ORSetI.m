@@ -24,7 +24,7 @@
 -(id<ORIntSet>) initORIntSetI
 {
     self = [super init];
-    _avl = [[ORInternalFactory AVLTree] retain];
+    _avl = [ORInternalFactory AVLTree];
     return self;
 }
 -(void) dealloc
@@ -122,7 +122,7 @@
 - (id) initWithCoder:(NSCoder*) aDecoder
 {
     self = [super init];
-    _avl = [[ORInternalFactory AVLTree] retain];
+    _avl = [ORInternalFactory AVLTree];
     ORInt size;
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&size];
     for(ORInt i = 0; i < size; i++) {

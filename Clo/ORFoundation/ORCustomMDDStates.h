@@ -1,5 +1,5 @@
-
 #import <ORFoundation/ORFoundation.h>
+
 
 @interface MDDStateValues : NSObject {
 @protected
@@ -63,9 +63,9 @@
 -(void) mergeTempBottomUpStateProperties:(char*)leftState with:(char*)rightState;
 -(char*) batchMergeForStates:(char**)parentStates values:(int**)edgesUsedByParent numEdgesPerParent:(int*)numEdgesPerParent variable:(int)variableIndex isMerged:(bool*)isMerged numParents:(int)numParents totalEdges:(int)totalEdges;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
--(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues objectiveMins:(int*)objectiveMins objectiveMaxes:(int*)objectiveMaxes;
+-(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
 -(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state;
--(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state objectiveMins:(int*)objectiveMins objectiveMaxes:(int*)objectiveMaxes;
+-(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
 -(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState;
 -(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
 -(bool) canCreateState:(char**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value;
@@ -89,6 +89,7 @@
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
 -(NSUInteger) hashValueFor:(char*)stateProperties;
 -(int) hashWidth;
++(short) bytesPerMagic;
 @end
 
 
