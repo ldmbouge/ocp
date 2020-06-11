@@ -880,6 +880,13 @@ enum ORGroupType {
 -(id<ORBitVar>) right;
 @end
 
+@protocol  ORBitDivideSigned <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @protocol  ORBitIf <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) trueIf;

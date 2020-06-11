@@ -813,8 +813,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    TRUInt* yLow = yrep._low;
    //[_y getUp:&yUp andLow:&yLow];
    // plenty of room for optimization here
-   for(ORUInt k=_la._val;k <= _ua._val;k++) {
-      if ([_I[k] value]) {
+   for(ORUInt k=_la._val;k <= _ua._val;k++) {  //for all possible indices in _z
+      if ([_I[k] value]) {                      //If k is still a possible index
          elmt = (CPBitVarI*)[_z at:k];
          ULRep ulr =  getULVarRep(elmt);
          //[elmt getUp:&eUp andLow:&eLow];
@@ -826,11 +826,11 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          yeldif = yLow[0]._val^eLow[0]._val;
          notcomp = bothfixed&yeldif;
          inXDom = [_x member:&k];
-         if (!inXDom||notcomp) {
-            [_I[k] setValue:0];
-            assignTRInt(&_cI,_cI._val - 1,_trail);
+         if (!inXDom||notcomp) {                //if k is not a possible value for _x (the index) and _z is incompatible with _y
+            [_I[k] setValue:0];                             //mark k as an incompatible index/value for _x
+            assignTRInt(&_cI,_cI._val - 1,_trail);          //decrement the count of possible indices
             if (_cI._val == 1) {
-               for(ORInt k= _la._val;k <= _ua._val;k++) {
+               for(ORInt k= _la._val;k <= _ua._val;k++) {   //if we're down to one possible index, find it and check
                   if ([_I[k] value]) {
                      [self doACEqual:k];
                      break;
@@ -838,8 +838,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
                }
                return;
             }
-            for (int b=0;b < _svy0._nb;b++) {
-               if (!DomBitFree(elmt->_dom, b)) {
+            for (int b=0;b < _svy0._nb;b++) {                              //update the number of remaining possible elements
+               if (!DomBitFree(elmt->_dom, b)) {                           //of _z that support each bit being 0/1
                   bool bit = DomBitGet(elmt->_dom, b);
                   if (bit) {
                      if (_svy1._entries[b]._val)
@@ -872,8 +872,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       }
    }
    
-   for (int b=0;b < _svx0._nb;b++) {
-      if ([[_x domain] isFree:b]) {
+   for (int b=0;b < _svx0._nb;b++) {                                                   //if a bit position lost all values that
+      if ([[_x domain] isFree:b]) {                                                    //support 0 or 1, assign the bit the opposite value
          if (!_svx0._entries[b]._val) { // support for 0 for free bit b is 0
             [[_x domain] setBit:b to:TRUE for:_x];
          }

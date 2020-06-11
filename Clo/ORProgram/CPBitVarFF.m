@@ -45,7 +45,7 @@
 
 -(ORDouble)varOrdering:(id<CPBitVar>)x
 {
-   float rv = - [x domsize];
+   ORDouble rv = - [x domsize];
    return rv;
 }
 -(ORDouble)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
@@ -58,5 +58,4 @@
    _cvs  = cv;
    NSLog(@"FirstFail ready...");
 }
-
 @end

@@ -42,7 +42,7 @@ void report_memory(void) {
 int main(int argc, const char * argv[])
 {
    char fname[256];
-   FILE* fp;
+   FILE* fp=NULL;
       
    clock_t start,finish;
    
@@ -59,11 +59,13 @@ int main(int argc, const char * argv[])
    }
    else{
       fprintf(stdout, "Enter data file path and filename:");
-      fscanf(stdin, "%s", fname);
-      fp = fopen(fname, "r");
-      if (fp==NULL) {
-         printf("Error opening file.\n");
-         return false;
+      while (fp==NULL) {
+         fscanf(stdin, "%s", fname);
+         fp = fopen(fname, "r");
+         if (fp==NULL) {
+            printf("Error opening file.\n");
+//            return false;
+         }
       }
    }
 

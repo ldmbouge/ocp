@@ -584,6 +584,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitDivide: visit method not defined"];
 }
+-(void) visitBitDivideSigned:(id<ORBitDivideSigned>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "BitDivideSigned: visit method not defined"];
+}
 -(void) visitBitIf:(id<ORBitIf>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitIf: visit method not defined"]; 

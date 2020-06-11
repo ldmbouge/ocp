@@ -43,6 +43,7 @@
 -(NSString*)description;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
+-(ORInt)level;
 -(void)letgo;
 -(id)grab;
 -(ORInt)sizeEstimate;
@@ -249,7 +250,10 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    return _nodeId;
 }
-
+-(ORInt) level
+{
+    return _level;
+}
 #if TARGET_OS_IPHONE
 +(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
 {
@@ -458,8 +462,8 @@ static __thread id checkPointCache = NULL;
    [_cmds pushList: _lastNode memory:[_mt trailSize]];     // add a list of constraint
    [_trail incMagic];
    _lastNode++;
-   //removed following line 8/18/15 GAJ
-//   assert([_cmds size] == [_trStack size]);
+
+   assert([_cmds size] == [_trStack size]);
    assignTRInt(&_level,_level._val+1,_trail);
    return _lastNode - 1;
 }

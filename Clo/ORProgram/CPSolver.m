@@ -1139,49 +1139,34 @@
    }];
    [self labelBitVarHeuristic:h withConcrete:cav];
 }
--(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<ORVarArray>)av
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
 {
-   id<CPBitVarArray> cav = [CPFactory bitVarArray:self range:av.range with:^id<CPBitVar>(ORInt i) {
-      CPBitVarI* sv =_gamma[av[i].getId];
-      assert([sv isKindOfClass:[CPBitVarI class]]);
-      return sv;
-   }];
    id<ORSelect> select = [ORFactory selectRandom: _engine
-                                           range: RANGE(_engine,[cav low],[cav up])
-                                        suchThat: ^ORBool(ORInt i) { return ![cav[i] bound]; }
+                                           range: RANGE(_engine,[av low],[av up])
+                                  suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
                                        orderedBy: ^ORDouble(ORInt i) {
-                                          ORDouble rv = [h varOrdering:cav[i]];
-                                          ORInt bl = [cav[i] bitLength];
-                                          return rv / (1 << bl);
-                                       }
-                                      randomized:NO
-                          ];
-   
+                                          ORDouble rv = [h varOrdering:av[i]];
+                                          return rv;
+                                       }];
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
    __block ORInt i ;
    do {
       id<CPBitVar> x = [last idValue];
-//      NSLog(@"at top: last = %p",x);
-      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
-         i = [select max];
-         if (i == MAXINT)
-            return;
-         x = cav[i];
-//         NSLog(@"-->Chose variable: %p=%@",x,x);
-         [last setIdValue:x];
-      } else {
-//        NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
-        }
-      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
+      i = [select max];
+      if (i == MAXINT)
+         return;
+      x =av[i];
+      [last setIdValue:x];
+      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
       [failStamp setValue:[self nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = [x lsFreeBit];
       ORInt up  = [x msFreeBit];
       ORInt bestIndex = - 1;
-      for(ORInt v = low;v <= up;v++) {
+      for(ORInt v = up;v >= low;v--) {
          if ([x isFree:v]) {
             ORFloat vValue = [h valOrdering:v forVar:x];
             if (vValue > bestValue) {
@@ -1197,26 +1182,14 @@
             }
          }
       }
-
       if (bestIndex != - 1)  {
-         [_search try: ^{
-//            NSLog(@"Setting bit %i of 0x%lx to 0 \n",bestIndex,(unsigned long)x);
-
-//            NSLog(@"Setting bit %i of %@ to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
-//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-//            NSLog(@"%@\n",[_engine variables]);
-            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
-            
-         } alt: ^{
-//            NSLog(@"Setting bit %i of 0x%lx to 1 \n",bestIndex,(unsigned long)x);
-//            NSLog(@"Setting bit %i of %@ to 1 at level %i\n",bestIndex,(unsigned long)x,[(CPLearningEngineI*)_engine getLevel]);
-//            NSLog(@"%@",[_engine variables]);
-            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
-         }];
+            [_search try: ^{
+               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+            } alt: ^{
+               [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+            }];
       }
    } while (true);
-
 }
 
 
@@ -1587,6 +1560,24 @@
 -(id<CPBitVarHeuristic>) createBitVarFF: (id<ORVarArray>) rvars
 {
    id<CPBitVarHeuristic> h = [[CPBitVarFirstFail alloc] initCPBitVarFirstFail:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPBitVarHeuristic>) createBitVarVSIDS
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarVSIDS alloc] initCPBitVarVSIDS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPBitVarHeuristic>) createBitVarVSIDS: (id<ORVarArray>) rvars
+{
+      id<CPBitVarArray> cav = [CPFactory bitVarArray:self range:rvars.range with:^id<CPBitVar>(ORInt i) {
+         CPBitVarI* sv =_gamma[rvars[i].getId];
+         assert([sv isKindOfClass:[CPBitVarI class]]);
+         return sv;
+      }];
+
+   id<CPBitVarHeuristic> h = [[CPBitVarVSIDS alloc] initCPBitVarVSIDS:self restricted:cav];
    [self addHeuristic:h];
    return h;
 }
@@ -2069,9 +2060,9 @@
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
-   //changed by gaj 08/07/15
-   ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
-//   ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
+   
+//   ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
+   ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
    if (status == ORFailure ){
       if (_engine.isPropagating)
          failNow();
@@ -2330,7 +2321,8 @@
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
-   ORStatus status = [_engine enforce:^ { [[var domain] setBit:i to:val for:var];}];
+//   ORStatus status = [_engine enforce:^ { [[var domain] setBit:i to:val for:var];}];
+   ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
    if (status == ORFailure) {
       if (_engine.isPropagating)
          failNow();
