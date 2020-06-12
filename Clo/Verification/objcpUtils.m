@@ -161,6 +161,7 @@
    id<ORDisabledVarArray> disVars = (id<ORDisabledVarArray>) _vars;
    for(ORInt i = [old low]; i <= [old up]; i++){
       ORInt p = [old parent:i];
+      if(![disVars contains:old[i]] || ![disVars contains:old[p]]) continue;
       if(p != i)
          [disVars unionSet:i and:p];
    }
