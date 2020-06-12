@@ -32,6 +32,8 @@ ExprSimplifier.m : $(LOC)ExprSimplifier.m
 $(LIBNAME): $(OFILES)
 	@echo "Linking..." $^
 	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+%.c: %.y
+%.c: %.l
 
 %.$(OBJEXT): %.c
 	@echo "compiling c" $(USER_DEFINES) $<
