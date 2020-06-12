@@ -1699,7 +1699,6 @@
       return [select max];
    } do:b];
    }];
-   [t release];
 }
 //float search
 -(void) maxCardinalitySearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b
