@@ -1066,7 +1066,7 @@
    cy = [_y getCenter];
    if(cx == cy){
       assignTRInt(&_active, NO, _trail);
-      [CPFactory floatSquare:cx eq:cz];
+      [self addConstraint: [CPFactory floatSquare:cx eq:cz]engine:[cz engine]];;
       return;
    }
    int gchanged,changed;
