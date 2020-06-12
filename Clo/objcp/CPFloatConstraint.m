@@ -520,19 +520,24 @@
 }
 -(void) propagate
 {
-   if(canFollow(_x,_y))
+   CPFloatVarI* cx;CPFloatVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
       failNow();
-   if(isIntersectingWith(_x,_y)){
-      if([_x min] >= [_y min]){
-         ORFloat nmin = fp_next_float([_x min]);
-         [_y updateMin:nmin];
+   if(canFollow(cx,cy))
+      failNow();
+   if(isIntersectingWith(cx,cy)){
+      if([cx min] >= [cy min]){
+         ORFloat nmin = fp_next_float([cx min]);
+         [cy updateMin:nmin];
       }
-      if([_x max] >= [_y max]){
-         ORFloat pmax = fp_previous_float([_y max]);
-         [_x updateMax:pmax];
+      if([cx max] >= [cy max]){
+         ORFloat pmax = fp_previous_float([cy max]);
+         [cx updateMax:pmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -572,19 +577,24 @@
 }
 -(void) propagate
 {
-   if(canPrecede(_x,_y))
+   CPFloatVarI* cx;CPFloatVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
       failNow();
-   if(isIntersectingWith(_x,_y)){
-      if([_x min] <= [_y min]){
-         ORFloat pmin = fp_next_float([_y min]);
-         [_x updateMin:pmin];
+   if(canPrecede(cx,cy))
+      failNow();
+   if(isIntersectingWith(cx,cy)){
+      if([cx min] <= [cy min]){
+         ORFloat pmin = fp_next_float([cy min]);
+         [cx updateMin:pmin];
       }
-      if([_x max] <= [_y max]){
-         ORFloat nmax = fp_previous_float([_x max]);
-         [_y updateMax:nmax];
+      if([cx max] <= [cy max]){
+         ORFloat nmax = fp_previous_float([cx max]);
+         [cy updateMax:nmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -625,19 +635,24 @@
 }
 -(void) propagate
 {
-   if(canFollow(_x,_y))
+   CPFloatVarI* cx;CPFloatVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
+      assignTRInt(&_active, NO, _trail);
+   if(canFollow(cx,cy))
       failNow();
-   if(isIntersectingWith(_x,_y)){
-      if([_x min] > [_y min]){
-         ORFloat nmin = [_x min];
-         [_y updateMin:nmin];
+   if(isIntersectingWith(cx,cy)){
+      if([cx min] > [cy min]){
+         ORFloat nmin = [cx min];
+         [cy updateMin:nmin];
       }
-      if([_x max] > [_y max]){
-         ORFloat pmax = [_y max];
-         [_x updateMax:pmax];
+      if([cx max] > [cy max]){
+         ORFloat pmax = [cy max];
+         [cx updateMax:pmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -676,19 +691,24 @@
 }
 -(void) propagate
 {
-   if(canPrecede(_x,_y))
+   CPFloatVarI* cx;CPFloatVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
+      assignTRInt(&_active, NO, _trail);
+   if(canPrecede(cx,cy))
       failNow();
-   if(isIntersectingWith(_x,_y)){
-      if([_x min] < [_y min]){
-         ORFloat pmin = [_y min];
-         [_x updateMin:pmin];
+   if(isIntersectingWith(cx,cy)){
+      if([cx min] < [cy min]){
+         ORFloat pmin = [cy min];
+         [cx updateMin:pmin];
       }
-      if([_x max] < [_y max]){
-         ORFloat nmax = [_x max];
-         [_y updateMax:nmax];
+      if([cx max] < [cy max]){
+         ORFloat nmax = [cx max];
+         [cy updateMax:nmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }

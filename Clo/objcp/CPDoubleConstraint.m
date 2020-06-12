@@ -507,19 +507,24 @@
 }
 -(void) propagate
 {
-   if(canFollowD(_x,_y))
+   CPDoubleVarI* cx;CPDoubleVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
       failNow();
-   if(isIntersectingWithD(_x,_y)){
-      if([_x min] >= [_y min]){
-         ORDouble nmin = fp_next_double([_x min]);
-         [_y updateMin:nmin];
+   if(canFollowD(cx,cy))
+      failNow();
+   if(isIntersectingWithD(cx,cy)){
+      if([cx min] >= [cy min]){
+         ORDouble nmin = fp_next_double([cx min]);
+         [cy updateMin:nmin];
       }
-      if([_x max] >= [_y max]){
-         ORDouble pmax = fp_previous_double([_y max]);
-         [_x updateMax:pmax];
+      if([cx max] >= [cy max]){
+         ORDouble pmax = fp_previous_double([cy max]);
+         [cx updateMax:pmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -559,19 +564,24 @@
 }
 -(void) propagate
 {
-   if(canPrecedeD(_x,_y))
+   CPDoubleVarI* cx;CPDoubleVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
       failNow();
-   if(isIntersectingWithD(_x,_y)){
-      if([_x min] <= [_y min]){
-         ORDouble pmin = fp_next_double([_y min]);
-         [_x updateMin:pmin];
+   if(canPrecedeD(cx,cy))
+      failNow();
+   if(isIntersectingWithD(cx,cy)){
+      if([cx min] <= [cy min]){
+         ORDouble pmin = fp_next_double([cy min]);
+         [cx updateMin:pmin];
       }
-      if([_x max] <= [_y max]){
-         ORDouble nmax = fp_previous_double([_x max]);
-         [_y updateMax:nmax];
+      if([cx max] <= [cy max]){
+         ORDouble nmax = fp_previous_double([cx max]);
+         [cy updateMax:nmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -612,19 +622,24 @@
 }
 -(void) propagate
 {
-   if(canFollowD(_x,_y))
+   CPDoubleVarI* cx;CPDoubleVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
+      assignTRInt(&_active, NO, _trail);
+   if(canFollowD(cx,cy))
       failNow();
-   if(isIntersectingWithD(_x,_y)){
-      if([_x min] > [_y min]){
-         ORDouble nmin = [_x min];
-         [_y updateMin:nmin];
+   if(isIntersectingWithD(cx,cy)){
+      if([cx min] > [cy min]){
+         ORDouble nmin = [cx min];
+         [cy updateMin:nmin];
       }
-      if([_x max] > [_y max]){
-         ORDouble pmax = [_y max];
-         [_x updateMax:pmax];
+      if([cx max] > [cy max]){
+         ORDouble pmax = [cy max];
+         [cx updateMax:pmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -663,19 +678,24 @@
 }
 -(void) propagate
 {
-   if(canPrecedeD(_x,_y))
+   CPDoubleVarI* cx;CPDoubleVarI* cy;
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy)
+      assignTRInt(&_active, NO, _trail);
+   if(canPrecedeD(cx,cy))
       failNow();
-   if(isIntersectingWithD(_x,_y)){
-      if([_x min] < [_y min]){
-         ORDouble pmin = [_y min];
-         [_x updateMin:pmin];
+   if(isIntersectingWithD(cx,cy)){
+      if([cx min] < [cy min]){
+         ORDouble pmin = [cy min];
+         [cx updateMin:pmin];
       }
-      if([_x max] < [_y max]){
-         ORDouble nmax = [_x max];
-         [_y updateMax:nmax];
+      if([cx max] < [cy max]){
+         ORDouble nmax = [cx max];
+         [cy updateMax:nmax];
       }
    }
-   if([_x bound] || [_y bound]){
+   if([cx bound] || [cy bound]){
       assignTRInt(&_active, NO, _trail);
       return;
    }
