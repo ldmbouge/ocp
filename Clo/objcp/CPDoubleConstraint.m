@@ -203,6 +203,8 @@
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   if(isPositiveOrNegativeD(_x) && isPositiveOrNegativeD(_y))
+   [_x setCenter:_y];
    if(_rewrite){
       [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:[[_x engine] isPosting]];
       [[_x engine] incNbRewrites:1];
@@ -304,6 +306,7 @@
    [self propagate];
    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   [_x setCenter:_y];
 }
 -(void) propagate
 {
@@ -1069,6 +1072,15 @@
 }
 -(void) propagate
 {
+   CPDoubleVarI* cz;CPDoubleVarI* cx;CPDoubleVarI* cy;
+   cz = [_z getCenter];
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy){
+      assignTRInt(&_active, NO, _trail);
+      [self addConstraint: [CPFactory doubleSquare:cz eq:cx] engine:[cz engine]];
+      return;
+   }
    int gchanged,changed;
    changed = gchanged = false;
    double_interval zTemp,yTemp,xTemp,z,x,y;
@@ -1290,7 +1302,6 @@
 @end
 
 @implementation CPDoubleReifyEqual{
-   ORBool _notified;
    ORBool _drewrite;
    ORBool _srewrite;
 }
@@ -1300,7 +1311,6 @@
    _b = b;
    _x = x;
    _y = y;
-   _notified = NO;
    _drewrite = r;
    _srewrite = s;
    return self;
@@ -1317,6 +1327,16 @@
          [_x whenChangeBoundsPropagate:self];
       if(![_y bound])
          [_y whenChangeBoundsPropagate:self];
+      [_b whenBindDo:^{
+//       if b is true and x and y don't have 0 in their domain equality is same than assignnation
+         if( minDom(_b) && isPositiveOrNegativeD(_x) && isPositiveOrNegativeD(_y)){
+            [_x setCenter:_y];
+            if((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting])){
+                 [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
+                 [[_x engine] incNbRewrites:1];
+            }
+         }
+      } onBehalf:self];
    }
 }
 
@@ -1332,11 +1352,6 @@
       } else {
          [_x updateInterval:[_y min] and:[_y max]];
          [_y updateInterval:[_x min] and:[_x max]];
-         if(!_notified && ((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting]))){
-            [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
-            [[_x engine] incNbRewrites:1];
-            _notified = YES;
-         }
       }
    }
    else if (maxDom(_b)==0) {     // b is FALSE
@@ -1469,6 +1484,13 @@
       [_x whenChangeBoundsPropagate:self];
    if(![_y bound])
       [_y whenChangeBoundsPropagate:self];
+   [_b whenBindDo:^{
+      if( minDom(_b)){
+         [_x setCenter:_y];
+         [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
+         [[_x engine] incNbRewrites:1];
+      }
+   } onBehalf:self];
 }
 -(void)propagate
 {

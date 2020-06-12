@@ -147,6 +147,7 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
    _value = 0.0;
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
+   assignTRId(&_center, NULL, [_engine trail]);
    return self;
 }
 -(void)dealloc
@@ -170,6 +171,22 @@ static id<OROSet> collectConstraints(CPDoubleEventNetwork* net,id<OROSet> rv)
 {
    id<OROSet> rv = collectConstraints(&_net,[ORFactory objectSet]);
    return rv;
+}
+-(CPDoubleVarI*) getCenter
+{
+   CPDoubleVarI* center = (_center == NULL) ? self : _center ;
+   if (center != self) {
+      center = [_center getCenter];
+      assignTRId(&_center, center, [_engine trail]);
+   }
+   return center;
+}
+-(void) setCenter:(CPDoubleVarI*) v
+{
+   CPDoubleVarI* xc = [v getCenter];
+   CPDoubleVarI* xs = [self getCenter];
+   if(xc != xs)
+      assignTRId(&_center, v, [_engine trail]);
 }
 -(ORInt)degree
 {

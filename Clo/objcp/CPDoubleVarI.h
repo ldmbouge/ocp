@@ -75,6 +75,7 @@
     BOOL                     _hasValue;
     ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
     CPMultiCast*             _recv;
+   TRId                     _center;
 @public
    id<CPDoubleDom>            _dom;
 }
@@ -84,6 +85,8 @@
 -(id<OROSet>) constraints;
 -(ORDouble) doubleValue;
 -(ORLDouble) domwidth;
+-(CPDoubleVarI*) getCenter;
+-(void) setCenter:(CPDoubleVarI*) v;
 @end
 
 @interface CPDoubleViewOnIntVarI : ORObject<CPDoubleVar,CPDoubleVarExtendedItf,CPIntVarNotifier> {

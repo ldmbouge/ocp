@@ -73,6 +73,7 @@
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    CPMultiCast*             _recv;
+   TRId                     _center;
 @public
    id<CPFloatDom>            _dom;
 }
@@ -83,6 +84,8 @@
 -(ORFloat) floatValue;
 -(ORLDouble) domwidth;
 -(id<CPDom>) domain;
+-(CPFloatVarI*) getCenter;
+-(void) setCenter:(CPFloatVarI*) v;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
