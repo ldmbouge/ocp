@@ -91,10 +91,15 @@
 {
    [_controller setup];
 }
+-(ORUInt) depth
+{
+   [_controller depth];
+}
 -(void) cleanup
 {
    [_controller cleanup];
 }
+
 -(void)       trust
 {
    if (_controller)

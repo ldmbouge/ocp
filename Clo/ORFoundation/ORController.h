@@ -50,6 +50,8 @@
 -(void)       succeeds;
 -(void)       abort;
 -(void)       trust;
+-(ORUInt)      depth;
+
 
 -(void)       startTry;
 -(void)       startTryLeft;
@@ -84,6 +86,7 @@
 -(void)       succeeds;
 -(void)       abort;
 -(void)       trust;
+-(ORUInt)      depth;
 
 -(void)       startTry;
 -(void)       startTryLeft;

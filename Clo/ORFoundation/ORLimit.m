@@ -425,8 +425,8 @@
 }
 -(void)trust
 {
-   assignTRInt(&_depth,_depth._val + 1,_trail);
-   [_mDepth setValue:max(_mDepth.intValue, _depth._val)];
+//   assignTRInt(&_depth,_depth._val + 1,_trail);
+//   [_mDepth setValue:max(_mDepth.intValue, _depth._val)];
    [super trust];
 }
 -(ORUInt)maxDepth

@@ -78,6 +78,7 @@ static enum ValHeuristic valIndex[] =
 @synthesize printModel;
 @synthesize noSearch;
 @synthesize _restrictRequired;
+@synthesize stats;
 
 
 +(void) defaultRunner:(ORCmdLineArgs*) args model:(id<ORModel>) model program:(id<CPProgram>) cp restrict:(id<ORVarArray>) vars
@@ -193,6 +194,7 @@ static enum ValHeuristic valIndex[] =
    printSolution = NO;
    printModel = NO;
    noSearch = NO;
+   stats = [[[NSMutableDictionary alloc] init] autorelease];
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "?", 1) == 0 || strncmp(argv[k], "-help", 5) == 0  ){
          printf("-var-order HEURISTIC : replace HEURISTIC by one of following FF, ABS, IBS, WDeg, DDeg, SDeg, maxWidth, minWidth, maxCard, minCard, maxDens, minDens, minMagn, maxMagn, maxDegree, minDegree, maxOcc, minOcc, maxAbs, minAbs, maxCan, minCan, absWDens, densWAbs, ref, lexico, absDens\n");
@@ -344,6 +346,10 @@ static enum ValHeuristic valIndex[] =
    }
    return self;
 }
+-(void) registerStat:(NSString*) label value:(id) v
+{
+   [stats setValue:v forKey:label];
+}
 -(NSString*)heuristicName
 {
    if(specialSearch) return @"special";
@@ -379,6 +385,22 @@ static enum ValHeuristic valIndex[] =
       default:
          return @selector(float3BSplit:call:withVars:);
    }
+}
++(const char*) headerFromDict:(NSDictionary*) dict
+{
+   NSMutableString* res = [NSMutableString string];
+   [dict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+      [res appendFormat:@",%@",key];
+   }];
+   return [res UTF8String];
+}
++(const char*) valueFromDict:(NSDictionary*) dict
+{
+   NSMutableString* res = [NSMutableString string];
+   [dict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+      [res appendFormat:@",%@",obj];
+   }];
+   return [res UTF8String];
 }
 -(void)measureTime:(void(^)(void))block
 {
@@ -422,9 +444,11 @@ static enum ValHeuristic valIndex[] =
    }
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
+   const char* header = [ORCmdLineArgs headerFromDict:stats];
+   const char* values = [ORCmdLineArgs valueFromDict:stats];
    NSString* str = mallocReport();
-   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent,#SRewrite,#DRewrite,#SMerged,#DMerged,#VAR,#CST,#varRestrict\n");
-   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d,%d,%d,%d,%d\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
+   printf("FMT:heur,valHeur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak,kb,kb%%, unique?,#uniquesubcut,split3Bpercent,#SRewrite,#DRewrite,#SMerged,#DMerged,#VAR,#CST,#varRestrict%s\n",header);
+   printf("OUT:%s,%s,%d,%d,%d,%d,%f,%d,%d,%d,%lld,%lld,%s,%s,%f,%s,%d,%s,%f,%d,%d,%d,%d,%d,%d,%d%s\n",[[self heuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           [[self valueHeuristicName] cStringUsingEncoding:NSASCIIStringEncoding],
           randomized,
           nbThreads,
@@ -449,7 +473,8 @@ static enum ValHeuristic valIndex[] =
           _nbDMerged,
           (ORInt)(run.nbVariables),
           (ORInt)(run.nbConstraints),
-          (ORInt)(run.restrictVar));
+          (ORInt)(run.restrictVar),
+          values);
 }
 -(void) updateNotes: (id<ORAnnotation>) notes model:(id<ORModel>) model
 {

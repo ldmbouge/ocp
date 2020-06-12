@@ -191,6 +191,7 @@ static id<OBJCPGateway> objcpgw;
    _types = [[NSMutableDictionary alloc] initWithCapacity:10];
    _options = opt;
    [ConstantWrapper setObjcpGateway:(id<OBJCPGateway>)self];
+   _trueVar = [ORFactory intVar:_model value:1];
    return self;
 }
 -(id<ORModel>) getModel
@@ -407,8 +408,9 @@ static id<OBJCPGateway> objcpgw;
 
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr
 {
-   id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
-   [_toadd addObject:[(id<ORExpr>)expr eq:trueVar]];
+//   id<ORIntVar> trueVar = [ORFactory intVar:_model value:1];
+//   [_toadd addObject:[(id<ORExpr>)expr eq:trueVar]];
+   [_toadd addObject:[(id<ORExpr>)expr eq:_trueVar]];
 }
 -(void) addConstraints
 {
@@ -448,6 +450,8 @@ static id<OBJCPGateway> objcpgw;
       __block ORBool isSat;
       [_options measure:^struct ORResult(){
          id<CPProgram> cp = [lh getProgram];
+         [_options registerStat:@"#Cvars" value:[NSNumber numberWithInt:[[cp engine] nbVars]]];
+         [_options registerStat:@"#Ccst" value:[NSNumber numberWithInt:[[cp engine] nbConstraints]]];
          ORBool hascycle = NO;
          if([_options cycleDetection]){
             hascycle = [_options isCycle:_model];

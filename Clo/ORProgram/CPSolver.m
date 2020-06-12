@@ -1691,10 +1691,15 @@
                                  orderedBy: c
                                  tiebreak:tb
                           ];
+   
+   ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
+   [_search applyController:t in:^(){
    [self genericSearch:x selection:(ORSelectorResult(^)(void))^{
       ONLY_DEBUG(_level,2,abs = [self computeAbsorptionsQuantities:x]);
       return [select max];
    } do:b];
+   }];
+   [t release];
 }
 //float search
 -(void) maxCardinalitySearch: (id<ORDisabledVarArray>) x do:(void(^)(ORUInt,id<ORDisabledVarArray>))b

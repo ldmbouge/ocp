@@ -156,7 +156,14 @@
 - (void)launchHeuristic
 {
    //just to force vars to be recompute.
+   id<ORDisabledVarArray> old = (id<ORDisabledVarArray>) _vars;
    _vars = [self getVariables];
+   id<ORDisabledVarArray> disVars = (id<ORDisabledVarArray>) _vars;
+   for(ORInt i = [old low]; i <= [old up]; i++){
+      ORInt p = [old parent:i];
+      if(p != i)
+         [disVars unionSet:i and:p];
+   }
    printf("--------------------\n");
    printf("|vars|=%lu |restrict|=%d |full-r|=%lu\n",(unsigned long)[[_model FPVars] count],_declSize,(unsigned long)[_vars count]);
    for (id<ORVar> v in _vars)

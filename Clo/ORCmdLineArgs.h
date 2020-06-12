@@ -127,10 +127,12 @@ struct ORResult {
 @property (nonatomic,readonly) ORBool printSolution;
 @property (nonatomic,readonly) ORBool printModel;
 @property (nonatomic,readonly) ORBool noSearch;
+@property (nonatomic,readonly) NSMutableDictionary* stats;
 
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
+-(void) registerStat:(NSString*) label value:(id) v;
 -(void)measure:(struct ORResult(^)(void))block;
 -(void)measureTime:(void(^)(void))block;
 -(ORBool) checkAllbound:(id<ORModel>) model with:(id<CPProgram>) cp;

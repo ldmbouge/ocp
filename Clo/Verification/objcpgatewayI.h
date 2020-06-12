@@ -17,6 +17,7 @@
    NSMutableDictionary* _instances;
    ORCmdLineArgs* _options;
    logic _logic;
+   id<ORIntVar> _trueVar;
 }
 -(OBJCPGatewayI*) initExplicitOBJCPGateway:(ORCmdLineArgs*)opt;
 -(id<ORModel>) getModel;
