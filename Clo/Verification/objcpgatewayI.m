@@ -662,8 +662,8 @@ static id<OBJCPGateway> objcpgw;
 -(objcp_expr) objcp_mk_not:(objcp_context)ctx expr:(id<ORExpr>)b0
 {
    if([b0.class conformsToProtocol:@protocol(ORIntVar)]){
-      if([(id<ORIntVar>)b0 low]) return [ORFactory intVar:_model value:1];
-      if(![(id<ORIntVar>)b0 up]) return [ORFactory intVar:_model value:0];
+      if([(id<ORIntVar>)b0 low]) return [ORFactory intVar:_model value:0];
+      if(![(id<ORIntVar>)b0 up]) return [ORFactory intVar:_model value:1];
    }
    return [b0 neg];
 }
