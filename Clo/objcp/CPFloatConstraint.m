@@ -1329,22 +1329,26 @@
 }
 -(void) post
 {
-   [self propagate];
-   if(![_b bound])
-      [_b whenBindPropagate:self];
-   if(![_x bound])
-      [_x whenChangeBoundsPropagate:self];
-   if(![_y bound])
-      [_y whenChangeBoundsPropagate:self];
-   [_b whenBindDo:^{
-        if( minDom(_b)){
-           [_x setCenter:_y];
-           if((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting])){
-              [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
-                         [[_x engine] incNbRewrites:1];
+   if(getId(_x) == getId(_y)){
+      [_b bind:1];
+   }else{
+      [self propagate];
+      if(![_b bound])
+         [_b whenBindPropagate:self];
+      if(![_x bound])
+         [_x whenChangeBoundsPropagate:self];
+      if(![_y bound])
+         [_y whenChangeBoundsPropagate:self];
+      [_b whenBindDo:^{
+           if( minDom(_b)){
+              [_x setCenter:_y];
+              if((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting])){
+                 [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
+                            [[_x engine] incNbRewrites:1];
+              }
            }
-        }
-     } onBehalf:self];
+        } onBehalf:self];
+   }
 }
 -(void)propagate
 {
@@ -1484,21 +1488,25 @@
 }
 -(void) post
 {
-   [self propagate];
-   if(![_b bound])
-      [_b whenBindPropagate:self];
-   if(![_x bound])
-      [_x whenChangeBoundsPropagate:self];
-   if(![_y bound])
-      [_y whenChangeBoundsPropagate:self];
-    [_b whenBindDo:^{
-   //       if b is true and x and y don't have 0 in their domain equality is same than assignnation
-       if( minDom(_b) && isPositiveOrNegative(_x) && isPositiveOrNegative(_y)){
-         [_x setCenter:_y];
-         [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
-         [[_x engine] incNbRewrites:1];
-       }
-      } onBehalf:self];
+   if(getId(_x) == getId(_y)){
+      [_b bind:1];
+   }else{
+      [self propagate];
+      if(![_b bound])
+         [_b whenBindPropagate:self];
+      if(![_x bound])
+         [_x whenChangeBoundsPropagate:self];
+      if(![_y bound])
+         [_y whenChangeBoundsPropagate:self];
+       [_b whenBindDo:^{
+      //       if b is true and x and y don't have 0 in their domain equality is same than assignnation
+          if( minDom(_b) && isPositiveOrNegative(_x) && isPositiveOrNegative(_y)){
+            [_x setCenter:_y];
+            [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
+            [[_x engine] incNbRewrites:1];
+          }
+         } onBehalf:self];
+   }
 }
 -(void)propagate
 {

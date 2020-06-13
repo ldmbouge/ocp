@@ -1497,20 +1497,24 @@
 }
 -(void) post
 {
-   [self propagate];
-   if(![_b bound])
-      [_b whenBindPropagate:self];
-   if(![_x bound])
-      [_x whenChangeBoundsPropagate:self];
-   if(![_y bound])
-      [_y whenChangeBoundsPropagate:self];
-   [_b whenBindDo:^{
-      if( minDom(_b)){
-         [_x setCenter:_y];
-         [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
-         [[_x engine] incNbRewrites:1];
-      }
-   } onBehalf:self];
+   if(getId(_x) == getId(_y)){
+      [_b bind:1];
+   }else{
+      [self propagate];
+      if(![_b bound])
+         [_b whenBindPropagate:self];
+      if(![_x bound])
+         [_x whenChangeBoundsPropagate:self];
+      if(![_y bound])
+         [_y whenChangeBoundsPropagate:self];
+      [_b whenBindDo:^{
+         if( minDom(_b)){
+            [_x setCenter:_y];
+            [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
+            [[_x engine] incNbRewrites:1];
+         }
+      } onBehalf:self];
+   }
 }
 -(void)propagate
 {
