@@ -996,6 +996,13 @@
       [CPFactory floatTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self floatGEQ:res to:x[2]];
 }
++(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
+{
+   id<CPConstraint> o = nil;
+   o = [[CPFloatTernaryMult alloc] init:z equals:x mult:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z annotation:(id<ORAnnotation>) notes
 {
    id<CPConstraint> o = nil;
@@ -1431,6 +1438,13 @@
    else
       [CPFactory doubleTernaryAdd:tmp equals:x[0] plus:x[1] annotation:notes];
    return [self doubleGEQ:res to:x[2]];
+}
++(id<CPConstraint>) doubleMult: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z
+{
+   id<CPConstraint> o = nil;
+   o = [[CPDoubleTernaryMult alloc] init:z equals:x mult:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<CPConstraint>) doubleMult: (id<CPDoubleVar>)x by:(id<CPDoubleVar>)y equal:(id<CPDoubleVar>)z annotation:(id<ORAnnotation>) notes
 {

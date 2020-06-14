@@ -228,7 +228,7 @@
       [_y updateInterval:min and:max];
       if(_x.min == _x.max && _y.min == _y.max) //to deal with -0,0
          assignTRInt(&_active, NO, _trail);
-         
+      
    }
 }
 -(NSSet*)allVars
@@ -306,15 +306,14 @@
 -(void) post
 {
    [self propagate];
-    if(![_x bound])  [_x whenChangeBoundsPropagate:self];
-    if(![_y bound])  [_y whenChangeBoundsPropagate:self];
+   if(![_x bound])  [_x whenChangeBoundsPropagate:self];
+   if(![_y bound])  [_y whenChangeBoundsPropagate:self];
    [_x setCenter:_y];
 }
 -(void) propagate
 {
-   if(isDisjointWith(_x,_y)){
+   if(isDisjointWith(_x,_y))
       failNow();
-   }
    updateFloatInterval(&_xi,_x);
    updateFloatInterval(&_yi,_y);
    intersectionInterval inter;
@@ -403,7 +402,20 @@
    if(![_x bound])[_x whenBindPropagate:self];
    if(![_y bound])[_y whenBindPropagate:self];
 }
+-(bool) verifyEq
+{
+   CPFloatVarI* cy = [_y getCenter];
+   CPFloatVarI* cx = [_x getCenter];
+   return(cy == cx);
+}
 -(void) propagate
+{
+   if([self verifyEq])
+      failNow();
+   else
+      [self propagateI];
+}
+-(void) propagateI
 {
    if ([_x bound]) {
       if([_y bound]){
@@ -518,30 +530,36 @@
    if(![_y bound]) [_y whenChangeBoundsPropagate:self];
    if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
+-(bool) verifyEq
+{
+   CPFloatVarI* cy = [_y getCenter];
+   CPFloatVarI* cx = [_x getCenter];
+   return(cy == cx);
+}
 -(void) propagate
 {
-   CPFloatVarI* cx;CPFloatVarI* cy;
-   cx = [_x getCenter];
-   cy = [_y getCenter];
-   if(cx == cy)
+   if([self verifyEq])
       failNow();
-   if(canFollow(cx,cy))
+   else
+      [self propagateI];
+}
+-(void) propagateI
+{
+   if(canFollow(_x,_y))
       failNow();
-   if(isIntersectingWith(cx,cy)){
-      if([cx min] >= [cy min]){
-         ORFloat nmin = fp_next_float([cx min]);
-         [cy updateMin:nmin];
+   if(isIntersectingWith(_x,_y)){
+      if([_x min] >= [_y min]){
+         ORFloat nmin = fp_next_float([_x min]);
+         [_y updateMin:nmin];
       }
-      if([cx max] >= [cy max]){
-         ORFloat pmax = fp_previous_float([cy max]);
-         [cx updateMax:pmax];
+      if([_x max] >= [_y max]){
+         ORFloat pmax = fp_previous_float([_y max]);
+         [_x updateMax:pmax];
       }
    }
-   if([cx bound] || [cy bound]){
+   if([_x bound] || [_y bound])
       assignTRInt(&_active, NO, _trail);
       return;
-   }
-   
 }
 -(NSSet*)allVars
 {
@@ -575,29 +593,35 @@
    if(![_y bound]) [_y whenChangeBoundsPropagate:self];
    if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
+-(bool) verifyEq
+{
+   CPFloatVarI* cy = [_y getCenter];
+   CPFloatVarI* cx = [_x getCenter];
+   return(cy == cx);
+}
 -(void) propagate
 {
-   CPFloatVarI* cx;CPFloatVarI* cy;
-   cx = [_x getCenter];
-   cy = [_y getCenter];
-   if(cx == cy)
+   if([self verifyEq])
       failNow();
-   if(canPrecede(cx,cy))
+   else
+      [self propagateI];
+}
+-(void) propagateI
+{
+   if(canPrecede(_x,_y))
       failNow();
-   if(isIntersectingWith(cx,cy)){
-      if([cx min] <= [cy min]){
-         ORFloat pmin = fp_next_float([cy min]);
-         [cx updateMin:pmin];
+   if(isIntersectingWith(_x,_y)){
+      if([_x min] <= [_y min]){
+         ORFloat pmin = fp_next_float([_y min]);
+         [_x updateMin:pmin];
       }
-      if([cx max] <= [cy max]){
-         ORFloat nmax = fp_previous_float([cx max]);
-         [cy updateMax:nmax];
+      if([_x max] <= [_y max]){
+         ORFloat nmax = fp_previous_float([_x max]);
+         [_y updateMax:nmax];
       }
    }
-   if([cx bound] || [cy bound]){
+   if([_x bound] || [_y bound])
       assignTRInt(&_active, NO, _trail);
-      return;
-   }
 }
 -(NSSet*)allVars
 {
@@ -633,29 +657,39 @@
    if(![_y bound]) [_y whenChangeBoundsPropagate:self];
    if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
+-(bool) rewritten
+{
+   CPFloatVarI* cy = [_y getCenter];
+   CPFloatVarI* cx = [_x getCenter];
+   if(cy == cx){
+      [self addConstraint:[CPFactory floatEqual:_x to:_y] engine:[_x engine]];
+      return true;
+   }
+   return false;
+}
 -(void) propagate
 {
-   CPFloatVarI* cx;CPFloatVarI* cy;
-   cx = [_x getCenter];
-   cy = [_y getCenter];
-   if(cx == cy)
+   if([self rewritten])
       assignTRInt(&_active, NO, _trail);
-   if(canFollow(cx,cy))
+   else
+      [self propagateI];
+}
+-(void) propagateI
+{
+   if(canFollow(_x,_y))
       failNow();
-   if(isIntersectingWith(cx,cy)){
-      if([cx min] > [cy min]){
-         ORFloat nmin = [cx min];
-         [cy updateMin:nmin];
+   if(isIntersectingWith(_x,_y)){
+      if([_x min] > [_y min]){
+         ORFloat nmin = [_x min];
+         [_y updateMin:nmin];
       }
-      if([cx max] > [cy max]){
-         ORFloat pmax = [cy max];
-         [cx updateMax:pmax];
+      if([_x max] > [_y max]){
+         ORFloat pmax = [_y max];
+         [_x updateMax:pmax];
       }
    }
-   if([cx bound] || [cy bound]){
+   if([_x bound] || [_y bound])
       assignTRInt(&_active, NO, _trail);
-      return;
-   }
 }
 -(NSSet*)allVars
 {
@@ -689,29 +723,39 @@
    if(![_y bound]) [_y whenChangeBoundsPropagate:self];
    if(![_x bound]) [_x whenChangeBoundsPropagate:self];
 }
+-(bool) rewritten
+{
+   CPFloatVarI* cy = [_y getCenter];
+   CPFloatVarI* cx = [_x getCenter];
+   if(cy == cx){
+      [self addConstraint:[CPFactory floatEqual:_x to:_y] engine:[_x engine]];
+      return true;
+   }
+   return false;
+}
 -(void) propagate
 {
-   CPFloatVarI* cx;CPFloatVarI* cy;
-   cx = [_x getCenter];
-   cy = [_y getCenter];
-   if(cx == cy)
+   if([self rewritten])
       assignTRInt(&_active, NO, _trail);
-   if(canPrecede(cx,cy))
+   else
+      [self propagateI];
+}
+-(void) propagateI
+{
+   if(canPrecede(_x,_y))
       failNow();
-   if(isIntersectingWith(cx,cy)){
-      if([cx min] < [cy min]){
-         ORFloat pmin = [cy min];
-         [cx updateMin:pmin];
+   if(isIntersectingWith(_x,_y)){
+      if([_x min] < [_y min]){
+         ORFloat pmin = [_y min];
+         [_x updateMin:pmin];
       }
-      if([cx max] < [cy max]){
-         ORFloat nmax = [cx max];
-         [cy updateMax:nmax];
+      if([_x max] < [_y max]){
+         ORFloat nmax = [_x max];
+         [_y updateMax:nmax];
       }
    }
-   if([cx bound] || [cy bound]){
+   if([_x bound] || [_y bound])
       assignTRInt(&_active, NO, _trail);
-      return;
-   }
 }
 -(NSSet*)allVars
 {
@@ -779,16 +823,36 @@
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
    
 }
-//hzi : _Temps variables are useless ? inter.result ? x is already changed ?
+-(bool) rewritten
+{
+   CPFloatVarI* cz;CPFloatVarI* cx;CPFloatVarI* cy;
+   cz = [_z getCenter];
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy){
+      id<CPFloatVar> c = [CPFactory floatVar:[cz engine] value:2.0f];
+      [self addConstraint: [CPFactory floatMult:cx by:c equal:cz] engine:[cz engine]];
+      return true;
+   }
+   return false;
+}
 -(void) propagate
+{
+   if([self rewritten])
+      assignTRInt(&_active, NO, _trail);
+   else
+      [self propagateI];
+}
+//hzi : _Temps variables are useless ? inter.result ? x is already changed ?
+-(void) propagateI
 {
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionInterval inter;
-   z = makeFloatInterval([_z min],[_z max]);
-   x = makeFloatInterval([_x min],[_x max]);
-   y = makeFloatInterval([_y min],[_y max]);
+   z = makeFloatInterval(_z.min,_z.max);
+   x = makeFloatInterval(_x.min,_x.max);
+   y = makeFloatInterval(_y.min,_y.max);
    do {
       changed = false;
       zTemp = z;
@@ -828,17 +892,17 @@
       if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
    }
-   fesetround(FE_TONEAREST);
+   fesetround(_rounding);
 }
 -(void) propagateFixPoint
 {
    if([self nbUVars]){
       if(absorb(_x,_y)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorb(_y,_x) ){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
@@ -942,15 +1006,34 @@
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
    
 }
+-(bool) rewritten
+{
+   CPFloatVarI* cz;CPFloatVarI* cx;CPFloatVarI* cy;
+   cz = [_z getCenter];
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy){
+      [self addConstraint: [CPFactory floatAssignC:cz to:(_rounding != FE_DOWNWARD ? +0.f : -0.f)] engine:[cz engine]];
+      return true;
+   }
+   return false;
+}
 -(void) propagate
+{
+   if([self rewritten])
+      assignTRInt(&_active, NO, _trail);
+   else
+      [self propagateI];
+}
+-(void) propagateI
 {
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionInterval inter;
-   z = makeFloatInterval([_z min],[_z max]);
-   x = makeFloatInterval([_x min],[_x max]);
-   y = makeFloatInterval([_y min],[_y max]);
+   z = makeFloatInterval(_z.min,_z.max);
+   x = makeFloatInterval(_x.min,_x.max);
+   y = makeFloatInterval(_y.min,_y.max);
    do {
       changed = false;
       zTemp = z;
@@ -990,17 +1073,17 @@
       if(![self nbUVars])
          assignTRInt(&_active, NO, _trail);
    }
-      fesetround(FE_TONEAREST);
+   fesetround(_rounding);
 }
 -(void) propagateFixPoint
 {
    if([self nbUVars]){
       if(absorb(_x,_y)){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_x rewrite:YES] engine:[_x engine]];
       }else if(absorb(_y,_x) ){
-//         NSLog(@"Absorb rewriting %@",self);
+         //         NSLog(@"Absorb rewriting %@",self);
          assignTRInt(&_active, NO, _trail);
          [self addConstraint:[CPFactory floatEqual:_z to:_y rewrite:YES] engine:[_x engine]];
       }
@@ -1078,41 +1161,51 @@
    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
 }
--(void) propagate
+-(bool) rewritten
 {
    CPFloatVarI* cz;CPFloatVarI* cx;CPFloatVarI* cy;
    cz = [_z getCenter];
    cx = [_x getCenter];
    cy = [_y getCenter];
    if(cx == cy){
-      assignTRInt(&_active, NO, _trail);
-      [self addConstraint: [CPFactory floatSquare:cx eq:cz]engine:[cz engine]];;
-      return;
+      [self addConstraint: [CPFactory floatSquare:cx eq:cz] engine:[cz engine]];
+      return true;
    }
+   return false;
+}
+-(void) propagate
+{
+   if([self rewritten])
+      assignTRInt(&_active, NO, _trail);
+   else
+      [self propagateI];
+}
+-(void) propagateI
+{
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionInterval inter;
-   z = makeFloatInterval([cz min],[cz max]);
-   x = makeFloatInterval([cx min],[cx max]);
-   y = makeFloatInterval([cy min],[cy max]);
+   z = makeFloatInterval(_z.min,_z.max);
+   x = makeFloatInterval(_x.min,_x.max);
+   y = makeFloatInterval(_y.min,_y.max);
    do {
       changed = false;
       zTemp = z;
       fpi_multf(_precision, _rounding, &zTemp, &x, &y);
-      inter = intersection(cz, z, zTemp,_percent);
+      inter = intersection(_z, z, zTemp,_percent);
       z = inter.result;
       changed |= inter.changed;
       
       xTemp = x;
       fpi_multxf_inv(_precision, _rounding, &xTemp, &z, &y);
-      inter = intersection(cx, x , xTemp,_percent);
+      inter = intersection(_x, x , xTemp,_percent);
       x = inter.result;
       changed |= inter.changed;
       
       yTemp = y;
       fpi_multyf_inv(_precision, _rounding, &yTemp, &z, &x);
-      inter = intersection(cy, y, yTemp,_percent);
+      inter = intersection(_y, y, yTemp,_percent);
       y = inter.result;
       changed |= inter.changed;
       gchanged |= changed;
@@ -1121,10 +1214,10 @@
       [_x updateInterval:x.inf and:x.sup];
       [_y updateInterval:y.inf and:y.sup];
       [_z updateInterval:z.inf and:z.sup];
-      if([cx bound] && [cy bound] && [cz bound])
+      if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
-   fesetround(FE_TONEAREST);
+   fesetround(_rounding);
 }
 -(NSSet*)allVars
 {
@@ -1171,15 +1264,34 @@
    if (![_y bound]) [_y whenChangeBoundsPropagate:self];
    if (![_z bound]) [_z whenChangeBoundsPropagate:self];
 }
+-(bool) rewritten
+{
+   CPFloatVarI* cz;CPFloatVarI* cx;CPFloatVarI* cy;
+   cz = [_z getCenter];
+   cx = [_x getCenter];
+   cy = [_y getCenter];
+   if(cx == cy){
+      [self addConstraint: [CPFactory floatAssignC:cz to:1.f] engine:[cz engine]];
+      return true;
+   }
+   return false;
+}
 -(void) propagate
+{
+   if([self rewritten])
+      assignTRInt(&_active, NO, _trail);
+   else
+      [self propagateI];
+}
+-(void) propagateI
 {
    int gchanged,changed;
    changed = gchanged = false;
    float_interval zTemp,yTemp,xTemp,z,x,y;
    intersectionInterval inter;
-   z = makeFloatInterval([_z min],[_z max]);
-   x = makeFloatInterval([_x min],[_x max]);
-   y = makeFloatInterval([_y min],[_y max]);
+   z = makeFloatInterval(_z.min,_z.max);
+   x = makeFloatInterval(_x.min,_x.max);
+   y = makeFloatInterval(_y.min,_y.max);
    do {
       changed = false;
       zTemp = z;
@@ -1208,7 +1320,7 @@
       if([_x bound] && [_y bound] && [_z bound])
          assignTRInt(&_active, NO, _trail);
    }
-   fesetround(FE_TONEAREST);
+   fesetround(_rounding);
 }
 -(NSSet*)allVars
 {
@@ -1280,13 +1392,14 @@
       }
    }
    else {                        // b is unknown
+      if([_x getCenter] == [_y getCenter])
+         [_b bind:NO];
       if ([_x bound] && [_y bound]){
          [_b bind: [_x min] != [_y min]];
          assignTRInt(&_active, NO, _trail);
       } else if ([_x max] < [_y min] || [_y max] < [_x min]){
          [_b bind:YES];
          assignTRInt(&_active, NO, _trail);
-         
       }
    }
 }
@@ -1340,14 +1453,14 @@
       if(![_y bound])
          [_y whenChangeBoundsPropagate:self];
       [_b whenBindDo:^{
-           if( minDom(_b)){
-              [_x setCenter:_y];
-              if((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting])){
-                 [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
-                            [[_x engine] incNbRewrites:1];
-              }
-           }
-        } onBehalf:self];
+         if( minDom(_b)){
+            [_x setCenter:_y];
+            if((_drewrite && ![[_x engine] isPosting]) || (_srewrite && [[_x engine] isPosting])){
+               [[[_x engine] mergedVar] notifyWith:_x andId:_y  isStatic:[[_x engine] isPosting]];
+               [[_x engine] incNbRewrites:1];
+            }
+         }
+      } onBehalf:self];
    }
 }
 -(void)propagate
@@ -1370,6 +1483,8 @@
       else if ([_y bound] || [_y min] == [_y max])
          [self addConstraint: [CPFactory floatNEqualc:_y to:[_x min]] engine:[_b engine]];
    }else {                        // b is unknown
+      if([_x getCenter] == [_y getCenter])
+         [_b bind:YES];
       if (([_x bound] && [_y bound]) || ([_x min] == [_x max] &&  [_y min] == [_y max]))
          [_b bind: [_x min] == [_y min]];
       else if ([_x max] < [_y min] || [_y max] < [_x min])
@@ -1498,14 +1613,14 @@
          [_x whenChangeBoundsPropagate:self];
       if(![_y bound])
          [_y whenChangeBoundsPropagate:self];
-       [_b whenBindDo:^{
-      //       if b is true and x and y don't have 0 in their domain equality is same than assignnation
-          if( minDom(_b) && isPositiveOrNegative(_x) && isPositiveOrNegative(_y)){
+      [_b whenBindDo:^{
+         //       if b is true and x and y don't have 0 in their domain equality is same than assignnation
+         if( minDom(_b) && isPositiveOrNegative(_x) && isPositiveOrNegative(_y)){
             [_x setCenter:_y];
             [[[_x engine] mergedVar] notifyWith:_x andId:_y isStatic:YES];
             [[_x engine] incNbRewrites:1];
-          }
-         } onBehalf:self];
+         }
+      } onBehalf:self];
    }
 }
 -(void)propagate
@@ -1520,15 +1635,15 @@
                if (is_eqf([_x min],[_y min]))
                   failNow();
             }else{
-                  if(is_eqf([_x min],[_y min])){
-                     [_y updateMin:fp_next_float([_y min])];
-                     assignTRInt(&_active, NO, _trail);
-                  }
-                  if(is_eqf([_x min],[_y max])) {
-                     [_y updateMax:fp_previous_float([_y max])];
-                     assignTRInt(&_active, NO, _trail);
-                  }
+               if(is_eqf([_x min],[_y min])){
+                  [_y updateMin:fp_next_float([_y min])];
+                  assignTRInt(&_active, NO, _trail);
                }
+               if(is_eqf([_x min],[_y max])) {
+                  [_y updateMax:fp_previous_float([_y max])];
+                  assignTRInt(&_active, NO, _trail);
+               }
+            }
          }else  if([_y bound]){
             if(is_eqf([_x min],[_y min])){
                [_x updateMin:fp_next_float([_x min])];
@@ -1541,6 +1656,8 @@
          }
       }
    }else{
+      if([_x getCenter] == [_y getCenter])
+         [_b bind:YES];
       if ([_x bound] && [_y bound])
          [_b bind:is_eqf([_x min], [_y min])];
    }
@@ -1609,6 +1726,8 @@
          }
       }
    } else {
+      if([_x getCenter] == [_y getCenter])
+         [_b bind:NO];
       if ([_y max] < [_x min]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
@@ -1667,6 +1786,8 @@
          [_x updateMin:fp_previous_float([_y min])];
       }
    } else {
+      if([_x getCenter] == [_y getCenter])
+         [_b bind:YES];
       if ([_y max] <= [_x min]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
@@ -1725,6 +1846,8 @@
          [_y updateMax:fp_previous_float([_x max])];
       }
    } else {
+      if([_x getCenter] == [_y getCenter])
+         [_b bind:YES];
       if ([_x max] <= [_y min]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
@@ -1793,6 +1916,8 @@
          [_x updateMin:[_y min]];
       }
    } else {
+      if([_x getCenter] == [_y getCenter])
+         [_b bind:NO];
       if ([_x max] < [_y min]) {
          assignTRInt(&_active, NO, _trail);
          bindDom(_b,YES);
@@ -1850,7 +1975,7 @@
       [_b setBindTrigger: ^ {
          if ([_b min] == true)
             [_x bind:_c];
-          else
+         else
             [self addConstraint: [CPFactory floatNEqualc:_x to:_c] engine:[_b engine]];     // Rewrite as x!=c  (addInternal can throw)
       } onBehalf:self];
       [_x whenChangeBoundsDo: ^ {
@@ -2249,7 +2374,7 @@
          assignTRInt(&_active, NO, _trail);
       }
    }else if([_res bound]){
-       if([_x member:-[_res value]]){
+      if([_x member:-[_res value]]){
          if([_x member:[_res value]])
             [_x updateInterval:-[_res value] and:[_res value]];
          else
