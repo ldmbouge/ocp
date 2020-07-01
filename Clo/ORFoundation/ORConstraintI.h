@@ -76,42 +76,10 @@
 -(MDDRecommendationStyle) recommendationStyle;
 @end
 
-/*
-@interface ORCustomAltMDD : ORConstraintI<ORCustomAltMDD>
--(ORCustomAltMDD*)initORCustomAltMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize stateClass:(Class)stateClass;
--(id<ORIntVarArray>) vars;
--(ORInt) relaxationSize;
--(Class) stateClass;
-@end
-@interface ORCustomMDD : ORConstraintI<ORCustomMDD>
--(ORCustomMDD*)initORCustomMDD:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize classState:(id)classState;
--(id<ORIntVarArray>) vars;
--(ORInt) relaxationSize;
--(Class) stateClass;
--(id) classState;
--(bool) usingClassState;
-@end
-
-@interface ORCustomMDDWithObjective : ORConstraintI<ORCustomMDD>
--(ORCustomMDD*)initORCustomMDDWithObjective:(id<ORIntVarArray>)x relaxed:(bool)relaxed size:(ORInt)relaxationSize reduced:(bool)reduced objective:(id<ORIntVar>)objectiveValue maximize:(bool)maximize stateClass:(Class)stateClass;
--(id<ORIntVarArray>) vars;
--(id<ORIntVar>) objective;
--(ORInt) relaxationSize;
--(bool) reduced;
--(bool) maximize;
--(Class) stateClass;
-@end*/
-
-
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
--(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
--(ORMDDSpecs*)initORMDDSpecsUsingClosures:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x numForwardProperties:(int)numTopDownProperties numReverseProperties:(int)numBottomUpProperties numCombinedProperties:(int)numCombinedProperties;
 -(id<ORIntVarArray>) vars;
 @end
-/*@interface ORAltMDDSpecs : ORConstraintI<ORAltMDDSpecs>
--(ORAltMDDSpecs*)initORAltMDDSpecs:(id<ORIntVarArray>)x;
--(id<ORIntVarArray>) vars;
-@end*/
 
 
 @interface ORGroupI : ORObject<ORGroup>

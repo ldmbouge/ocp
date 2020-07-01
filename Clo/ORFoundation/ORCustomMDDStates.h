@@ -5,18 +5,15 @@
 @protected
     char* _state;
     ORUInt* _magic;
-    size_t _numBytes;
-    TRInt _hashValue;
+    int _numBytes;
     bool _tempState;
     id _node;
 }
--(id) initState:(char*)stateValues numBytes:(size_t)numBytes;
--(id) initState:(char*)stateValues numBytes:(size_t)numBytes hashWidth:(int)width trail:(id<ORTrail>)trail;
+-(id) initState:(char*)stateValues numBytes:(int)numBytes;
+-(id) initState:(char*)stateValues numBytes:(int)numBytes trail:(id<ORTrail>)trail;
 -(char*) stateValues;
+-(void) replaceUnusedStateWith:(char*)newState trail:(id<ORTrail>)trail;
 -(void) replaceStateWith:(char*)newState trail:(id<ORTrail>)trail;
--(int) calcHash:(int)width;
--(void) setHash:(int)width trail:(id<ORTrail>)trail;
--(void) recalcHash:(int)width trail:(id<ORTrail>)trail;
 -(void) setNode:(id)node;
 -(id) node;
 @end
@@ -24,90 +21,69 @@
 
 @interface MDDStateSpecification : NSObject {
 @protected
-    MDDStateDescriptor* _topDownStateDescriptor;
-    MDDStateDescriptor* _bottomUpStateDescriptor;
+    MDDStateDescriptor* _forwardStateDescriptor;
+    MDDStateDescriptor* _reverseStateDescriptor;
+    MDDStateDescriptor* _combinedStateDescriptor;
     DDArcExistsClosure _arcExists;
+    DDStateExistsClosure _stateExists;
     id<ORTrail> _trail;
-    bool _relaxed;
     id<ORIntVarArray> _vars;
     
-    bool** _topDownPropertiesUsedPerVariable;
-    bool** _bottomUpPropertiesUsedPerVariable;
+    bool** _forwardPropertiesUsedPerVariable;
+    bool** _reversePropertiesUsedPerVariable;
+    
+    bool** _forwardPropertiesUsedPerSpec;
     
     int* _numArcExistsForVariable;
     
-    int _numTopDownPropertiesAdded, _numBottomUpPropertiesAdded;
+    int _numForwardPropertiesAdded, _numReversePropertiesAdded, _numCombinedPropertiesAdded;
     int _numSpecsAdded;
-    size_t _topDownNumBytes, _bottomUpNumBytes;
+    int _numForwardBytes, _numReverseBytes, _numCombinedBytes;
     
     int _minVar;
+    int _maxVar;
     int _numVars;
+    int _minDom;
+    int _maxDom;
+    int _domSize;
     int _hashWidth;
+    int _mergeCacheHashWidth;
+    int _transitionCacheHashWidth;
     
     bool _dualDirectional;
-    bool singleState;
 }
--(id) initMDDStateSpecification:(int)numSpecs numTopDownProperties:(int)topDownNumProperties numBottomUpProperties:(int)bottomUpNumProperties relaxed:(bool)relaxed vars:(id<ORIntVarArray>)vars;
--(id) initMDDStateSpecification:(id<ORMDDSpecs>)MDDSpec relaxed:(bool)relaxed;
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
--(void) addMDDSpec:(MDDPropertyDescriptor**)stateProperties arcExists:(DDArcExistsClosure)arcExists transitionFunctions:(DDArcTransitionClosure*)transitionFunctions relaxationFunctions:(DDMergeClosure*)relaxationFunctions differentialFunctions:(DDOldMergeClosure*)differentialFunctions numProperties:(int)numProperties variables:(id<ORIntVarArray>)vars mapping:(int*)mapping;
+-(id) initMDDStateSpecification:(int)numSpecs numForwardProperties:(int)numForwardProperties numReverseProperties:(int)numReverseProperties numCombinedProperties:(int)numCombinedProperties vars:(id<ORIntVarArray>)vars;
 -(void) addMDDSpec:(id<ORMDDSpecs>)MDDSpec mapping:(int*)mapping;
 -(bool) dualDirectional;
 -(MDDStateValues*) createRootState;
 -(MDDStateValues*) createSinkState;
--(char*) computeTopDownStateFromProperties:(char*)parentState assigningVariable:(int)variable withValue:(int)value;
--(char*) computeBottomUpStateFromProperties:(char*)childState assigningVariable:(int)variable withValue:(int)value;
--(char*) computeBottomUpStateFromProperties:(char*)childTopDown bottomUp:(char*)childBottomUp assigningVariable:(int)variable withValues:(ORIntSetI*)valueSet;
--(void) mergeState:(MDDStateValues*)left with:(MDDStateValues*)right;
--(void) mergeTempStateProperties:(char*)leftState with:(char*)rightState;
--(void) mergeTempBottomUpStateProperties:(char*)leftState with:(char*)rightState;
--(char*) batchMergeForStates:(char**)parentStates values:(int**)edgesUsedByParent numEdgesPerParent:(int*)numEdgesPerParent variable:(int)variableIndex isMerged:(bool*)isMerged numParents:(int)numParents totalEdges:(int)totalEdges;
--(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues;
--(bool) canChooseValue:(int)value forVariable:(int)variable withState:(MDDStateValues*)stateValues objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
--(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state;
--(bool) canChooseValue:(int)value forVariable:(int)variable withStateProperties:(char*)state objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
--(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState;
+-(char*) cachedComputeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValue:(int)value;
+-(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValue:(int)value;
+-(char*) computeReverseStateFromProperties:(char*)reverse combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom;
+-(char*) computeCombinedStateFromProperties:(char*)forward reverse:(char*)reverse;
+-(void) cachedMergeStateProperties:(char*)leftState with:(char*)rightState;
+-(void) mergeStateProperties:(char*)leftState with:(char*)rightState;
+-(void) cachedMergeReverseStateProperties:(char*)leftState with:(char*)rightState;
+-(void) mergeReverseStateProperties:(char*)leftState with:(char*)rightState;
 -(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
--(bool) canCreateState:(char**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value;
--(bool) canCreateState:(char**)newState fromParent:(MDDStateValues*)parentState assigningVariable:(int)variable toValue:(int)value objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
--(long) slack:(char*)stateProperties;
--(int) stateDifferential:(MDDStateValues*)left with:(MDDStateValues*)right;
--(int) numTopDownProperties;
--(int) numBottomUpProperties;
--(size_t) numTopDownBytes;
--(size_t) numBottomUpBytes;
+-(bool) canCreateState:(char**)newState forward:(char*)forward combined:(char*)combined assigningVariable:(int)variable toValue:(int)value objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
+-(bool) stateExistsWithForward:(char*)forward reverse:(char*)reverse combined:(char*)combined objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes;
+-(int) nodePriority:(char*)forward reverse:(char*)reverse combined:(char*)combined;
+-(int) nodePriority:(char*)forward reverse:(char*)reverse combined:(char*)combined forConstraint:(int)constraintIndex;
+-(int) arcPriority:(char*)parentForward parentCombined:(char*)parentCombined childReverse:(char*)childReverse childCombined:(char*)childCombined arcValue:(int)value;
+-(int) numForwardBytes;
+-(int) numReverseBytes;
+-(int) numCombinedBytes;
 -(int) numSpecs;
 -(id<ORIntVarArray>) vars;
--(MDDStateDescriptor*) stateDescriptor;
--(bool*) topDownPropertiesUsed:(int)variableIndex;
--(bool*) bottomUpPropertiesUsed:(int)variableIndex;
--(DDArcTransitionClosure*) topDownTransitionFunctions;
--(DDArcSetTransitionClosure*) bottomUpTransitionFunctions;
 -(id<ORIntVar>*) fixpointVars;
 -(DDFixpointBoundClosure*) fixpointMins;
 -(DDFixpointBoundClosure*) fixpointMaxes;
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
--(NSUInteger) hashValueFor:(char*)stateProperties;
 -(int) hashWidth;
+-(int) hashValueForState:(char*)state constraint:(int)constraint;
+-(bool) state:(char*)state equivalentTo:(char*)other forConstraint:(int)constraint;
+-(bool) approximateEquivalenceUsedFor:(int)constraint;
+-(int) equivalenceClassFor:(char*)forward reverse:(char*)reverse constraint:(int)constraint;
 +(short) bytesPerMagic;
 @end
-
-
-/*
-@interface CustomState : NSObject {
-@protected
-    int _variableIndex;
-}
--(id) initClassState;
--(id) initRootState:(CustomState*)classState variableIndex:(int)variableIndex;
--(id) initRootState:(int)variableIndex;
--(id) initState:(CustomState*)parentNodeState assigningVariable:(int)variableIndex withValue:(int)edgeValue;
--(id) initState:(CustomState*)parentNodeState variableIndex:(int)variableIndex;
--(int) variableIndex;
--(void) mergeStateWith:(CustomState*)other;
--(void) replaceStateWith:(CustomState*)other;
--(bool) canChooseValue:(int)value forVariable:(int)variable;
--(int) stateDifferential:(CustomState*)other;
--(bool) equivalentTo:(CustomState*)other;
-@end
-*/

@@ -162,32 +162,11 @@
    [self concretizeCP:mddm program:cpprogram annotation:ncpy];
    [ncpy release];
 }
-+(void) createCPAltMDDProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
-{
-   //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
-   id<ORModel> fm = [model flatten: notes];   // models are AUTORELEASE
-   id<ORModel> mddm = [fm altmddify: notes];
-   [self concretizeCP:mddm program:cpprogram annotation:notes];
-   //Copy of notes wasn't working properly. Look into this
-}
 
 +(id<CPProgram>) createCPMDDProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
    __block id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPMDDProgram: model program: cpprogram annotation:notes];
-   id<ORSolutionPool> sp = [cpprogram solutionPool];
-   [cpprogram onSolution:^{
-      id<ORSolution> s = [cpprogram captureSolution];
-      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
-      [sp addSolution: s];
-      [s release];
-   }];
-   return cpprogram;
-}
-+(id<CPProgram>) createCPAltMDDProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
-{
-   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
-   [ORFactory createCPAltMDDProgram: model program: cpprogram annotation:notes];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];

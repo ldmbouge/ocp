@@ -286,8 +286,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(id)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
-+(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
-+(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties;
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numForwardProperties:(int)numForwardProperties numReverseProperties:(int)numReverseProperties numCombinedProperties:(int)numCombinedProperties;
 +(id<MDDStateDescriptor>) MDDStateDescriptor;
 
 

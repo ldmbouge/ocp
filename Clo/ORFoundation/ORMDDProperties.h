@@ -12,12 +12,12 @@
 @interface MDDPropertyDescriptor : NSObject {
 @protected
     short _id;
-    size_t _byteOffset;
+    int _byteOffset;
 }
 -(id) initMDDPropertyDescriptor:(short)pId;
--(size_t) storageSize;
--(size_t) setOffset:(size_t)bitOffset;
--(size_t) byteOffset;
+-(int) storageSize;
+-(int) setOffset:(int)bitOffset;
+-(int) byteOffset;
 -(void) initializeState:(char*)state;
 -(int) get:(char*)state;
 -(void) set:(int)value forState:(char*)state;
@@ -60,7 +60,7 @@
 @protected
     int _currentPropertyIndex;
     int _numProperties;
-    size_t _currentOffset;
+    int _currentOffset;
 }
 -(id) initMDDStateDescriptor;
 -(id) initMDDStateDescriptor:(int)numProperties;
@@ -70,7 +70,7 @@
 -(MDDPropertyDescriptor**) properties;
 -(int) getProperty:(int)propertyIndex forState:(char*)state;
 -(void) setProperty:(int)propertyIndex to:(int)value forState:(char*)state;
--(size_t) byteOffsetForProperty:(int)propertyIndex;
--(size_t) numBytes;
+-(int) byteOffsetForProperty:(int)propertyIndex;
+-(int) numBytes;
 -(int) numProperties;
 @end

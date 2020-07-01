@@ -416,49 +416,6 @@ enum ORGroupType {
 -(ORInt) low;
 -(ORInt) up;
 @end
-/*
-@protocol ORExactMDDAllDifferent <ORConstraint>
--(id<ORIntVarArray>) vars;
--(bool) reduced;
-@end
-
-@protocol ORRestrictedMDDAllDifferent <ORConstraint>
--(id<ORIntVarArray>) vars;
--(ORInt)restrictionSize;
--(bool) reduced;
-@end
-
-@protocol ORRelaxedMDDAllDifferent <ORConstraint>
--(id<ORIntVarArray>) vars;
--(ORInt) relaxationSize;
--(bool) reduced;
-@end
-
-@protocol ORExactMDDMISP <ORConstraint>
--(id<ORIntVarArray>) vars;
--(id<ORIntVar>) objective;
--(bool) reduced;
--(bool**) adjacencyMatrix;
--(id<ORIntArray>) weights;
-@end
-
-@protocol ORRestrictedMDDMISP <ORConstraint>
--(id<ORIntVarArray>) vars;
--(id<ORIntVar>) objective;
--(ORInt) restrictionSize;
--(bool) reduced;
--(bool**) adjacencyMatrix;
--(id<ORIntArray>) weights;
-@end
-
-@protocol ORRelaxedMDDMISP <ORConstraint>
--(id<ORIntVarArray>) vars;
--(id<ORIntVar>) objective;
--(ORInt) relaxationSize;
--(bool) reduced;
--(bool**) adjacencyMatrix;
--(id<ORIntArray>) weights;
-@end*/
 
 @protocol ORMDDStateSpecification <ORConstraint>
 -(id<ORIntVarArray>) vars;
@@ -466,28 +423,6 @@ enum ORGroupType {
 -(id) specs;
 -(int) recommendationStyle;
 @end
-
-/*@protocol ORCustomAltMDD <ORConstraint>
--(id<ORIntVarArray>) vars;
--(bool) relaxed;
--(ORInt) relaxationSize;
--(Class) stateClass;
-@end
-@protocol ORCustomMDD <ORConstraint>
--(id<ORIntVarArray>) vars;
--(bool) relaxed;
--(ORInt) relaxationSize;
--(id) classState;
-@end
-@protocol ORCustomMDDWithObjective <ORConstraint>
--(id<ORIntVarArray>) vars;
--(id<ORIntVar>) objective;
--(ORInt) relaxationSize;
--(bool) relaxed;
--(bool) reduced;
--(bool) maximize;
--(Class) stateClass;
-@end*/
 
 @protocol MDDStateDescriptor <NSObject>
 -(id) initMDDStateDescriptor;
@@ -497,40 +432,46 @@ enum ORGroupType {
 -(void) initializeState:(char*)state;
 -(int) getProperty:(int)propertyIndex forState:(char*)state;
 -(void) setProperty:(int)propertyIndex to:(int)value forState:(char*)state;
--(size_t) byteOffsetForProperty:(int)propertyIndex;
--(size_t) numBytes;
+-(int) byteOffsetForProperty:(int)propertyIndex;
+-(int) numBytes;
 @end
 
 @protocol ORMDDSpecs <ORConstraint>
--(void) initializeClosures;
 -(bool) dualDirectional;
 -(id<ORIntVarArray>) vars;
--(void)addStateInt:(int)lookup withDefaultValue:(ORInt)value topDown:(bool)topDown;
--(void)addStateCounter:(int)lookup withDefaultValue:(ORInt)value topDown:(bool)topDown;
--(void)addStateBool:(ORInt)lookup withDefaultValue:(bool)value topDown:(bool)topDown;
--(void)addStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size topDown:(bool)topDown;
--(void)setStateDescriptor:(id<MDDStateDescriptor>)stateDesc;
--(id<MDDStateDescriptor>)stateDescriptor;
--(bool)closuresDefined;
--(id<ORExpr>)arcExists;
+-(void)addForwardStateInt:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addForwardStateCounter:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addForwardStateBool:(ORInt)lookup withDefaultValue:(bool)value;
+-(void)addForwardStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size;
+-(void)addReverseStateInt:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addReverseStateCounter:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addReverseStateBool:(ORInt)lookup withDefaultValue:(bool)value;
+-(void)addReverseStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size;
+-(void)addCombinedStateInt:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addCombinedStateCounter:(int)lookup withDefaultValue:(ORInt)value;
+-(void)addCombinedStateBool:(ORInt)lookup withDefaultValue:(bool)value;
+-(void)addCombinedStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size;
+-(id*)forwardStateProperties;
+-(id*)reverseStateProperties;
+-(id*)combinedStateProperties;
 -(DDArcExistsClosure)arcExistsClosure;
--(id<ORExpr>*)transitionFunctions;
--(DDArcTransitionClosure*)topDownTransitionClosures;
--(DDArcSetTransitionClosure*)bottomUpTransitionClosures;
--(id<ORExpr>*)relaxationFunctions;
--(DDMergeClosure*)topDownRelaxationClosures;
--(DDMergeClosure*)bottomUpRelaxationClosures;
--(id<ORExpr>*)differentialFunctions;
--(DDOldMergeClosure*)differentialClosures;
+-(DDStateExistsClosure)stateExistsClosure;
+-(DDArcTransitionClosure*)forwardTransitionClosures;
+-(DDArcSetTransitionClosure*)reverseTransitionClosures;
+-(DDMergeClosure*)forwardRelaxationClosures;
+-(DDMergeClosure*)reverseRelaxationClosures;
+-(DDUpdatePropertyClosure*)updatePropertyClosures;
 -(id<ORIntVar>)fixpointVar;
 -(DDFixpointBoundClosure)fixpointMin;
 -(DDFixpointBoundClosure)fixpointMax;
--(DDSlackClosure)slackClosure;
--(int)numTopDownProperties;
--(int)numBottomUpProperties;
--(void)setArcExistsFunction:(id<ORExpr>)arcExists;
--(void)setArcExistsClosure:(DDArcExistsClosure)arcExists;
--(void)setSlackClosure:(DDSlackClosure)slack;
+-(DDNodePriorityClosure)nodePriorityClosure;
+-(DDArcPriorityClosure)arcPriorityClosure;
+-(DDStateEquivalenceClassClosure)approximateEquivalenceClosure;
+-(int)numForwardProperties;
+-(int)numReverseProperties;
+-(int)numCombinedProperties;
+
+
 -(void)setAsAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void)setAsDualDirectionalAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void) setAsSequenceConstraint:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
@@ -540,65 +481,7 @@ enum ORGroupType {
 -(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights lower:(int)lb upper:(int)ub;
 -(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights equal:(id<ORIntVar>)equal;
 -(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weightMatrix:(int**)weights equal:(id<ORIntVar>)equal;
--(void)addTransitionFunction:(id<ORExpr>)transitionFunction toStateValue:(int)lookup;
--(void)addTransitionClosure:(DDArcTransitionClosure)transitionFunction toStateValue:(int)lookup;
--(void)addRelaxationFunction:(id<ORExpr>)relaxationFunction toStateValue:(int)lookup;
--(void)addRelaxationClosure:(DDMergeClosure)relaxationFunction toStateValue:(int)lookup;
--(void)addStateDifferentialFunction:(id<ORExpr>)differentialFunction toStateValue:(int)lookup;
--(void)addStateDifferentialClosure:(DDMergeClosure)differentialFunction toStateValue:(int)lookup;
--(id*)topDownStateProperties;
--(id*)bottomUpStateProperties;
--(void)addStates:(id*)states size:(int)size;
--(void)addStatesWithClosures:(int)size;
 @end
-
-/*@protocol ORAltMDDSpecs <ORConstraint>
--(id<ORIntVarArray>) vars;
--(void) setAsMaximize;
--(void) setAsMinimize;
--(void) setTopDownInformationAsSet;
--(void) setBottomUpInformationAsSet;
--(void) setTopDownInformationAsInt;
--(void) setBottomUpInformationAsInt;
--(void) setTopDownInformationAsArrayWithSize:(int)size andDefaultValue:(int)value;
--(void) setBottomUpInformationAsArrayWithSize:(int)size andDefaultValue:(int)value;
--(void) setTopDownInformationAsMinMaxArrayWithSize:(int)size andDefaultValue:(int)value;
--(void) setBottomUpInformationAsMinMaxArrayWithSize:(int)size andDefaultValue:(int)value;
--(void) addToTopDownInfoSet:(ORInt)value;
--(void) addToBottomUpInfoSet:(ORInt)value;
--(void) setEdgeDeletionCondition:(id<ORExpr>)deleteWhen;
--(void) setTopDownInfoEdgeAddition:(id<ORExpr>)topDownInfoEdge;
--(void) setBottomUpInfoEdgeAddition:(id<ORExpr>)bottomUpInfoEdge;
--(void) setTopDownInfoEdgeAdditionMin:(id<ORExpr>)minTopDownInfoEdge max:(id<ORExpr>)maxTopDownInfoEdge;
--(void) setBottomUpInfoEdgeAdditionMin:(id<ORExpr>)minBottomUpInfoEdge max:(id<ORExpr>)maxBottomUpInfoEdge;
--(void) setInformationMergeToUnion:(id<ORTracker>)t;
--(void) setInformationMergeToMax:(id<ORTracker>)t;
--(void) setInformationMergeToMin:(id<ORTracker>)t;
--(void) setInformationMergeToMinMaxSet:(id<ORTracker>)t;
--(void) setInformationMergeToMinAndMaxArrays:(id<ORTracker>)t;
--(bool) isMinMaxTopDownInfo;
--(bool) isMinMaxBottomUpInfo;
--(id) topDownInfo;
--(id) minTopDownInfo;
--(id) maxTopDownInfo;
--(id) bottomUpInfo;
--(id) minBottomUpInfo;
--(id) maxBottomUpInfo;
--(id<ORExpr>) edgeDeletionCondition;
--(id<ORExpr>) topDownInfoEdgeAddition;
--(id<ORExpr>) bottomUpInfoEdgeAddition;
--(id<ORExpr>) minTopDownInfoEdgeAddition;
--(id<ORExpr>) maxTopDownInfoEdgeAddition;
--(id<ORExpr>) minBottomUpInfoEdgeAddition;
--(id<ORExpr>) maxBottomUpInfoEdgeAddition;
--(id<ORExpr>) topDownInfoMerge;
--(id<ORExpr>) bottomUpInfoMerge;
--(id<ORExpr>) minTopDownInfoMerge;
--(id<ORExpr>) maxTopDownInfoMerge;
--(id<ORExpr>) minBottomUpInfoMerge;
--(id<ORExpr>) maxBottomUpInfoMerge;
--(bool) objective;
-@end*/
 
 @protocol ORRegular<ORConstraint>
 -(id<ORIntVarArray>) array;

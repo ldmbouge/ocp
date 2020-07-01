@@ -10,20 +10,23 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/objcp.h>
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <CPUKernel/CPGroup.h>
+#import <objcp/CPIntVarI.h>
+#import <objcp/CPMDDNode.h>
+#import <objcp/CPMDDHashTables.h>
+#import <objcp/CPMDDQueue.h>
 
-@class NodeHashTable;
 @interface CPIRMDD : CPCoreConstraint {
 @protected
     id<CPEngine> _engine;
     
     //State/Spec info
     MDDStateSpecification* _spec;
-    size_t _numTopDownBytes;
-    size_t _numBottomUpBytes;
+    int _numForwardBytes;
+    int _numReverseBytes;
+    int _numCombinedBytes;
     int _numSpecs;
     int _hashWidth;
     bool _dualDirectional;
@@ -33,6 +36,8 @@
     NSUInteger _numVariables;
     int _minVariableIndex;
     int _nextVariable;
+    TRInt _firstMergedLayer;
+    TRInt _lastMergedLayer;
 
     //Layer info
     ORTRIdArrayI* __strong *_layers;
@@ -44,19 +49,33 @@
     //Domain info
     int* _minDomainsByLayer;
     int* _maxDomainsByLayer;
-    TRInt** _variableBitDomains;
+    TRInt** _layerBitDomains;
     TRInt* _layerBound;
     
     //Propagation info
     bool _inPost;
-    CPMDDQueue* _topDownQueue;
-    CPMDDQueue* _bottomUpQueue;
+    CPMDDQueue* _forwardQueue;
+    CPMDDQueue* _reverseQueue;
+    
+    //Splitting queues
+    ORPQueue* _candidateSplits;
+    ORPQueue* _splittableNodes;
 
     //Heuristic info
     int _relaxationSize;
     MDDRecommendationStyle _recommendationStyle;
     int _maxNumPasses;
     int _maxRebootDistance;
+    
+    //Split heuristic info
+    bool _splitAllLayersBeforeFiltering;
+    bool _splitByConstraint;
+    bool _fullySplitNodeFirst;
+    bool _rankNodesForSplitting;
+    bool _useDefaultNodeRank;
+    bool _rankArcsForSplitting;
+    bool _useDefaultArcRank;
+    bool _approximateEquivalenceClasses;
     
     //Objective info
     TRInt* _fixpointMinValues;
@@ -103,28 +122,35 @@ struct LayerInfo {
 -(void) updateVariableDomains;
 
 //Passes
--(void) bottomUpPass;
--(void) topDownPassWithSplit;
--(void) topDownPassWithoutSplit;
+-(void) reversePass;
+-(void) forwardPassOnlySplit;
+-(void) forwardPassWithSplit;
+-(void) forwardPassWithoutSplit;
 -(void) enqueueRelativesOf:(MDDNode*)node;
 -(void) enqueueChildrenOf:(MDDNode*)node;
 -(void) enqueueParentsOf:(MDDNode*)node;
 -(void) enqueueNode:(MDDNode*)node;
--(bool) refreshBottomUpStateFor:(MDDNode*)node;
--(bool) refreshTopDownStateFor:(MDDNode*)node;
--(bool) refreshStateFor:(MDDNode*)node;
--(char*) computeBottomUpStateFromChildrenOf:(MDDNode*)node;
--(int) fillNodeArcVarsFromChildrenOfNode:(MDDNode*)node childNodes:(MDDNode**)childNodes arcValuesByChild:(ORIntSetI**)arcValuesByChild;
--(char*) computeBottomUpStateFromChildren:(MDDNode**)children arcValueSets:(ORIntSetI**)arcValuesByChild numChildren:(int)numChildNodes;
--(char*) computeStateFromChild:(MDDNode*)child arcValues:(ORIntSetI*)arcValues;
+-(bool) refreshReverseStateFor:(MDDNode*)node;
+-(bool) refreshForwardStateFor:(MDDNode*)node;
+-(bool) updateCombinedStateFor:(MDDNode*)node;
+-(char*) computeForwardStateFromArcs:(NSArray*)arcs isMerged:(bool*)merged;
+-(char*) computeForwardStateFromParentsOf:(MDDNode*)node isMerged:(bool*)merged;
+-(char*) computeReverseStateFromChildrenOf:(MDDNode*)node;
+-(int) fillNodeArcVarsFromChildrenOfNode:(MDDNode*)node childNodes:(MDDNode**)childNodes arcValuesByChild:(bool**)arcValuesByChild;
+-(char*) computeReverseStateFromChildren:(MDDNode**)children arcValueSets:(bool**)arcValuesByChild numChildren:(int)numChildNodes minDom:(int)minDom maxDom:(int)maxDom;
+-(char*) computeStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues minDom:(int)minDom maxDom:(int)maxDom;
 -(bool) stateExistsFor:(MDDNode*)node;
 -(void) updateChildrenOf:(MDDNode*)node stateChanged:(bool)stateChanged;
 -(void) splitLayer:(int)layer;
--(void) splitNode:(MDDNode*)node layerInfo:(struct LayerInfo)layerInfo;
--(void) splitArc:(MDDArc*)parentArc oldChildArcs:(MDDArc**)oldChildArcs layerInfo:(struct LayerInfo)layerInfo addToHashTable:(NodeHashTable*)nodeHashTable oldBottomUp:(char*)bottomUp;
+-(bool) noMergedNodesOnLayer:(int)layerIndex;
+-(void) emptySplittingQueues;
+-(void) splitLayer:(struct LayerInfo)layerInfo forConstraint:(int)c;
+-(void) splitRankedLayer:(struct LayerInfo)layerInfo forConstraint:(int)c;
+-(void) splitNode:(MDDNode *)node layerInfo:(struct LayerInfo)layerInfo forConstraint:(int)c;
+-(MDDNode*) splitArc:(char*)arcState layerInfo:(struct LayerInfo)layerInfo;
+-(void) splitCandidatesOnLayer:(struct LayerInfo)layerInfo;
 -(bool) checkChildrenOfNewNode:(MDDNode*)node withOldChildren:(MDDArc**)oldChildArcs layerInfo:(struct LayerInfo)layerInfo;
 -(bool) checkChildOfNewNode:(MDDNode*)node oldArc:(MDDArc*)oldChildArc alreadyFoundChildren:(bool)hasChildren layerInfo:(struct LayerInfo)layerInfo;
--(void) connectParents:(ORTRIdArrayI*)parentArcs ofNode:(MDDNode*)node toEquivalentStatesIn:(NodeHashTable*)nodeHashTable;
 
 
 //Node removal
@@ -133,6 +159,7 @@ struct LayerInfo {
 -(void) checkChildrenOfParentlessNode:(MDDNode*)node parentLayer:(int)layer;
 -(void) removeChildlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer;
 -(void) checkParentsOfChildlessNode:(MDDNode*)node parentLayer:(int)layer;
+-(void) deleteArcWhileCheckingParent:(MDDArc*)arc parentLayer:(int)layer;
 -(void) removeNode:(MDDNode*)node onLayer:(int)layerIndex;
 -(void) removeNodeAt:(int)index onLayer:(int)layerIndex;
 
@@ -145,18 +172,8 @@ struct LayerInfo {
 
 //Debug functions
 -(void) DEBUGcheckNodeLayerIndexCorrectness;
-@end
-
-@interface NodeHashTable : NSObject {
-    char** *_statePropertiesLists;
-    int* _numPerHash;
-    int* _maxPerHash;
-    int _width;
-    NSUInteger _lastCheckedHash;
-    size_t _numBytes;
-}
-@property MDDStateValues* __strong **stateLists;
--(id) initNodeHashTable:(int)width numBytes:(size_t)numBytes;
--(bool) hasNodeWithStateProperties:(char*)stateProperties hashValue:(NSUInteger)hash node:(MDDNode**)existingNode;
--(void) addState:(MDDStateValues*)state;
+-(void) DEBUGcheckQueueCounts;
+-(void) DEBUGcheckArcPointerConsistency;
+-(void) DEBUGcheckQueuesHaveNoDeletedNodes;
+-(void) DEBUGcheckNodesInQueueMarkedInQueue;
 @end

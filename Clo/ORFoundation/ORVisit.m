@@ -16,49 +16,6 @@
 @implementation ORVisitor
 
 
-/*-(void) visitExactMDDAllDifferent: (id<ORExactMDDAllDifferent>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDAllDifferent: visit method not defined"];
-}
-
--(void) visitRelaxedMDDAllDifferent: (id<ORRelaxedMDDAllDifferent>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedMDDAllDifferent: visit method not defined"];
-}
-
--(void) visitRestrictedMDDAllDifferent: (id<ORRestrictedMDDAllDifferent>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "RestrictedMDDAllDifferent: visit method not defined"];
-}
-
--(void) visitExactMDDMISP: (id<ORExactMDDMISP>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "ExactMDDMISP: visit method not defined"];
-}
-
--(void) visitRestrictedMDDMISP: (id<ORRestrictedMDDMISP>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "RestrictedMDDMISP: visit method not defined"];
-}
-
--(void) visitRelaxedMDDMISP: (id<ORRelaxedMDDMISP>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "RelaxedMDDMISP: visit method not defined"];
-}
-
-
--(void) visitCustomAltMDD: (id<ORCustomAltMDD>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "CustomAltMDD: visit method not defined"];
-}
--(void) visitCustomMDD: (id<ORCustomMDD>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDD: visit method not defined"];
-}
--(void) visitCustomMDDWithObjective: (id<ORCustomMDD>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "CustomMDDWithObjective: visit method not defined"];
-}*/
 -(void) visitMDDStateSpecification:(id<ORConstraint>)c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateSpecification: visit method not defined"];
@@ -68,10 +25,6 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "MDDSpecs: visit method not defined"];
 }
-/*-(void) visitAltMDDSpecs: (id<ORAltMDDSpecs>)c
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "AltMDDSpecs: visit method not defined"];
-}*/
 
 -(void) visitRandomStream:(id) v
 {

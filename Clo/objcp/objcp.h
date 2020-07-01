@@ -34,4 +34,5 @@
 #import <objcp/CPVar.h>
 #import <objcp/CPMDDNode.h>
 #import <objcp/CPMDDQueue.h>
+#import <objcp/CPMDDHashTables.h>
 #import <objcp/CPMDD.h>

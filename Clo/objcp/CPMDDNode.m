@@ -1,7 +1,7 @@
 #import <objcp/CPMDDNode.h>
 
 @implementation MDDNode
--(id) initSinkNode:(id<ORTrail>)trail defaultBottomUpState:(MDDStateValues*)bottomUpState layer:(int)layer numTopDownBytes:(size_t)numTopDownBytes hashWidth:(int)hashWidth {
+-(id) initSinkNode:(id<ORTrail>)trail defaultReverseState:(MDDStateValues*)reverseState layer:(int)layer numForwardBytes:(int)numForwardBytes numCombinedBytes:(int)numCombinedBytes {
     self = [super init];
     
     _trail = trail;
@@ -18,19 +18,21 @@
     _maxNumParents = makeTRInt(_trail,10);
     _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     
-    _topDownState = [[MDDStateValues alloc] initState:malloc(numTopDownBytes) numBytes:numTopDownBytes hashWidth:hashWidth trail:_trail];
-    _bottomUpState = [bottomUpState retain];
-    [_bottomUpState setNode:self];
+    _forwardState = [[MDDStateValues alloc] initState:malloc(numForwardBytes) numBytes:numForwardBytes trail:_trail];
+    _reverseState = [reverseState retain];
+    [_reverseState setNode:self];
+    _combinedState = [[MDDStateValues alloc] initState:malloc(numCombinedBytes) numBytes:numCombinedBytes trail:_trail];
+    [_combinedState setNode:self];
     
     _isMergedNode = makeTRInt(_trail, 0);
     _isDeleted = makeTRInt(_trail, 0);
     
-    _inTopDownQueue = false;
-    _inBottomUpQueue = false;
+    _inForwardQueue = false;
+    _inReverseQueue = false;
     
     return self;
 }
--(id) initNode: (id<ORTrail>)trail minChildIndex:(int)minChildIndex maxChildIndex:(int)maxChildIndex state:(MDDStateValues*)state layer:(int)layer indexOnLayer:(int)indexOnLayer numBottomUpBytes:(size_t)numBottomUpBytes hashWidth:(int)hashWidth {
+-(id) initNode: (id<ORTrail>)trail minChildIndex:(int)minChildIndex maxChildIndex:(int)maxChildIndex state:(MDDStateValues*)state layer:(int)layer indexOnLayer:(int)indexOnLayer numReverseBytes:(int)numReverseBytes numCombinedBytes:(int)numCombinedBytes {
     self = [super init];
     
     _trail = trail;
@@ -51,23 +53,26 @@
     _maxNumParents = makeTRInt(_trail,(_maxChildIndex-_minChildIndex+1));
     _parents = [[ORTRIdArrayI alloc] initORTRIdArray:_trail low:0 size:_maxNumParents._val];
     
-    _topDownState = [state retain];
-    [_topDownState setNode:self];
-    _bottomUpState = [[MDDStateValues alloc] initState:malloc(numBottomUpBytes * sizeof(char)) numBytes:numBottomUpBytes hashWidth:hashWidth trail:trail];
-    [_bottomUpState setNode:self];
+    _forwardState = [state retain];
+    [_forwardState setNode:self];
+    _reverseState = [[MDDStateValues alloc] initState:malloc(numReverseBytes) numBytes:numReverseBytes trail:trail];
+    [_reverseState setNode:self];
+    _combinedState = [[MDDStateValues alloc] initState:malloc(numCombinedBytes) numBytes:numCombinedBytes trail:trail];
+    [_combinedState setNode:self];
     
     _isMergedNode = makeTRInt(_trail, 0);
     _isDeleted = makeTRInt(_trail, 0);
     
-    _inTopDownQueue = false;
-    _inBottomUpQueue = false;
+    _inForwardQueue = false;
+    _inReverseQueue = false;
     
     return self;
 }
 
 -(void) dealloc {
-    [_topDownState release];
-    [_bottomUpState release];
+    [_forwardState release];
+    [_reverseState release];
+    [_combinedState release];
     [_parents release];
     if (_children != nil) {
         for (int i = _minChildIndex; i <= _maxChildIndex; i++) {
@@ -82,11 +87,18 @@
     [super dealloc];
 }
 
--(void) updateTopDownState:(char*)topDownState {
-    [_topDownState replaceStateWith:topDownState trail:_trail];
+-(void) updateForwardState:(char*)forwardState {
+    [_forwardState replaceStateWith:forwardState trail:_trail];
 }
--(void) updateBottomUpState:(char*)bottomUpState {
-    [_bottomUpState replaceStateWith:bottomUpState trail:_trail];
+-(void) updateReverseState:(char*)reverseState {
+    [_reverseState replaceStateWith:reverseState trail:_trail];
+}
+-(void) updateCombinedState:(char*)combinedState {
+    [_combinedState replaceStateWith:combinedState trail:_trail];
+}
+
+-(char*) reverseProperties {
+    return [_reverseState stateValues];
 }
 
 -(void) addParent:(MDDArc*)parentArc inPost:(bool)inPost {
@@ -153,38 +165,32 @@
     }
 }
 
--(bool) inQueue:(bool)topDown {
-    return topDown ? _inTopDownQueue : _inBottomUpQueue;
+-(bool) inQueue:(bool)forward {
+    return forward ? _inForwardQueue : _inReverseQueue;
 }
--(bool) inTopDownQueue {
-    return _inTopDownQueue;
+-(int) indexInQueue:(bool)forward {
+    return forward ? _forwardQueueIndex : _reverseQueueIndex;
 }
--(bool) inBottomUpQueue {
-    return _inBottomUpQueue;
-}
--(void) addToQueue:(bool)topDown {
-    if (topDown) {
-        _inTopDownQueue = true;
+-(void) addToQueue:(bool)forward index:(int)index {
+    if (forward) {
+        _inForwardQueue = true;
+        _forwardQueueIndex = index;
     } else {
-        _inBottomUpQueue = true;
+        _inReverseQueue = true;
+        _reverseQueueIndex = index;
     }
 }
--(void) addToTopDownQueue {
-    _inTopDownQueue = true;
-}
--(void) addToBottomUpQueue {
-    _inBottomUpQueue = true;
-}
--(void) removeFromQueue:(bool)topDown {
-    if (topDown) {
-        _inTopDownQueue = false;
+-(void) removeFromQueue:(bool)forward {
+    if (forward) {
+        _inForwardQueue = false;
     } else {
-        _inBottomUpQueue = false;
+        _inReverseQueue = false;
     }
 }
 
 -(int) layer { return _layer; }
 -(int) indexOnLayer { return _indexOnLayer._val; }
+-(void) setIndexOnLayer:(int)index {_indexOnLayer = makeTRInt(_trail, index); }
 -(void) updateIndexOnLayer:(int)index { assignTRInt(&_indexOnLayer,index,_trail); }
 -(TRId*) children { return _children; }
 -(int) numChildren { return _numChildren._val; }
@@ -193,7 +199,13 @@
 -(int) numParents { return _numParents._val; }
 -(bool) isParentless { return !_numParents._val; }
 -(bool) isMerged { return _isMergedNode._val; }
--(void) setIsMergedNode:(bool)isMergedNode { assignTRInt(&_isMergedNode, isMergedNode, _trail); }
+-(void) setIsMergedNode:(bool)isMergedNode inCreation:(bool)inCreation {
+    if (inCreation) {
+        _isMergedNode = makeTRInt(_trail, isMergedNode);
+    } else {
+        assignTRInt(&_isMergedNode, isMergedNode, _trail);
+    }
+}
 -(bool) isDeleted { return _isDeleted._val; }
 -(void) deleteNode {
     assignTRInt(&_isDeleted, true, _trail);
@@ -203,10 +215,14 @@
 @end
 
 @implementation MDDArc
--(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numTopDownByte:(size_t)numTopDownBytes {
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state spec:(MDDStateSpecification*)spec {
     self = [super init];
     
+    _spec = spec;
+    
     _trail = trail;
+    _hashWidth = [spec hashWidth];
+    _bytesPerMagic = [MDDStateSpecification bytesPerMagic];
     
     _parent = parent;
     _arcValue = arcValue;
@@ -216,12 +232,20 @@
     _parentArcIndex = makeTRInt(_trail, [_child numParents]);
     [_child addParent:self inPost:inPost];
     
-    _numTopDownBytes = numTopDownBytes;
-    _passedTopDownState = state;
-    _topDownMagic = malloc(_numTopDownBytes/[MDDStateSpecification bytesPerMagic] * sizeof(ORUInt));
-    for (int i = 0; i < (_numTopDownBytes/[MDDStateSpecification bytesPerMagic]); i++) {
-        _topDownMagic[i] = [trail magic];
+    _numForwardBytes = [_spec numForwardBytes];
+    _passedForwardState = state;
+    _forwardMagic = malloc(_numForwardBytes/_bytesPerMagic * sizeof(ORUInt));
+    for (int i = 0; i < (_numForwardBytes/_bytesPerMagic); i++) {
+        _forwardMagic[i] = [trail magic];
     }
+    [self setHash];
+    
+    _equivalenceClasses = malloc([_spec numSpecs] * sizeof(TRInt));
+    
+    for (int i = 0; i < [_spec numSpecs]; i++) {
+        _equivalenceClasses[i] = makeTRInt(_trail, 0);
+    }
+    _needToRecalcEquivalenceClasses = makeTRInt(_trail, 1);
     
     [self release];
     
@@ -229,8 +253,9 @@
 }
 
 -(void) dealloc {
-    free(_passedTopDownState);
-    free(_topDownMagic);
+    free(_passedForwardState);
+    free(_forwardMagic);
+    free(_equivalenceClasses);
     [super dealloc];
 }
 
@@ -239,6 +264,7 @@
     [self setChild:child inPost:inPost];
     [self updateParentArcIndex:[child numParents] inPost:inPost];
     [child addParent:self inPost:inPost];
+    assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
 }
 -(void) setChild:(MDDNode*)child inPost:(bool)inPost {
     if (inPost) {
@@ -247,6 +273,7 @@
     } else {
         assignTRId(&_child, child, _trail);
     }
+    assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
 }
 -(void) updateParentArcIndex:(int)parentArcIndex inPost:(bool)inPost {
     if (inPost) {
@@ -260,27 +287,27 @@
     [_parent removeChildAt:_arcValue inPost:inPost];
 }
 
--(void) replaceTopDownStateWith:(char *)newState trail:(id<ORTrail>)trail {
+-(void) replaceForwardStateWith:(char *)newState trail:(id<ORTrail>)trail {
     ORUInt magic = [trail magic];
-    for (int byteIndex = 0; byteIndex < _numTopDownBytes; byteIndex+=[MDDStateSpecification bytesPerMagic]) {
-        size_t magicIndex = byteIndex/[MDDStateSpecification bytesPerMagic];
-        switch ([MDDStateSpecification bytesPerMagic]) {
+    for (int byteIndex = 0; byteIndex < _numForwardBytes; byteIndex+=_bytesPerMagic) {
+        int magicIndex = byteIndex/_bytesPerMagic;
+        switch (_bytesPerMagic) {
             case 2:
-                if (*(short*)&_passedTopDownState[byteIndex] != *(short*)&newState[byteIndex]) {
-                    if (magic != _topDownMagic[magicIndex]) {
-                        [trail trailShort:(short*)&_passedTopDownState[byteIndex]];
-                        _topDownMagic[magicIndex] = magic;
+                if (*(short*)&_passedForwardState[byteIndex] != *(short*)&newState[byteIndex]) {
+                    if (magic != _forwardMagic[magicIndex]) {
+                        [trail trailShort:(short*)&_passedForwardState[byteIndex]];
+                        _forwardMagic[magicIndex] = magic;
                     }
-                    *(short*)&_passedTopDownState[byteIndex] = *(short*)&newState[byteIndex];
+                    *(short*)&_passedForwardState[byteIndex] = *(short*)&newState[byteIndex];
                 }
                 break;
             case 4:
-                if (*(int*)&_passedTopDownState[byteIndex] != *(int*)&newState[byteIndex]) {
-                    if (magic != _topDownMagic[magicIndex]) {
-                        [trail trailInt:(int*)&_passedTopDownState[byteIndex]];
-                        _topDownMagic[magicIndex] = magic;
+                if (*(int*)&_passedForwardState[byteIndex] != *(int*)&newState[byteIndex]) {
+                    if (magic != _forwardMagic[magicIndex]) {
+                        [trail trailInt:(int*)&_passedForwardState[byteIndex]];
+                        _forwardMagic[magicIndex] = magic;
                     }
-                    *(int*)&_passedTopDownState[byteIndex] = *(int*)&newState[byteIndex];
+                    *(int*)&_passedForwardState[byteIndex] = *(int*)&newState[byteIndex];
                 }
                 break;
             default:
@@ -288,11 +315,50 @@
                 break;
         }
     }
+    [self updateHash];
+    assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
 }
 
 -(MDDNode*) parent { return _parent; }
 -(MDDNode*) child { return _child; }
 -(int) arcValue { return _arcValue; }
 -(int) parentArcIndex { return _parentArcIndex._val; }
--(char*) topDownState { return _passedTopDownState; }
+-(char*) forwardState { return _passedForwardState; }
+
+
+-(int) calcHash {
+    const int numGroups = _numForwardBytes/_bytesPerMagic;
+    int hashValue = 0;
+    switch (_bytesPerMagic) {
+        case 2:
+            for (int s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 15 + *(short*)&_passedForwardState[s*_bytesPerMagic];
+            }
+            break;
+        case 4:
+            for (int s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 255 + *(int*)&_passedForwardState[s*_bytesPerMagic];
+            }
+            break;
+        default:
+            @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateValues: Method calcHash not implemented for given BytesPerMagic"];
+            break;
+    }
+    hashValue = hashValue % _hashWidth;
+    if (hashValue < 0) hashValue += _hashWidth;
+    return hashValue;
+}
+-(void) setHash { _forwardHash = makeTRInt(_trail, [self calcHash]); }
+-(void) updateHash { assignTRInt(&_forwardHash, [self calcHash], _trail); }
+-(int) hashValue { return _forwardHash._val; }
+
+-(int) equivalenceClassFor:(int)constraint {
+    if (_needToRecalcEquivalenceClasses._val) {
+        for (int i = 0; i < [_spec numSpecs]; i++) {
+            assignTRInt(&_equivalenceClasses[i], [_spec equivalenceClassFor:_passedForwardState reverse:[_child reverseProperties] constraint:i], _trail);
+        }
+        assignTRInt(&_needToRecalcEquivalenceClasses, 0, _trail);
+    }
+    return _equivalenceClasses[constraint]._val;
+}
 @end

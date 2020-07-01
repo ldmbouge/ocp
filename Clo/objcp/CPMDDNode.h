@@ -3,8 +3,9 @@
 @class MDDArc;
 @interface MDDNode : NSObject {
 @public
-    MDDStateValues* _topDownState;
-    MDDStateValues* _bottomUpState;
+    MDDStateValues* _forwardState;
+    MDDStateValues* _reverseState;
+    MDDStateValues* _combinedState;
 @private
     id<ORTrail> _trail;
     
@@ -23,14 +24,19 @@
     TRInt _isMergedNode;
     TRInt _isDeleted;
     
-    bool _inTopDownQueue;
-    bool _inBottomUpQueue;
+    bool _inForwardQueue;
+    int _forwardQueueIndex;
+    bool _inReverseQueue;
+    int _reverseQueueIndex;
 }
--(id) initSinkNode:(id<ORTrail>)trail defaultBottomUpState:(MDDStateValues*)bottomUpState layer:(int)layer numTopDownBytes:(size_t)numTopDownBytes hashWidth:(int)hashWidth;
--(id) initNode: (id<ORTrail>)trail minChildIndex:(int)minChildIndex maxChildIndex:(int)maxChildIndex state:(MDDStateValues*)state layer:(int)layer indexOnLayer:(int)indexOnLayer numBottomUpBytes:(size_t)numBottomUpBytes hashWidth:(int)hashWidth;
+-(id) initSinkNode:(id<ORTrail>)trail defaultReverseState:(MDDStateValues*)reverseState layer:(int)layer numForwardBytes:(int)numForwardBytes numCombinedBytes:(int)numCombinedBytes;
+-(id) initNode: (id<ORTrail>)trail minChildIndex:(int)minChildIndex maxChildIndex:(int)maxChildIndex state:(MDDStateValues*)state layer:(int)layer indexOnLayer:(int)indexOnLayer numReverseBytes:(int)numReverseBytes numCombinedBytes:(int)numCombinedBytes;
 
--(void) updateTopDownState:(char*)bottomUpState;
--(void) updateBottomUpState:(char*)bottomUpState;
+-(void) updateForwardState:(char*)reverseState;
+-(void) updateReverseState:(char*)reverseState;
+-(void) updateCombinedState:(char*)combinedState;
+
+-(char*) reverseProperties;
 
 -(void) addParent:(MDDArc*)parentArc inPost:(bool)inPost;
 -(void) removeParent:(MDDArc*)parentArc inPost:(bool)inPost;
@@ -41,6 +47,7 @@
 
 -(int) layer;
 -(int) indexOnLayer;
+-(void) setIndexOnLayer:(int)index;
 -(void) updateIndexOnLayer:(int)index;
 
 -(TRId*) children;
@@ -52,23 +59,25 @@
 -(bool) isParentless;
 
 -(bool) isMerged;
--(void) setIsMergedNode:(bool)isMergedNode;
+-(void) setIsMergedNode:(bool)isMergedNode inCreation:(bool)inCreation;
 -(bool) isDeleted;
 -(void) deleteNode;
 -(bool) candidateForSplitting;
 
--(bool) inQueue:(bool)topDown;
--(bool) inTopDownQueue;
--(bool) inBottomUpQueue;
--(void) addToQueue:(bool)topDown;
--(void) addToTopDownQueue;
--(void) addToBottomUpQueue;
--(void) removeFromQueue:(bool)topDown;
+-(bool) inQueue:(bool)forward;
+-(int) indexInQueue:(bool)forward;
+-(void) addToQueue:(bool)forward index:(int)index;
+-(void) removeFromQueue:(bool)forward;
 @end
 
 @interface MDDArc : NSObject {
 @protected
     id<ORTrail> _trail;
+    
+    MDDStateSpecification* _spec;
+    
+    int _hashWidth;
+    short _bytesPerMagic;
     
     MDDNode* _parent;
     int _arcValue;
@@ -76,22 +85,34 @@
     TRId _child;
     TRInt _parentArcIndex;
     
-    size_t _numTopDownBytes;
-    char* _passedTopDownState;
-    ORUInt* _topDownMagic;
+    int _numForwardBytes;
+    char* _passedForwardState;
+    ORUInt* _forwardMagic;
+    
+    TRInt _needToRecalcEquivalenceClasses;
+    TRInt* _equivalenceClasses;
+    
+    TRInt _forwardHash;
 }
--(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state numTopDownByte:(size_t)numTopDownBytes;
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state spec:(MDDStateSpecification*)spec;
 
 -(void) updateChildTo:(MDDNode*)child inPost:(bool)inPost;
 -(void) setChild:(MDDNode*)child inPost:(bool)inPost;
 -(void) updateParentArcIndex:(int)parentArcIndex inPost:(bool)inPost;
 -(void) deleteArc:(bool)inPost;
 
--(void) replaceTopDownStateWith:(char*)newState trail:(id<ORTrail>)trail;
+-(void) replaceForwardStateWith:(char*)newState trail:(id<ORTrail>)trail;
 
 -(MDDNode*) parent;
 -(MDDNode*) child;
 -(int) arcValue;
 -(int) parentArcIndex;
--(char*) topDownState;
+-(char*) forwardState;
+
+-(int) calcHash;
+-(void) setHash;
+-(void) updateHash;
+-(int) hashValue;
+
+-(int) equivalenceClassFor:(int)constraint;
 @end

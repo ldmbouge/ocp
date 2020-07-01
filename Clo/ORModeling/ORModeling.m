@@ -59,9 +59,9 @@
 {
    return [[ORLinearize alloc] initORLinearize:into];
 }
-+(id<ORModelTransformation>) createMDDifier:(id<ORAddToModel>)into isTopDown:(bool)isTopDown
++(id<ORModelTransformation>) createMDDifier:(id<ORAddToModel>)into
 {
-    return [[ORMDDify alloc] initORMDDify:into isTopDown:isTopDown];
+    return [[ORMDDify alloc] initORMDDify:into];
 }
 +(id<ORConstraintSet>) createConstraintSet
 {

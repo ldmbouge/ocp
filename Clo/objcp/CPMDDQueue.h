@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "CPMDDNode.h"
+#import <objcp/CPMDDNode.h>
 
 @interface CircularQueue : NSObject {
 @protected
@@ -22,21 +22,24 @@
 -(id) initCircularQueue:(int)size;
 -(void) clear;
 -(bool) isEmpty;
--(void) retract:(id)object;
--(void) enqueue:(id)object;
+-(void) retractIndex:(int)index forward:(bool)isForward;
+-(int) enqueue:(id)object;
 -(id) dequeue;
+-(int) count;
+-(bool) hasDeletedNode;
+-(bool) hasUnmarkedNodeFor:(bool)isForward;
 @end
 
 @interface CPMDDQueue : NSObject {
 @protected
     int _numLayers;
     int _width;
-    bool _isTopDown;
+    bool _isForward;
     CircularQueue* __strong *_layerQueues;
     int _numNodes;
     int _currentLayer;
 }
--(id) initCPMDDQueue:(int)numLayers width:(int)width isTopDown:(bool)isTopDown;
+-(id) initCPMDDQueue:(int)numLayers width:(int)width isForward:(bool)isForward;
 -(void) reboot;
 -(void) rebootTo:(int)layer;
 -(void) clear;
@@ -44,4 +47,7 @@
 -(void) retract:(MDDNode*)node;
 -(void) enqueue:(MDDNode*)node;
 -(MDDNode*) dequeue;
+-(int) numOnLayer:(int)layer;
+-(bool) hasDeletedNodeOnLayer:(int)layer;
+-(bool) hasUnmarkedNodeOnLayer:(int)layer;
 @end

@@ -7,16 +7,16 @@
    _byteOffset = 0;
    return self;
 }
--(size_t) storageSize { return 0; }
--(size_t) setOffset:(size_t)bitOffset {
-    size_t lastByteOffset = bitOffset & 0x7;
+-(int) storageSize { return 0; }
+-(int) setOffset:(int)bitOffset {
+    int lastByteOffset = bitOffset & 0x7;
     if (lastByteOffset != 0) {
        bitOffset = (bitOffset | 0x7) + 1;
     }
     _byteOffset = bitOffset >> 3;
     return bitOffset + [self storageSize];
 }
--(size_t) byteOffset { return _byteOffset; }
+-(int) byteOffset { return _byteOffset; }
 -(void) initializeState:(char*)state { return; }
 -(int) get:(char*)state { return 0; }
 -(void) set:(int)value forState:(char*)state { return; }
@@ -28,7 +28,7 @@
    _initialValue = initialValue;
    return self;
 }
--(size_t) storageSize { return 16; }
+-(int) storageSize { return 16; }
 -(void) initializeState:(char*)state {
     *(short*)(&state[_byteOffset]) = _initialValue;
 }
@@ -47,7 +47,7 @@
    _initialValue = initialValue;
    return self;
 }
--(size_t) storageSize { return 32; }
+-(int) storageSize { return 32; }
 -(void) initializeState:(char*)state {
     *(int*)(&state[_byteOffset]) = _initialValue;
 }
@@ -68,7 +68,7 @@
    _bitmask = 0x1 << (pId & 0x7);
    return self;
 }
--(size_t) storageSize { return 1; }
+-(int) storageSize { return 1; }
 -(void) initializeState:(char*)state {
    state[_byteOffset] = _initialValue ? (state[_byteOffset] | _bitmask) : (state[_byteOffset] & !_bitmask);
 }
@@ -89,7 +89,7 @@
     _numBytes = ceil(numBits/8.0);
    return self;
 }
--(size_t) storageSize { return _numBytes*8; }
+-(int) storageSize { return _numBytes*8; }
 -(void) initializeState:(char*)state {
     for (int i = 0; i < _numBytes; i++) {
         state[_byteOffset + i] = _initialValue ? (0xFF) : (0x00);
@@ -155,11 +155,11 @@
     [_properties[propertyIndex] set:value forState:(char*)state];
     return;
 }
--(size_t) byteOffsetForProperty:(int)propertyIndex {
+-(int) byteOffsetForProperty:(int)propertyIndex {
     return [_properties[propertyIndex] byteOffset];
 }
--(size_t) numBytes {
-    size_t lastByteOffset = _currentOffset & 0x1F;
+-(int) numBytes {
+    int lastByteOffset = _currentOffset & 0x1F;
     if (lastByteOffset != 0) {
         return ((_currentOffset | 0x1F) + 1) >> 3;
     }

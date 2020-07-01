@@ -55,7 +55,6 @@ PORTABLE_BEGIN
 -(NSArray*) immutables;
 // pvh: this should go
 -(id<ORModel>) mddify:(PNULLABLE id<ORAnnotation>)notes;
--(id<ORModel>) altmddify:(PNULLABLE id<ORAnnotation>)notes;
 -(id<ORModel>) flatten:(PNULLABLE id<ORAnnotation>)notes;
 -(id<ORModel>) lsflatten:(PNULLABLE id<ORAnnotation>)notes;
 -(id<ORModel>) lpflatten:(PNULLABLE id<ORAnnotation>)notes;
@@ -109,7 +108,7 @@ PORTABLE_BEGIN
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
-+(id<ORModelTransformation>) createMDDifier:(id<ORAddToModel>)into isTopDown:(bool)isTopDown;
++(id<ORModelTransformation>) createMDDifier:(id<ORAddToModel>)into;
 +(id<ORConstraintSet>) createConstraintSet;
 //+(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
 @end

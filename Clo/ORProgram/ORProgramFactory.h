@@ -35,7 +35,6 @@ PORTABLE_BEGIN
 // With annotations
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation: (id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPMDDProgram: (id<ORModel>) model annotation: (id<ORAnnotation>) notes;
-+(id<CPProgram>) createCPAltMDDProgram: (id<ORModel>) model annotation: (id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto;
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>) notes;

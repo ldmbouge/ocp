@@ -588,17 +588,7 @@
 -(id<ORModel>) mddify:(id<ORAnnotation>)ncpy {
    id<ORModel> mddModel = [ORFactory createModel:_nbObjects mappings:_mappings];
    id<ORAddToModel> batch = [ORFactory createBatchModel:mddModel source:self annotation: ncpy];
-   id<ORModelTransformation> mdd = [ORFactory createMDDifier:batch isTopDown:true];
-   [mdd apply: self with: ncpy];
-   [batch release];
-   [mddModel setSource:self];
-   [mdd release];
-   return mddModel;
-}
--(id<ORModel>) altmddify:(id<ORAnnotation>)ncpy {
-   id<ORModel> mddModel = [ORFactory createModel:_nbObjects mappings:_mappings];
-   id<ORAddToModel> batch = [ORFactory createBatchModel:mddModel source:self annotation: ncpy];
-   id<ORModelTransformation> mdd = [ORFactory createMDDifier:batch isTopDown:false];
+   id<ORModelTransformation> mdd = [ORFactory createMDDifier:batch];
    [mdd apply: self with: ncpy];
    [batch release];
    [mddModel setSource:self];

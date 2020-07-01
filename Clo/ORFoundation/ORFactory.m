@@ -1121,19 +1121,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 
 +(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
 {
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numTopDownProperties:stateSize numBottomUpProperties:0];
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numForwardProperties:stateSize numReverseProperties:0 numCombinedProperties:0];
     [model trackObject:o];
     return o;
 }
-+(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numForwardProperties:(int)numForwardProperties numReverseProperties:(int)numReverseProperties numCombinedProperties:(int)numCombinedProperties
 {
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecsUsingClosures:x numTopDownProperties:stateSize numBottomUpProperties:0];
-    [model trackObject:o];
-    return o;
-}
-+(id<ORMDDSpecs>) MDDSpecsWithClosures:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numTopDownProperties:(int)numTopDownProperties numBottomUpProperties:(int)numBottomUpProperties
-{
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecsUsingClosures:x numTopDownProperties:numTopDownProperties numBottomUpProperties:numBottomUpProperties];
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numForwardProperties:numForwardProperties numReverseProperties:numReverseProperties numCombinedProperties:numCombinedProperties];
     [model trackObject:o];
     return o;
 }
@@ -1141,12 +1135,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     id<MDDStateDescriptor> o = (id)[[MDDStateDescriptor alloc] initMDDStateDescriptor];
     return o;
 }
-/*+(id<ORAltMDDSpecs>) AltMDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x
-{
-    id<ORAltMDDSpecs> o = [[ORAltMDDSpecs alloc] initORAltMDDSpecs:x];
-    [model trackObject:o];
-    return o;
-}*/
 
 
 +(id<ORConstraint>) fail:(id<ORTracker>)model

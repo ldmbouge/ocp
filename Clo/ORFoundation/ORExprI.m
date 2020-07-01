@@ -911,10 +911,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }
--(DDOldClosure)visitClosure: (ORVisitor*)v
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
-}
 -(NSSet*)allVars
 {
    ORSweep* sweep = [[ORSweep alloc] init];
