@@ -184,6 +184,7 @@
     _width = width;
     _arcLists = malloc(_width * sizeof(NSMutableArray**));
     _equivalenceArcs = malloc(_width * sizeof(MDDArc**));
+    _propertiesLists = malloc(_width * sizeof(char**));
     _numPerHash = calloc(_width, sizeof(int));
     _maxPerHash = calloc(_width, sizeof(int));
     _numBytes = numBytes;
@@ -196,76 +197,126 @@
     return self;
 }
 -(void) setReverse:(char*)reverse { _reverse = reverse; }
--(void) setMatchingRule:(bool)matchByConstraint approximate:(bool)approximate {
+-(void) setMatchingRule:(bool)matchByConstraint approximate:(bool)approximate cachedOnArc:(bool)cachedOnArc {
     _matchByConstraint = matchByConstraint;
     _approximate = approximate;
+    _cachedOnArc = cachedOnArc;
 }
--(bool) matches:(MDDArc*)a to:(MDDArc*)b {
+-(bool) matches:(MDDArc*)a withState:(char*)stateA to:(MDDArc*)b withState:(char*)stateB {
     if (_approximate) {
         if (_matchByConstraint) {
             if ([_spec approximateEquivalenceUsedFor:_constraint]) {
-                return [a equivalenceClassFor:_constraint] == [b equivalenceClassFor:_constraint];
+                if (_cachedOnArc) {
+                    return [a equivalenceClassFor:_constraint] == [b equivalenceClassFor:_constraint];
+                } else {
+                    @throw [[ORExecutionError alloc] initORExecutionError: "ArcHashTable: matches not implemented for approximate equivalence by constraint without caches on arcs."];
+                }
             } else {
-                @throw [[ORExecutionError alloc] initORExecutionError: "ArcHashTable: matches not implemented for apprximate equivalence by constraint with some specs not having their equivalence class defined."];
+                @throw [[ORExecutionError alloc] initORExecutionError: "ArcHashTable: matches not implemented for approximate equivalence by constraint with some specs not having their equivalence class defined."];
             }
         } else {
-            for (int i = 0; i < [_spec numSpecs]; i++) {
-                if ([_spec approximateEquivalenceUsedFor:i]) {
-                    if ([a equivalenceClassFor:i] != [b equivalenceClassFor:i]) {
-                        return false;
+            if (_cachedOnArc) {
+                for (int i = 0; i < [_spec numSpecs]; i++) {
+                    if ([_spec approximateEquivalenceUsedFor:i]) {
+                        if ([a equivalenceClassFor:i] != [b equivalenceClassFor:i]) {
+                            return false;
+                        }
+                    } else {
+                        @throw [[ORExecutionError alloc] initORExecutionError: "ArcHashTable: matches not implemented for approximate equivalence with some specs not having their equivalence class defined."];
                     }
-                } else {
-                    @throw [[ORExecutionError alloc] initORExecutionError: "ArcHashTable: matches not implemented for apprximate equivalence by constraint with some specs not having their equivalence class defined."];
                 }
+                return true;
+            } else {
+                for (int i = 0; i < [_spec numSpecs]; i++) {
+                    if ([_spec approximateEquivalenceUsedFor:i]) {
+                        if ([_spec equivalenceClassFor:stateA reverse:_reverse constraint:i] != [_spec equivalenceClassFor:stateB reverse:_reverse constraint:i]) {
+                            return false;
+                        }
+                    } else {
+                        @throw [[ORExecutionError alloc] initORExecutionError: "ArcHashTable: matches not implemented for approximate equivalence with some specs not having their equivalence class defined."];
+                    }
+                }
+                return true;
             }
-            return true;
         }
     } else {
         if (_matchByConstraint) {
-            return [_spec state:[a forwardState] equivalentTo:[b forwardState] forConstraint:_constraint];
+            if (_cachedOnArc) {
+                return [_spec state:[a forwardState] equivalentTo:[b forwardState] forConstraint:_constraint];
+            } else {
+                return [_spec state:stateA equivalentTo:stateB forConstraint:_constraint];
+            }
         } else {
-            return memcmp([a forwardState], [b forwardState], _numBytes) == 0;
+            if (_cachedOnArc) {
+                return memcmp([a forwardState], [b forwardState], _numBytes) == 0;
+            } else {
+                return memcmp(stateA, stateB, _numBytes) == 0;
+            }
         }
     }
 }
--(bool) hasMatchingStateProperties:(MDDArc*)arc hashValue:(NSUInteger)hash arcList:(NSMutableArray**)existingArcs {
+-(bool) hasMatchingStateProperties:(char*)state forArc:(MDDArc*)arc hashValue:(NSUInteger)hash arcList:(NSMutableArray**)existingArcs {
+    if (hash > _width-2) {
+        hash %= (_width-1);
+    } else if (hash < 0) {
+        hash += (_width-1);
+    }
     _lastCheckedHash = hash;
-    int numWithHash = _numPerHash[_lastCheckedHash];
-    if (!numWithHash) return false;
-    MDDArc** propertiesList = _equivalenceArcs[_lastCheckedHash];
-    for (int i = 0; i < numWithHash; i++) {
-        if ([self matches:arc to:propertiesList[i]]) {
-            *existingArcs = (NSMutableArray*)_arcLists[_lastCheckedHash][i];
-            return true;
+    if (_approximate && _matchByConstraint) {
+        for (int i = 0; i < _width; i++) {
+            for (int j = 0; j < _numPerHash[i]; j++) {
+                if ([self matches:arc withState:state to:_equivalenceArcs[i][j] withState:_propertiesLists[i][j]]) {
+                    *existingArcs = (NSMutableArray*)_arcLists[i][j];
+                    return true;
+                }
+            }
+        }
+    } else {
+        int numWithHash = _numPerHash[_lastCheckedHash];
+        if (!numWithHash) return false;
+        MDDArc** equivalenceArcs = _equivalenceArcs[_lastCheckedHash];
+        char** propertiesList = _propertiesLists[_lastCheckedHash];
+        for (int i = 0; i < numWithHash; i++) {
+            if ([self matches:arc withState:state to:equivalenceArcs[i] withState:propertiesList[i]]) {
+                *existingArcs = (NSMutableArray*)_arcLists[_lastCheckedHash][i];
+                return true;
+            }
         }
     }
     return false;
 }
--(NSMutableArray*) addArc:(MDDArc*)arc {
+-(NSMutableArray*) addArc:(MDDArc*)arc withState:(char*)state {
     int numStates = _numPerHash[_lastCheckedHash];
     if (numStates == 0) {
         _maxPerHash[_lastCheckedHash] = 2;
         _arcLists[_lastCheckedHash] = malloc(2 * sizeof(NSMutableArray*));
         _equivalenceArcs[_lastCheckedHash] = malloc(2 * sizeof(MDDArc*));
+        _propertiesLists[_lastCheckedHash] = malloc(2 * sizeof(char*));
     } else if (numStates == _maxPerHash[_lastCheckedHash]) {
         int newMax = _maxPerHash[_lastCheckedHash] * 2;
         _maxPerHash[_lastCheckedHash] = newMax;
         NSMutableArray** newList = malloc(newMax * sizeof(NSMutableArray*));
-        MDDArc** newProperties = malloc(newMax * sizeof(MDDArc*));
+        MDDArc** newArcs = malloc(newMax * sizeof(MDDArc*));
+        char** newProperties = malloc(newMax * sizeof(char*));
         NSMutableArray** oldList = (NSMutableArray**)(_arcLists[_lastCheckedHash]);
-        MDDArc** oldProperties = _equivalenceArcs[_lastCheckedHash];
+        MDDArc** oldArcs = _equivalenceArcs[_lastCheckedHash];
+        char** oldProperties = _propertiesLists[_lastCheckedHash];
         for (int i = 0; i < numStates; i++) {
             newList[i] = oldList[i];
+            newArcs[i] = oldArcs[i];
             newProperties[i] = oldProperties[i];
         }
         free(oldList);
+        free(oldArcs);
         free(oldProperties);
         _arcLists[_lastCheckedHash] = (NSMutableArray**)newList;
-        _equivalenceArcs[_lastCheckedHash] = newProperties;
+        _equivalenceArcs[_lastCheckedHash] = newArcs;
+        _propertiesLists[_lastCheckedHash] = newProperties;
     }
     NSMutableArray* newList = [[NSMutableArray alloc] initWithObjects:arc, nil];
     _arcLists[_lastCheckedHash][numStates] = newList;
     _equivalenceArcs[_lastCheckedHash][numStates] = arc;
+    _propertiesLists[_lastCheckedHash][numStates] = state;
     _numPerHash[_lastCheckedHash] += 1;
     return newList;
 }
@@ -274,15 +325,20 @@
         if (_maxPerHash[i] > 0) {
             for (int j = 0; j < _numPerHash[i]; j++) {
                 [_arcLists[i][j] release];
+                if (!_cachedOnArc) {
+                    free(_propertiesLists[i][j]);
+                }
             }
             free(_arcLists[i]);
             free(_equivalenceArcs[i]);
+            free(_propertiesLists[i]);
         }
     }
     free(_arcLists);
     free(_equivalenceArcs);
     free(_numPerHash);
     free(_maxPerHash);
+    free(_propertiesLists);
     [super dealloc];
 }
 @end

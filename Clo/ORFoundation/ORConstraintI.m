@@ -70,7 +70,7 @@
    MDDPropertyDescriptor** _forwardStateProperties;
    MDDPropertyDescriptor** _reverseStateProperties;
    MDDPropertyDescriptor** _combinedStateProperties;
-   DDArcTransitionClosure* _forwardTransitionClosures;
+   DDArcSetTransitionClosure* _forwardTransitionClosures;
    DDArcSetTransitionClosure* _reverseTransitionClosures;
    DDMergeClosure* _forwardRelaxationClosures;
    DDMergeClosure* _reverseRelaxationClosures;
@@ -98,7 +98,7 @@
    _reverseStateProperties = malloc(_numReverseProperties * sizeof(MDDPropertyDescriptor*));
    _combinedStateProperties = malloc(_numCombinedProperties * sizeof(MDDPropertyDescriptor*));
    
-   _forwardTransitionClosures = malloc(_numForwardProperties * sizeof(DDArcTransitionClosure));
+   _forwardTransitionClosures = malloc(_numForwardProperties * sizeof(DDArcSetTransitionClosure));
    _reverseTransitionClosures = malloc(_numReverseProperties * sizeof(DDArcSetTransitionClosure));
    
    _forwardRelaxationClosures = malloc(_numForwardProperties * sizeof(DDMergeClosure));
@@ -240,13 +240,27 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
       }
       return getMinDown(minDownProp, getSel, parent) + valueInSet <= ub;
    } copy];
-   _forwardTransitionClosures[minCount] = [^(char* newState, char* forward, char* combined,ORInt value) {
-      [minDownProp set:getMinDown(minDownProp,getSel,forward) + offsetVISLookup[value] forState:newState];
+   _forwardTransitionClosures[minCount] = [^(char* newState, char* forward, char* combined, bool* valueSet, int minDom, int maxDom) {
+      bool valueInAll = true;
+      for (int i = minDom; i <= maxDom; i++) {
+         if (valueSet[i] && !offsetVISLookup[i]) {
+            valueInAll = false;
+            break;
+         }
+      }
+      [minDownProp set:getMinDown(minDownProp,getSel,forward) + valueInAll forState:newState];
    } copy];
-   _forwardTransitionClosures[maxCount] = [^(char* newState, char* forward, char* combined,ORInt value) {
-      [maxDownProp set:getMaxDown(maxDownProp,getSel,forward) + offsetVISLookup[value] forState:newState];
+   _forwardTransitionClosures[maxCount] = [^(char* newState, char* forward, char* combined, bool* valueSet, int minDom, int maxDom) {
+      bool valueInSome = false;
+      for (int i = minDom; i <= maxDom; i++) {
+         if (valueSet[i] && offsetVISLookup[i]) {
+            valueInSome = true;
+            break;
+         }
+      }
+      [maxDownProp set:getMaxDown(maxDownProp,getSel,forward) + valueInSome forState:newState];
    } copy];
-   _reverseTransitionClosures[minCount] = [^(char* newState, char* reverse, char* combined,bool* valueSet, int minDom, int maxDom) {
+   _reverseTransitionClosures[minCount] = [^(char* newState, char* reverse, char* combined, bool* valueSet, int minDom, int maxDom) {
       bool valueInAll = true;
       for (int i = minDom; i <= maxDom; i++) {
          if (valueSet[i] && !offsetVISLookup[i]) {
@@ -1047,7 +1061,7 @@ typedef void (*SetBitsPropIMP)(id,SEL,char*,char*);
 
 -(DDArcExistsClosure)arcExistsClosure { return _arcExistsClosure; }
 -(DDStateExistsClosure)stateExistsClosure { return _stateExistsClosure; }
--(DDArcTransitionClosure*)forwardTransitionClosures { return _forwardTransitionClosures; }
+-(DDArcSetTransitionClosure*)forwardTransitionClosures { return _forwardTransitionClosures; }
 -(DDArcSetTransitionClosure*)reverseTransitionClosures { return _reverseTransitionClosures; }
 -(DDMergeClosure*)forwardRelaxationClosures { return _forwardRelaxationClosures; }
 -(DDMergeClosure*)reverseRelaxationClosures { return _reverseRelaxationClosures; }

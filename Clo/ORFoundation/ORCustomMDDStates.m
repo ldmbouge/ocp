@@ -7,7 +7,7 @@ const short BytesPerMagic = 4;
     MDDPropertyDescriptor** _forwardProperties;
     MDDPropertyDescriptor** _reverseProperties;
     MDDPropertyDescriptor** _combinedProperties;
-    DDArcTransitionClosure* _forwardTransitionFunctions;
+    DDArcSetTransitionClosure* _forwardTransitionFunctions;
     DDArcSetTransitionClosure* _reverseTransitionFunctions;
     DDMergeClosure* _forwardRelaxationFunctions;
     DDMergeClosure* _reverseRelaxationFunctions;
@@ -67,7 +67,7 @@ const short BytesPerMagic = 4;
     _forwardStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: numForwardProperties];
     _reverseStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: numReverseProperties];
     _combinedStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: numCombinedProperties];
-    _forwardTransitionFunctions = malloc(numForwardProperties * sizeof(DDArcTransitionClosure));
+    _forwardTransitionFunctions = malloc(numForwardProperties * sizeof(DDArcSetTransitionClosure));
     _reverseTransitionFunctions = malloc(numReverseProperties * sizeof(DDArcSetTransitionClosure));
     _forwardRelaxationFunctions = malloc(numForwardProperties * sizeof(DDMergeClosure));
     _reverseRelaxationFunctions = malloc(numReverseProperties * sizeof(DDMergeClosure));
@@ -215,7 +215,7 @@ const short BytesPerMagic = 4;
 -(void) addMDDSpec:(id<ORMDDSpecs>)MDDSpec mapping:(int*)mapping {
     MDDPropertyDescriptor** forwardProperties = [MDDSpec forwardStateProperties];
     MDDPropertyDescriptor** reverseProperties = [MDDSpec reverseStateProperties];
-    DDArcTransitionClosure* newForwardTransitionClosures = [MDDSpec forwardTransitionClosures];
+    DDArcSetTransitionClosure* newForwardTransitionClosures = [MDDSpec forwardTransitionClosures];
     DDArcSetTransitionClosure* newReverseTransitionClosures = [MDDSpec reverseTransitionClosures];
     DDMergeClosure* newForwardRelaxationClosures = [MDDSpec forwardRelaxationClosures];
     DDMergeClosure* newReverseRelaxationClosures = [MDDSpec reverseRelaxationClosures];
@@ -276,25 +276,25 @@ const short BytesPerMagic = 4;
     [_reverseStateDescriptor initializeState:defaultProperties];
     return [[MDDStateValues alloc] initState:defaultProperties numBytes:_numReverseBytes trail:_trail];
 }
--(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValue:(int)value {
+-(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom {
     char* newState = malloc(_numForwardBytes);
     memcpy(newState, forward, _numForwardBytes);
     if (_numSpecsAdded == 1) {
         for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
-            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, value);
+            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, minDom, maxDom);
         }
         return newState;
     }
     bool* propertyUsed = _forwardPropertiesUsedPerVariable[variable];
     for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
         if (propertyUsed[propertyIndex]) {
-            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, value);
+            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, minDom, maxDom);
         }
     }
     return newState;
 }
--(char*) cachedComputeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValue:(int)value {
-    int forwardHash = [self forwardTransitionCacheHashValueFor:forward];
+-(char*) cachedComputeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom {
+    /*int forwardHash = [self forwardTransitionCacheHashValueFor:forward];
     int maxForwards = _forwardTransitionCacheMaxPerHash[forwardHash];
     int numForwards = _forwardTransitionCacheNumPerHash[forwardHash];
     char* cachedState = nil;
@@ -372,8 +372,8 @@ const short BytesPerMagic = 4;
         }
     }
     char* newState = malloc(_numForwardBytes);
-    memcpy(newState, cachedState, _numForwardBytes);
-    return newState;
+    memcpy(newState, cachedState, _numForwardBytes);*/
+    return nil;
 }
 -(char*) computeReverseStateFromProperties:(char*)reverse combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom {
     char* newState = malloc(_numReverseBytes);
@@ -589,20 +589,25 @@ const short BytesPerMagic = 4;
         }
     }
     
+    bool* valueSet = malloc(sizeof(bool));
+    valueSet[0] = true;
+    valueSet -= value;
     *newStateProperties = malloc(_numForwardBytes * sizeof(char));
     if (_numSpecsAdded == 1) {
         for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
-            _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, value);
+            _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, valueSet, value, value);
         }
     } else {
         memcpy(*newStateProperties, forward, _numForwardBytes);
         bool* propertyUsed = _forwardPropertiesUsedPerVariable[variable];
         for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
             if (propertyUsed[propertyIndex]) {
-                _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, value);
+                _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, valueSet, value, value);
             }
         }
     }
+    valueSet += value;
+    free(valueSet);
     return true;
 }
 -(bool) stateExistsWithForward:(char*)forward reverse:(char*)reverse combined:(char*)combined objectiveMins:(TRInt *)objectiveMins objectiveMaxes:(TRInt *)objectiveMaxes {
@@ -785,6 +790,28 @@ const short BytesPerMagic = 4;
     }
     hashValue = hashValue % _mergeCacheHashWidth;
     if (hashValue < 0) hashValue += _mergeCacheHashWidth;
+    return hashValue;
+}
+-(int) hashValueForState:(char*)state {
+    const int numGroups = _numForwardBytes/BytesPerMagic;
+    int hashValue = 0;
+    switch (BytesPerMagic) {
+        case 2:
+            for (int s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 15 + *(short*)&state[s*BytesPerMagic];
+            }
+            break;
+        case 4:
+            for (int s = 0; s < numGroups; s++) {
+                hashValue = hashValue * 255 + *(int*)&state[s*BytesPerMagic];
+            }
+            break;
+        default:
+            @throw [[ORExecutionError alloc] initORExecutionError: "MDDStateValues: Method calcHash not implemented for given BytesPerMagic"];
+            break;
+    }
+    hashValue = hashValue % _hashWidth;
+    if (hashValue < 0) hashValue += _hashWidth;
     return hashValue;
 }
 -(int) hashValueForState:(char*)state constraint:(int)constraint {

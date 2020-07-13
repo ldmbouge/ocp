@@ -68,6 +68,7 @@
     int _maxRebootDistance;
     
     //Split heuristic info
+    bool _cacheForwardOnArcs;
     bool _splitAllLayersBeforeFiltering;
     bool _splitByConstraint;
     bool _fullySplitNodeFirst;
@@ -133,9 +134,13 @@ struct LayerInfo {
 -(bool) refreshReverseStateFor:(MDDNode*)node;
 -(bool) refreshForwardStateFor:(MDDNode*)node;
 -(bool) updateCombinedStateFor:(MDDNode*)node;
--(char*) computeForwardStateFromArcs:(NSArray*)arcs isMerged:(bool*)merged;
+-(char*) computeForwardStateFromArcs:(NSArray*)arcs isMerged:(bool*)merged layerInfo:(struct LayerInfo)layerInfo;
 -(char*) computeForwardStateFromParentsOf:(MDDNode*)node isMerged:(bool*)merged;
 -(char*) computeReverseStateFromChildrenOf:(MDDNode*)node;
+-(int) fillNodeArcVarsUsingArcs:(NSArray*)arcs parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent parentLayerIndex:(int)parentLayer;
+-(int) fillNodeArcVarsFromParentsOfNode:(MDDNode*)node parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent;
+-(char*) computeForwardStateFromParents:(MDDNode**)parents arcValueSets:(bool**)arcValuesByParent numParents:(int)numParentNodes minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged;
+-(char*) computeStateFromParent:(MDDNode*)parent arcValues:(bool*)arcValues minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged;
 -(int) fillNodeArcVarsFromChildrenOfNode:(MDDNode*)node childNodes:(MDDNode**)childNodes arcValuesByChild:(bool**)arcValuesByChild;
 -(char*) computeReverseStateFromChildren:(MDDNode**)children arcValueSets:(bool**)arcValuesByChild numChildren:(int)numChildNodes minDom:(int)minDom maxDom:(int)maxDom;
 -(char*) computeStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues minDom:(int)minDom maxDom:(int)maxDom;
@@ -149,6 +154,7 @@ struct LayerInfo {
 -(void) splitNode:(MDDNode *)node layerInfo:(struct LayerInfo)layerInfo forConstraint:(int)c;
 -(MDDNode*) splitArc:(char*)arcState layerInfo:(struct LayerInfo)layerInfo;
 -(void) splitCandidatesOnLayer:(struct LayerInfo)layerInfo;
+-(MDDNode*)findExactMatchForState:(char*)state onLayer:(struct LayerInfo)layerInfo;
 -(bool) checkChildrenOfNewNode:(MDDNode*)node withOldChildren:(MDDArc**)oldChildArcs layerInfo:(struct LayerInfo)layerInfo;
 -(bool) checkChildOfNewNode:(MDDNode*)node oldArc:(MDDArc*)oldChildArc alreadyFoundChildren:(bool)hasChildren layerInfo:(struct LayerInfo)layerInfo;
 

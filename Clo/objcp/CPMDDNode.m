@@ -215,14 +215,10 @@
 @end
 
 @implementation MDDArc
--(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state spec:(MDDStateSpecification*)spec {
+-(id) initArcWithoutCache:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost {
     self = [super init];
     
-    _spec = spec;
-    
     _trail = trail;
-    _hashWidth = [spec hashWidth];
-    _bytesPerMagic = [MDDStateSpecification bytesPerMagic];
     
     _parent = parent;
     _arcValue = arcValue;
@@ -231,6 +227,19 @@
     _child = makeTRId(_trail, [child retain]);
     _parentArcIndex = makeTRInt(_trail, [_child numParents]);
     [_child addParent:self inPost:inPost];
+    
+    _forwardCache = false;
+    _reverseCache = false;
+    
+    [self release];
+    
+    return self;
+}
+-(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state spec:(MDDStateSpecification*)spec {
+    self = [self initArcWithoutCache:trail from:parent to:child value:arcValue inPost:inPost];
+    _spec = spec;
+    _hashWidth = [_spec hashWidth];
+    _bytesPerMagic = [MDDStateSpecification bytesPerMagic];
     
     _numForwardBytes = [_spec numForwardBytes];
     _passedForwardState = state;
@@ -246,16 +255,18 @@
         _equivalenceClasses[i] = makeTRInt(_trail, 0);
     }
     _needToRecalcEquivalenceClasses = makeTRInt(_trail, 1);
+    _combinedEquivalenceClass = makeTRInt(_trail, 0);
     
-    [self release];
-    
+    _forwardCache = true;
     return self;
 }
 
 -(void) dealloc {
-    free(_passedForwardState);
-    free(_forwardMagic);
-    free(_equivalenceClasses);
+    if (_forwardCache) {
+        free(_passedForwardState);
+        free(_forwardMagic);
+        free(_equivalenceClasses);
+    }
     [super dealloc];
 }
 
@@ -264,7 +275,9 @@
     [self setChild:child inPost:inPost];
     [self updateParentArcIndex:[child numParents] inPost:inPost];
     [child addParent:self inPost:inPost];
-    assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
+    if (_forwardCache) {
+        assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
+    }
 }
 -(void) setChild:(MDDNode*)child inPost:(bool)inPost {
     if (inPost) {
@@ -273,7 +286,9 @@
     } else {
         assignTRId(&_child, child, _trail);
     }
-    assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
+    if (_forwardCache) {
+        assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
+    }
 }
 -(void) updateParentArcIndex:(int)parentArcIndex inPost:(bool)inPost {
     if (inPost) {
@@ -352,13 +367,27 @@
 -(void) updateHash { assignTRInt(&_forwardHash, [self calcHash], _trail); }
 -(int) hashValue { return _forwardHash._val; }
 
+-(void) recalcEquivalenceClasses {
+    int combinedEquivalenceClass = 0;
+    for (int i = 0; i < [_spec numSpecs]; i++) {
+        int constraintEquivalenceClass = [_spec equivalenceClassFor:_passedForwardState reverse:[_child reverseProperties] constraint:i];
+        assignTRInt(&_equivalenceClasses[i], constraintEquivalenceClass, _trail);
+        combinedEquivalenceClass += constraintEquivalenceClass;
+        combinedEquivalenceClass *= 4;
+    }
+    assignTRInt(&_combinedEquivalenceClass, combinedEquivalenceClass, _trail);
+    assignTRInt(&_needToRecalcEquivalenceClasses, 0, _trail);
+}
 -(int) equivalenceClassFor:(int)constraint {
     if (_needToRecalcEquivalenceClasses._val) {
-        for (int i = 0; i < [_spec numSpecs]; i++) {
-            assignTRInt(&_equivalenceClasses[i], [_spec equivalenceClassFor:_passedForwardState reverse:[_child reverseProperties] constraint:i], _trail);
-        }
-        assignTRInt(&_needToRecalcEquivalenceClasses, 0, _trail);
+        [self recalcEquivalenceClasses];
     }
     return _equivalenceClasses[constraint]._val;
+}
+-(int) combinedEquivalenceClasses {
+    if (_needToRecalcEquivalenceClasses._val) {
+        [self recalcEquivalenceClasses];
+    }
+    return _combinedEquivalenceClass._val;
 }
 @end

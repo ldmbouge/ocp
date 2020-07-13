@@ -43,6 +43,7 @@
 
 @interface ArcHashTable : NSObject {
     MDDArc* __strong **_equivalenceArcs;
+    char*** _propertiesLists;
     int* _numPerHash;
     int* _maxPerHash;
     int _width;
@@ -53,13 +54,14 @@
     bool _matchByConstraint;
     bool _approximate;
     char* _reverse;
+    bool _cachedOnArc;
 }
 @property NSMutableArray* __strong **arcLists;
 -(id) initArcHashTable:(int)width numBytes:(int)numBytes;
 -(id) initArcHashTable:(int)width numBytes:(int)numBytes constraint:(int)constraint spec:(MDDStateSpecification*)spec;
 -(void) setReverse:(char*)reverse;
--(void) setMatchingRule:(bool)matchByConstraint approximate:(bool)approximate;
--(bool) matches:(MDDArc*)a to:(MDDArc*)b;
--(bool) hasMatchingStateProperties:(MDDArc*)arc hashValue:(NSUInteger)hash arcList:(NSMutableArray**)existingArcs;
--(NSMutableArray*) addArc:(MDDArc*)arc;
+-(void) setMatchingRule:(bool)matchByConstraint approximate:(bool)approximate cachedOnArc:(bool)cachedOnArc;
+-(bool) matches:(MDDArc*)a withState:(char*)stateA to:(MDDArc*)b withState:(char*)stateB;
+-(bool) hasMatchingStateProperties:(char*)state forArc:(MDDArc*)arc hashValue:(NSUInteger)hash arcList:(NSMutableArray**)existingArcs;
+-(NSMutableArray*) addArc:(MDDArc*)arc withState:(char*)state;
 @end

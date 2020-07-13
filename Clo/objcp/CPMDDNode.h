@@ -89,11 +89,16 @@
     char* _passedForwardState;
     ORUInt* _forwardMagic;
     
+    bool _forwardCache;
+    bool _reverseCache;
+    
     TRInt _needToRecalcEquivalenceClasses;
     TRInt* _equivalenceClasses;
+    TRInt _combinedEquivalenceClass;
     
     TRInt _forwardHash;
 }
+-(id) initArcWithoutCache:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost;
 -(id) initArc:(id<ORTrail>)trail from:(MDDNode*)parent to:(MDDNode*)child value:(int)arcValue inPost:(bool)inPost state:(char*)state spec:(MDDStateSpecification*)spec;
 
 -(void) updateChildTo:(MDDNode*)child inPost:(bool)inPost;
@@ -114,5 +119,7 @@
 -(void) updateHash;
 -(int) hashValue;
 
+-(void) recalcEquivalenceClasses;
 -(int) equivalenceClassFor:(int)constraint;
+-(int) combinedEquivalenceClasses;
 @end

@@ -57,8 +57,8 @@
 -(bool) dualDirectional;
 -(MDDStateValues*) createRootState;
 -(MDDStateValues*) createSinkState;
--(char*) cachedComputeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValue:(int)value;
--(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValue:(int)value;
+-(char*) cachedComputeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom;
+-(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom;
 -(char*) computeReverseStateFromProperties:(char*)reverse combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom;
 -(char*) computeCombinedStateFromProperties:(char*)forward reverse:(char*)reverse;
 -(void) cachedMergeStateProperties:(char*)leftState with:(char*)rightState;
@@ -81,6 +81,7 @@
 -(DDFixpointBoundClosure*) fixpointMaxes;
 -(void) finalizeSpec:(id<ORTrail>) trail hashWidth:(int)width;
 -(int) hashWidth;
+-(int) hashValueForState:(char*)state;
 -(int) hashValueForState:(char*)state constraint:(int)constraint;
 -(bool) state:(char*)state equivalentTo:(char*)other forConstraint:(int)constraint;
 -(bool) approximateEquivalenceUsedFor:(int)constraint;

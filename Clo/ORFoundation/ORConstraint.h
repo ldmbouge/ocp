@@ -456,7 +456,7 @@ enum ORGroupType {
 -(id*)combinedStateProperties;
 -(DDArcExistsClosure)arcExistsClosure;
 -(DDStateExistsClosure)stateExistsClosure;
--(DDArcTransitionClosure*)forwardTransitionClosures;
+-(DDArcSetTransitionClosure*)forwardTransitionClosures;
 -(DDArcSetTransitionClosure*)reverseTransitionClosures;
 -(DDMergeClosure*)forwardRelaxationClosures;
 -(DDMergeClosure*)reverseRelaxationClosures;
