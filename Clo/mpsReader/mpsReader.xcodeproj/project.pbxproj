@@ -235,7 +235,7 @@
 		5BC38DC51CF3385D0019E673 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1160;
 				ORGANIZATIONNAME = "Laurent Michel";
 				TargetAttributes = {
 					5B4E17701CF4DE7400A15258 = {
@@ -248,10 +248,11 @@
 			};
 			buildConfigurationList = 5BC38DC81CF3385D0019E673 /* Build configuration list for PBXProject "mpsReader" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 5BC38DC41CF3385D0019E673;
 			productRefGroup = 5BC38DCE1CF3385D0019E673 /* Products */;
@@ -439,6 +440,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-Wno-deprecated-register",
 					"$(OTHER_CFLAGS)",
@@ -452,6 +454,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-Wno-deprecated-register",
 					"$(OTHER_CFLAGS)",
