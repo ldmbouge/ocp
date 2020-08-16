@@ -1026,6 +1026,12 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-p2"
             isEnabled = "YES">
          </CommandLineArgument>
