@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-f./AllInstances/AES256pm2Ins/Instance7-6"
+            argument = "-f./Instance7-6"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
