@@ -51,10 +51,7 @@
 -(void) propagate
 {
    if([_initial bound]){
-      if(is_eqf([_initial min],-0.0f) && is_eqf([_initial max],+0.0f))
-         [_res updateInterval:[_initial min] and:[_initial max]];
-      else
-         [_res bind:[_initial value]];
+      [_res bind:[_initial value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }

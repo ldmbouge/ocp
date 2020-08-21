@@ -135,10 +135,7 @@
 -(void) propagate
 {
    if([_res bound]){
-      if(is_eq([_res min],-0.0) && is_eq([_res max],+0.0))
-         [_initial updateInterval:[_res min] and:[_res max]];
-      else
-         [_initial bind:[_res value]];
+      [_initial bind:[_res value]];
       assignTRInt(&_active, NO, _trail);
       return;
    }
@@ -257,7 +254,6 @@
    _x = x;
    _c = c;
    return self;
-   
 }
 -(void) post
 {

@@ -30,26 +30,23 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   CPDoubleDom* res = [[CPDoubleDom allocWithZone:zone] initCPDoubleDom:_trail low:_imin up:_imax];
+   CPDoubleDom* res = [[CPDoubleDom allocWithZone:zone] initCPDoubleDom:_trail low:_domain._low up:_domain._up];
    res->_imax = _imax;
    res->_imin = _imin;
    return res;
 }
 -(NSString*) description
 {
-   if([self bound] && !(is_eq(_domain._low,-0.0) && is_eq(_domain._up,+0.0))){
-      unsigned int *inf;
-      inf = (unsigned int *)&(_domain._low);
-      NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-      [buf appendFormat:@"%20.20e [%4X]",_domain._low,*inf ];
-      return buf;
-   }
    unsigned int *inf;
-   unsigned int *sup;
    inf = (unsigned int *)&(_domain._low);
-   sup = (unsigned int *)&(_domain._up);
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",_domain._low,_domain._up,*inf,*sup];
+   if([self bound]){
+      [buf appendFormat:@"%20.20e [%4X]",_domain._low,*inf];
+   }else{
+      unsigned int *sup;
+      sup = (unsigned int *)&(_domain._up);
+      [buf appendFormat:@"(%20.20e,%20.20e) hexa (%4X,%4X)",_domain._low,_domain._up,*inf,*sup];
+   }
    return buf;
 }
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x
@@ -57,20 +54,14 @@
    if(newMin > [self max])
       failNow();
    updateMinD(&_domain, newMin, _trail);
-   ORBool isBound = is_eq(_domain._low,_domain._up);
-   [x changeMinEvt: isBound sender:self];
-   if (isBound)
-      [x bindEvt:self];
+   [x changeMinEvt: [self bound] sender:self];
 }
 -(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x
 {
    if(newMax < [self min])
       failNow();
    updateMaxD(&_domain, newMax, _trail);
-   ORBool isBound = is_eq(_domain._low,_domain._up);
-   [x changeMaxEvt:isBound sender:self];
-   if (isBound)
-      [x bindEvt:self];
+   [x changeMaxEvt:[self bound]  sender:self];
 }
 -(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p
 {
@@ -78,10 +69,7 @@
       failNow();
    updateMinD(&_domain, newMin, _trail);
    if(p){
-      ORBool isBound = is_eq(_domain._low,_domain._up);
-      [x changeMinEvt: isBound sender:self];
-      if (isBound)
-         [x bindEvt:self];
+      [x changeMinEvt: [self bound]  sender:self];
    }
 }
 -(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x propagate:(ORBool) p
@@ -90,10 +78,7 @@
       failNow();
    updateMaxD(&_domain, newMax, _trail);
    if(p){
-      ORBool isBound = is_eq(_domain._low,_domain._up);
-      [x changeMaxEvt:isBound sender:self];
-      if (isBound)
-         [x bindEvt:self];
+      [x changeMaxEvt:[self bound]  sender:self];
    }
 }
 -(void) updateInterval:(double_interval)v for:(id<CPDoubleVarNotifier>)x;
