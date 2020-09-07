@@ -397,6 +397,7 @@ static inline V* get##T(T* v) { return v->_val;}
    __strong TRId*    _array;
    ORInt               _low;
    TRInt                _up;
+   ORUInt            _magic;
 }
 -(ORTRIdArrayI*) initORTRIdArray: (ORTrailI*)t low:(ORInt)low size:(ORInt)size;
 -(void) dealloc;
@@ -409,5 +410,6 @@ static inline V* get##T(T* v) { return v->_val;}
 -(void) resize:(int)newSize inPost:(bool)inPost;
 -(NSUInteger) count;
 -(TRId*) array;
+-(bool) changed;
 -(NSString*) description;
 @end

@@ -470,13 +470,13 @@ enum ORGroupType {
 -(int)numForwardProperties;
 -(int)numReverseProperties;
 -(int)numCombinedProperties;
+-(int**)forwardPropertyImpact;
+-(int*)forwardPropertyImpactCount;
+-(int**)reversePropertyImpact;
+-(int*)reversePropertyImpactCount;
 
 
--(void)setAsAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 -(void)setAsDualDirectionalAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void) setAsSequenceConstraint:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void) setAsSequenceConstraintWithBitSequence:(id<ORIntRange>)range length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void)setAsAllDifferent:(id<ORIntRange>)domain;
 -(void) setAsDualDirectionalAllDifferent:(int)numVariables domain:(id<ORIntRange>)domain;
 -(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights lower:(int)lb upper:(int)ub;
 -(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights equal:(id<ORIntVar>)equal;

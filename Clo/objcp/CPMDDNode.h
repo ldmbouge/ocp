@@ -28,6 +28,15 @@
     int _forwardQueueIndex;
     bool _inReverseQueue;
     int _reverseQueueIndex;
+    
+    bool* _forwardDelta;
+    int _forwardDeltaMagic;
+    int _forwardDeltaPass;
+    bool* _reverseDelta;
+    int _reverseDeltaMagic;
+    int _reverseDeltaPass;
+    
+    int _childrenChangedMagic;
 }
 -(id) initSinkNode:(id<ORTrail>)trail defaultReverseState:(MDDStateValues*)reverseState layer:(int)layer numForwardBytes:(int)numForwardBytes numCombinedBytes:(int)numCombinedBytes;
 -(id) initNode: (id<ORTrail>)trail minChildIndex:(int)minChildIndex maxChildIndex:(int)maxChildIndex state:(MDDStateValues*)state layer:(int)layer indexOnLayer:(int)indexOnLayer numReverseBytes:(int)numReverseBytes numCombinedBytes:(int)numCombinedBytes;
@@ -35,6 +44,11 @@
 -(void) updateForwardState:(char*)reverseState;
 -(void) updateReverseState:(char*)reverseState;
 -(void) updateCombinedState:(char*)combinedState;
+
+-(void) setForwardPropertyDelta:(bool*)delta passIteration:(int)passIteration;
+-(bool*) forwardDeltaForPassIteration:(int)passIteration;
+-(void) setReversePropertyDelta:(bool*)delta passIteration:(int)passIteration;
+-(bool*) reverseDeltaForPassIteration:(int)passIteration;
 
 -(char*) reverseProperties;
 
@@ -63,6 +77,9 @@
 -(bool) isDeleted;
 -(void) deleteNode;
 -(bool) candidateForSplitting;
+-(bool) parentsChanged;
+-(bool) childrenChanged;
+-(void) updateChildrenMagic;
 
 -(bool) inQueue:(bool)forward;
 -(int) indexInQueue:(bool)forward;

@@ -467,17 +467,8 @@ extension ORMDDSpecs {
         }
         return Array(d.keys)
     }
-    func setAsAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
-        self.setAsAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
-    }
     func setAsDualDirectionalAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
         self.setAsDualDirectionalAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
-    }
-    func setAsSequence(_ domainRange : ORIntRange!, _ length : Int, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
-        self.setAsSequenceConstraint(domainRange, length: Int32(length), lb: Int32(lb), ub: Int32(ub), values:values)
-    }
-    func setAsSequenceWithBitSequence(_ domainRange : ORIntRange!, _ length : Int, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
-        self.setAsSequenceConstraintWithBitSequence(domainRange, length: Int32(length), lb: Int32(lb), ub: Int32(ub), values:values)
     }
 }
 
@@ -585,20 +576,6 @@ public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,
     return mdd
 }
 
-public func allDiffMDDWithSetsAndClosures(_ vars : ORIntVarArray) -> ORMDDSpecs {
-    let m = vars.tracker(),
-        udom = arrayDomains(vars)
-    let domSize = Int(udom.size())
-    let some = 0,
-        all = 1,
-        numAssigned = 2
-        
-    let mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: 3)
-    mdd.state([(some, false, domSize),(all, false, domSize)])
-    mdd.state([(numAssigned,0)])
-    mdd.setAsAllDifferent(udom)
-    return mdd
-}
 public func allDiffDualDirectionalMDDWithSetsAndClosures(_ vars : ORIntVarArray) -> ORMDDSpecs {
     let m = vars.tracker(),
         udom = arrayDomains(vars)
@@ -673,38 +650,6 @@ public func sumMDD(m : ORTracker,vars : ORIntVarArray, weightMatrix : [[Int]], e
     return mdd
 }
 
-public func seqMDDClosures(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
-    let m = vars.tracker(),
-        minFIdx = 0,minLIdx = len-1,
-        maxFIdx = len,maxLIdx = len*2-1,
-        valueSet = ORFactory.intSet(m, set: values)
-    let udom = arrayDomains(vars)
-    let mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: len*2)
-    var sd : [(Int,Int)] = []
-    for i in minFIdx...minLIdx {
-        sd.append((i,i-minLIdx))
-    }
-    for i in maxFIdx...maxLIdx {
-        sd.append((i,i-maxLIdx))
-    }
-    mdd.state(sd)
-    mdd.setAsSequence(udom, len, lb, ub, valueSet)
-    return mdd;
-}
-public func seqMDDClosuresWithBitSequence(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
-    let m = vars.tracker(),
-        minCounts = 0,
-        maxCounts = 1,
-        numAssigned = 2,
-        valueSet = ORFactory.intSet(m, set: values)
-    let udom = arrayDomains(vars)
-    let mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: 3)
-    //Each bit sequence is a len*2 shorts
-    mdd.state([(minCounts, false, len * 16), (maxCounts, false, len * 16)])
-    mdd.state([numAssigned:0])
-    mdd.setAsSequenceWithBitSequence(udom, len, lb, ub, valueSet)
-    return mdd;
-}
 public func seqDualDirectionalMDDClosuresWithBitSequence(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
     let m = vars.tracker(),
         minCounts = 0,
@@ -716,6 +661,6 @@ public func seqDualDirectionalMDDClosuresWithBitSequence(_ vars : ORIntVarArray,
     //Each bit sequence is a len*2 shorts
     mdd.state([(minCounts, false, len * 16), (maxCounts, false, len * 16)])
     mdd.state([numAssigned:0])
-    mdd.setAsSequenceWithBitSequence(udom, len, lb, ub, valueSet)
+    //mdd.setAsDualDirectionalSequenceWithBitSequence(udom, len, lb, ub, valueSet)
     return mdd;
 }

@@ -17,7 +17,7 @@ autoreleasepool {
     
     //let fileName = numArguments > 1 ? arguments[1] : ""
     let mode = numArguments > 2 ? Int(arguments[2]) : 1
-    let relaxationSize = numArguments > 3 ? Int32(arguments[3]) : 64
+    let relaxationSize = numArguments > 3 ? Int32(arguments[3]) : 32
     let usingFirstFail = numArguments > 6 ? Bool(arguments[6]) : false
     let recommendationStyle = numArguments > 9 ? Int(arguments[9]) : 0
     let variableOverlap = numArguments > 10 ? Int32(arguments[10]) : 0
@@ -25,7 +25,7 @@ autoreleasepool {
     //mode = 0, classic constraint
     //mode = 1, among MDD
     //mode = 2, sequence MDD
-    let constraintClass = 1,
+    let constraintClass = 0,
         singleCumulative = false
     
     let programStart    = ORRuntimeMonitor.cputime()
@@ -135,9 +135,9 @@ autoreleasepool {
         }
     } else if (mode == 2) {
         //Max Work
-        m.add(seqMDDClosuresWithBitSequence(vars, len: maxWorkDayRange[constraintClass], lb: 0, ub: maxWorkDays[constraintClass], values: setOfOne))
+        m.add(seqDualDirectionalMDDClosuresWithBitSequence(vars, len: maxWorkDayRange[constraintClass], lb: 0, ub: maxWorkDays[constraintClass], values: setOfOne))
         //Min Work
-        m.add(seqMDDClosuresWithBitSequence(vars, len: minWorkDayRange[constraintClass], lb: minWorkDays[constraintClass], ub: minWorkDayRange[constraintClass], values: setOfOne))
+        m.add(seqDualDirectionalMDDClosuresWithBitSequence(vars, len: minWorkDayRange[constraintClass], lb: minWorkDays[constraintClass], ub: minWorkDayRange[constraintClass], values: setOfOne))
         //Calendar Week
         let weekRange = range(m, 0...6)
         for i in 0..<planningHorizon/7 {

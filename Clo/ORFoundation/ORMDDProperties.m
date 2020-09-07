@@ -20,6 +20,7 @@
 -(void) initializeState:(char*)state { return; }
 -(int) get:(char*)state { return 0; }
 -(void) set:(int)value forState:(char*)state { return; }
+-(bool) diff:(char*)left to:(char*)right { return true; }
 -(int) initialValue { return 0; }
 @end
 @implementation MDDPShort
@@ -39,6 +40,9 @@
     *(short*)(&state[_byteOffset]) = value;
     return;
 }
+-(bool) diff:(char*)left to:(char*)right {
+    return *(short*)&left[_byteOffset] != *(short*)&right[_byteOffset];
+}
 -(int) initialValue { return _initialValue; }
 @end
 @implementation MDDPInt
@@ -57,6 +61,9 @@
 -(void) set:(int)value forState:(char*)state {
     *(int*)(&state[_byteOffset]) = value;
     return;
+}
+-(bool) diff:(char*)left to:(char*)right {
+    return *(int*)&left[_byteOffset] != *(int*)&right[_byteOffset];
 }
 -(int) initialValue { return _initialValue; }
 @end
@@ -78,6 +85,9 @@
 -(void) set:(int)value forState:(char*)state {
     state[_byteOffset] = value ? (state[_byteOffset] | _bitmask) : (state[_byteOffset] & !_bitmask);
     return;
+}
+-(bool) diff:(char*)left to:(char*)right {
+    return (left[_byteOffset] & _bitmask) != (right[_byteOffset] & _bitmask);
 }
 -(int) initialValue { return _initialValue; }
 @end
@@ -101,6 +111,14 @@
 }
 -(void) setBitSequence:(char*)value forState:(char*)state {
     memcpy(state + _byteOffset, value, _numBytes);
+}
+-(bool) diff:(char*)left to:(char*)right {
+    for (int i = 0; i < _numBytes; i++) {
+        if (left[_byteOffset + i] != right[_byteOffset + i]) {
+            return true;
+        }
+    }
+    return true;
 }
 -(int) initialValue { return _initialValue; }
 @end

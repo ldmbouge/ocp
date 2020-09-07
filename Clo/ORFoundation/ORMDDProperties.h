@@ -21,6 +21,7 @@
 -(void) initializeState:(char*)state;
 -(int) get:(char*)state;
 -(void) set:(int)value forState:(char*)state;
+-(bool) diff:(char*)left to:(char*)right;
 -(int) initialValue;
 @end
 

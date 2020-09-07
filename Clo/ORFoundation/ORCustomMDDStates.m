@@ -26,6 +26,11 @@ const short BytesPerMagic = 4;
     
     DDStateEquivalenceClassClosure* _approximateEquivalenceFunctions;
     
+    int** _forwardPropertyImpact;
+    int* _forwardPropertyImpactCount;
+    int** _reversePropertyImpact;
+    int* _reversePropertyImpactCount;
+    
     
     
     char**** _mergeCacheLeft;
@@ -68,7 +73,11 @@ const short BytesPerMagic = 4;
     _reverseStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: numReverseProperties];
     _combinedStateDescriptor = [[MDDStateDescriptor alloc] initMDDStateDescriptor: numCombinedProperties];
     _forwardTransitionFunctions = malloc(numForwardProperties * sizeof(DDArcSetTransitionClosure));
+    _forwardPropertyImpact = malloc(numForwardProperties * sizeof(int*));
+    _forwardPropertyImpactCount = calloc(numForwardProperties, sizeof(int));
     _reverseTransitionFunctions = malloc(numReverseProperties * sizeof(DDArcSetTransitionClosure));
+    _reversePropertyImpact = malloc(numReverseProperties * sizeof(int*));
+    _reversePropertyImpactCount = calloc(numReverseProperties, sizeof(int));
     _forwardRelaxationFunctions = malloc(numForwardProperties * sizeof(DDMergeClosure));
     _reverseRelaxationFunctions = malloc(numReverseProperties * sizeof(DDMergeClosure));
     _numForwardPropertiesAdded = 0;
@@ -130,7 +139,21 @@ const short BytesPerMagic = 4;
     [_forwardStateDescriptor release];
     [_reverseStateDescriptor release];
     free(_forwardTransitionFunctions);
+    for (int i = 0; i < _numForwardPropertiesAdded; i++) {
+        if (_forwardPropertyImpactCount[i]) {
+            free(_forwardPropertyImpact[i]);
+        }
+    }
+    free(_forwardPropertyImpact);
+    free(_forwardPropertyImpactCount);
     free(_reverseTransitionFunctions);
+    for (int i = 0; i < _numReversePropertiesAdded; i++) {
+        if (_reversePropertyImpactCount[i]) {
+            free(_reversePropertyImpact[i]);
+        }
+    }
+    free(_reversePropertyImpact);
+    free(_reversePropertyImpactCount);
     free(_forwardRelaxationFunctions);
     free(_reverseRelaxationFunctions);
     free(_fixpointVars);
@@ -223,9 +246,18 @@ const short BytesPerMagic = 4;
     int numNewForwardProperties = [MDDSpec numForwardProperties];
     int numNewReverseProperties = [MDDSpec numReverseProperties];
     id<ORIntVarArray> otherVars = [MDDSpec vars];
+    int** forwardPropertyImpact = [MDDSpec forwardPropertyImpact];
+    int* forwardPropertyImpactCount = [MDDSpec forwardPropertyImpactCount];
+    int** reversePropertyImpact = [MDDSpec reversePropertyImpact];
+    int* reversePropertyImpactCount = [MDDSpec reversePropertyImpactCount];
     for (int i = 0; i < numNewForwardProperties; i++) {
         [_forwardStateDescriptor addStateProperty:forwardProperties[i]];
         _forwardTransitionFunctions[_numForwardPropertiesAdded] = newForwardTransitionClosures[i];
+        _forwardPropertyImpactCount[_numForwardPropertiesAdded] = forwardPropertyImpactCount[i];
+        _forwardPropertyImpact[_numForwardPropertiesAdded] = malloc(forwardPropertyImpactCount[i] * sizeof(int));
+        for (int p = 0; p < forwardPropertyImpactCount[i]; p++) {
+            _forwardPropertyImpact[_numForwardPropertiesAdded][p] = (_numForwardPropertiesAdded - i) + forwardPropertyImpact[i][p];
+        }
         _forwardRelaxationFunctions[_numForwardPropertiesAdded] = newForwardRelaxationClosures[i];
         for (int varIndex = [otherVars low]; varIndex <= [otherVars up]; varIndex++) {
             _forwardPropertiesUsedPerVariable[mapping[varIndex]][_numForwardPropertiesAdded] = true;
@@ -236,7 +268,12 @@ const short BytesPerMagic = 4;
     for (int i = 0; i < numNewReverseProperties; i++) {
         [_reverseStateDescriptor addStateProperty:reverseProperties[i]];
         _reverseTransitionFunctions[_numReversePropertiesAdded] = newReverseTransitionClosures[i];
-            _reverseRelaxationFunctions[_numReversePropertiesAdded] = newReverseRelaxationClosures[i];
+        _reversePropertyImpactCount[_numReversePropertiesAdded] = reversePropertyImpactCount[i];
+        _reversePropertyImpact[_numReversePropertiesAdded] = malloc(reversePropertyImpactCount[i] * sizeof(int));
+        for (int p = 0; p < reversePropertyImpactCount[i]; p++) {
+            _reversePropertyImpact[_numReversePropertiesAdded][p] = (_numReversePropertiesAdded - i) + reversePropertyImpact[i][p];
+        }
+        _reverseRelaxationFunctions[_numReversePropertiesAdded] = newReverseRelaxationClosures[i];
         for (int varIndex = [otherVars low]; varIndex <= [otherVars up]; varIndex++) {
             _reversePropertiesUsedPerVariable[mapping[varIndex]][_numReversePropertiesAdded] = true;
         }
@@ -276,19 +313,59 @@ const short BytesPerMagic = 4;
     [_reverseStateDescriptor initializeState:defaultProperties];
     return [[MDDStateValues alloc] initState:defaultProperties numBytes:_numReverseBytes trail:_trail];
 }
--(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom {
+-(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom {
     char* newState = malloc(_numForwardBytes);
     memcpy(newState, forward, _numForwardBytes);
     if (_numSpecsAdded == 1) {
         for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
-            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, minDom, maxDom);
+            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, numArcs, minDom, maxDom);
         }
         return newState;
     }
     bool* propertyUsed = _forwardPropertiesUsedPerVariable[variable];
     for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
         if (propertyUsed[propertyIndex]) {
-            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, minDom, maxDom);
+            _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, numArcs, minDom, maxDom);
+        }
+    }
+    return newState;
+}
+-(char*) computeForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom merged:(bool*)merged {
+    char* newState = malloc(_numForwardBytes);
+    memcpy(newState, forward, _numForwardBytes);
+    if (_numSpecsAdded == 1) {
+        for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+            *merged = _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, numArcs, minDom, maxDom) || *merged;
+        }
+        return newState;
+    }
+    bool* propertyUsed = _forwardPropertiesUsedPerVariable[variable];
+    for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+        if (propertyUsed[propertyIndex]) {
+            *merged = _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, numArcs, minDom, maxDom) || *merged;
+        }
+    }
+    return newState;
+}
+-(char*) updateForwardStateFromForward:(char*)forward combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState merged:(bool*)merged {
+    char* newState = malloc(_numForwardBytes);
+    memcpy(newState, oldState, _numForwardBytes);
+    if (_numSpecsAdded == 1) {
+        for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+            if (properties[propertyIndex]) {
+                *merged = _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, numArcs, minDom, maxDom) || *merged;
+            }
+        }
+        return newState;
+    }
+    bool* propertyUsed = _forwardPropertiesUsedPerVariable[variable];
+    for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+        if (properties[propertyIndex]) {
+            if (propertyUsed[propertyIndex]) {
+                *merged = _forwardTransitionFunctions[propertyIndex](newState, forward, combined, valueSet, numArcs, minDom, maxDom) || *merged;
+            } else {
+                [_forwardProperties[propertyIndex] set:[_forwardProperties[propertyIndex] get:forward] forState:newState];
+            }
         }
     }
     return newState;
@@ -375,19 +452,42 @@ const short BytesPerMagic = 4;
     memcpy(newState, cachedState, _numForwardBytes);*/
     return nil;
 }
--(char*) computeReverseStateFromProperties:(char*)reverse combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet minDom:(int)minDom maxDom:(int)maxDom {
+-(char*) computeReverseStateFromProperties:(char*)reverse combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom {
     char* newState = malloc(_numReverseBytes);
     memcpy(newState, reverse, _numReverseBytes);
     if (_numSpecsAdded == 1) {
         for (int propertyIndex = 0; propertyIndex < _numReversePropertiesAdded; propertyIndex++) {
-            _reverseTransitionFunctions[propertyIndex](newState, reverse, combined, valueSet, minDom, maxDom);
+            _reverseTransitionFunctions[propertyIndex](newState, reverse, combined, valueSet, numArcs, minDom, maxDom);
         }
         return newState;
     }
     bool* propertyUsed = _reversePropertiesUsedPerVariable[variable];
     for (int propertyIndex = 0; propertyIndex < _numReversePropertiesAdded; propertyIndex++) {
         if (propertyUsed[propertyIndex]) {
-            _reverseTransitionFunctions[propertyIndex](newState, reverse, combined, valueSet, minDom, maxDom);
+            _reverseTransitionFunctions[propertyIndex](newState, reverse, combined, valueSet, numArcs, minDom, maxDom);
+        }
+    }
+    return newState;
+}
+-(char*) updateReverseStateFromReverse:(char*)reverse combined:(char*)combined assigningVariable:(int)variable withValues:(bool*)valueSet numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState {
+    char* newState = malloc(_numReverseBytes);
+    memcpy(newState, oldState, _numReverseBytes);
+    if (_numSpecsAdded == 1) {
+        for (int propertyIndex = 0; propertyIndex < _numReversePropertiesAdded; propertyIndex++) {
+            if (properties[propertyIndex]) {
+                _reverseTransitionFunctions[propertyIndex](newState, reverse, combined, valueSet, numArcs, minDom, maxDom);
+            }
+        }
+        return newState;
+    }
+    bool* propertyUsed = _reversePropertiesUsedPerVariable[variable];
+    for (int propertyIndex = 0; propertyIndex < _numReversePropertiesAdded; propertyIndex++) {
+        if (properties[propertyIndex]) {
+            if (propertyUsed[propertyIndex]) {
+                _reverseTransitionFunctions[propertyIndex](newState, reverse, combined, valueSet, numArcs, minDom, maxDom);
+            } else {
+                [_reverseProperties[propertyIndex] set:[_reverseProperties[propertyIndex] get:reverse] forState:newState];
+            }
         }
     }
     return newState;
@@ -405,6 +505,28 @@ const short BytesPerMagic = 4;
         _forwardRelaxationFunctions[propertyIndex](newState, leftState, rightState);
     }
     memcpy(leftState, newState, _numForwardBytes);
+    free(newState);
+}
+-(void) mergeStateProperties:(char*)leftState with:(char*)rightState properties:(bool*)properties {
+    char* newState = malloc(_numForwardBytes * sizeof(char));
+    memcpy(newState, leftState, _numForwardBytes);
+    for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+        if (properties[propertyIndex]) {
+            _forwardRelaxationFunctions[propertyIndex](newState, leftState, rightState);
+        }
+    }
+    memcpy(leftState, newState, _numForwardBytes);
+    free(newState);
+}
+-(void) mergeReverseStateProperties:(char*)leftState with:(char*)rightState properties:(bool*)properties {
+    char* newState = malloc(_numReverseBytes * sizeof(char));
+    memcpy(newState, leftState, _numReverseBytes);
+    for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+        if (properties[propertyIndex]) {
+            _reverseRelaxationFunctions[propertyIndex](newState, leftState, rightState);
+        }
+    }
+    memcpy(leftState, newState, _numReverseBytes);
     free(newState);
 }
 -(void) cachedMergeStateProperties:(char*)leftState with:(char*)rightState {
@@ -559,15 +681,23 @@ const short BytesPerMagic = 4;
     
     memcpy(leftState, newState, _numReverseBytes);
 }
--(bool) canChooseValue:(int)value forVariable:(int)variable fromParent:(char*)parentState toChild:(char*)childState objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes {
+-(bool) canChooseValue:(int)value forVariable:(int)variable fromParentForward:(char*)parentForward combined:(char*)parentCombined toChildReverse:(char*)childReverse combined:(char*)childCombined objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes {
     if (_numSpecsAdded == 1) {
-        return _arcExists(parentState,childState,value,objectiveMins == nil ? INT_MIN : objectiveMins[0]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]._val);
+        return _arcExists(parentForward, parentCombined,
+                          childReverse, childCombined,
+                          value,
+                          objectiveMins == nil ? INT_MIN : objectiveMins[0]._val,
+                          objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]._val);
     }
     int numArcExists = _numArcExistsForVariable[variable];
     int* arcExistFunctionIndices = _arcExistFunctionIndicesForVariable[variable];
     for (int i = 0; i < numArcExists; i++) {
         int specIndex = arcExistFunctionIndices[i];
-        if (!_arcExistFunctions[specIndex](parentState,childState,value,objectiveMins == nil ? INT_MIN : objectiveMins[specIndex]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex]._val)) {
+        if (!_arcExistFunctions[specIndex](parentForward, parentCombined,
+                                           childReverse, childCombined,
+                                           value,
+                                           objectiveMins == nil ? INT_MIN : objectiveMins[specIndex]._val,
+                                           objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex]._val)) {
             return false;
         }
     }
@@ -575,7 +705,11 @@ const short BytesPerMagic = 4;
 }
 -(bool) canCreateState:(char**)newStateProperties forward:(char*)forward combined:(char*)combined assigningVariable:(int)variable toValue:(int)value objectiveMins:(TRInt*)objectiveMins objectiveMaxes:(TRInt*)objectiveMaxes {
     if (_numSpecsAdded == 1) {
-        if (!_arcExists(forward,combined,value,objectiveMins == nil ? INT_MIN : objectiveMins[0]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]._val)) {
+        if (!_arcExists(forward, combined,
+                        nil, nil,
+                        value,
+                        objectiveMins == nil ? INT_MIN : objectiveMins[0]._val,
+                        objectiveMaxes == nil ? INT_MAX : objectiveMaxes[0]._val)) {
             return false;
         }
     } else {
@@ -583,7 +717,11 @@ const short BytesPerMagic = 4;
         int* arcExistFunctionIndices = _arcExistFunctionIndicesForVariable[variable];
         for (int i = 0; i < numArcExists; i++) {
             int specIndex = arcExistFunctionIndices[i];
-            if (!_arcExistFunctions[specIndex](forward,combined,value,objectiveMins == nil ? INT_MIN : objectiveMins[specIndex]._val,objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex]._val)) {
+            if (!_arcExistFunctions[specIndex](forward, combined,
+                                               nil, nil,
+                                               value,
+                                               objectiveMins == nil ? INT_MIN : objectiveMins[specIndex]._val,
+                                               objectiveMaxes == nil ? INT_MAX : objectiveMaxes[specIndex]._val)) {
                 return false;
             }
         }
@@ -595,14 +733,14 @@ const short BytesPerMagic = 4;
     *newStateProperties = malloc(_numForwardBytes * sizeof(char));
     if (_numSpecsAdded == 1) {
         for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
-            _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, valueSet, value, value);
+            _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, valueSet, 1, value, value);
         }
     } else {
         memcpy(*newStateProperties, forward, _numForwardBytes);
         bool* propertyUsed = _forwardPropertiesUsedPerVariable[variable];
         for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
             if (propertyUsed[propertyIndex]) {
-                _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, valueSet, value, value);
+                _forwardTransitionFunctions[propertyIndex](*newStateProperties, forward, combined, valueSet, 1, value, value);
             }
         }
     }
@@ -646,9 +784,86 @@ const short BytesPerMagic = 4;
     }
     return sumOfPriorities;
 }
+-(bool*) diffForwardProperties:(char*)left to:(char*)right {
+    bool* diff = malloc(_numForwardPropertiesAdded * sizeof(bool));
+    for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+        diff[propertyIndex] = [_forwardProperties[propertyIndex] diff:left to:right];
+    }
+    return diff;
+    /*
+    int diffCount = 0;
+    int maxDiffCount = 10;
+    *diff = malloc(maxDiffCount * sizeof(int));
+    for (int propertyIndex = 0; propertyIndex < _numForwardPropertiesAdded; propertyIndex++) {
+        if ([_forwardProperties[propertyIndex] diff:left to:right]) {
+            if (diffCount == maxDiffCount) {
+                int newMaxDiffCount = maxDiffCount * 2;
+                int* newDiff = malloc(newMaxDiffCount * sizeof(int));
+                for (int i = 0; i < diffCount; i++) {
+                    newDiff[i] = (*diff)[i];
+                }
+                free(*diff);
+                *diff = newDiff;
+                maxDiffCount = newMaxDiffCount;
+            }
+            (*diff)[diffCount] = propertyIndex;
+            diffCount++;
+        }
+    }
+    return diffCount;
+    */
+}
+-(bool*) diffReverseProperties:(char*)left to:(char*)right {
+    bool* diff = malloc(_numReversePropertiesAdded * sizeof(bool));
+    for (int propertyIndex = 0; propertyIndex < _numReversePropertiesAdded; propertyIndex++) {
+        diff[propertyIndex] = [_reverseProperties[propertyIndex] diff:left to:right];
+    }
+    return diff;
+}
+-(bool*) forwardPropertyImpactFrom:(bool**)parentDeltas numParents:(int)numParents variable:(int)variable {
+    bool* propertyImpact = calloc(_numForwardPropertiesAdded, sizeof(bool));
+    bool* propertyUsed = _forwardPropertiesUsedPerVariable[variable];
+    for (int property = 0; property < _numForwardPropertiesAdded; property++) {
+        for (int parent = 0; parent < numParents; parent++) {
+            if (parentDeltas[parent][property]) {
+                if (propertyUsed[property]) {
+                    for (int i = 0; i < _forwardPropertyImpactCount[property]; i++) {
+                        propertyImpact[_forwardPropertyImpact[property][i]] = true;
+                    }
+                } else {
+                    propertyImpact[property] = true;
+                }
+                break;
+            }
+        }
+    }
+    return propertyImpact;
+}
+-(bool*) reversePropertyImpactFrom:(bool**)childDeltas numChildren:(int)numChildren variable:(int)variable {
+    bool* propertyImpact = calloc(_numReversePropertiesAdded, sizeof(bool));
+    bool* propertyUsed = _reversePropertiesUsedPerVariable[variable];
+    for (int property = 0; property < _numReversePropertiesAdded; property++) {
+        for (int child = 0; child < numChildren; child++) {
+            if (childDeltas[child][property]) {
+                if (propertyUsed[property]) {
+                    for (int i = 0; i < _reversePropertyImpactCount[property]; i++) {
+                        propertyImpact[_reversePropertyImpact[property][i]] = true;
+                    }
+                } else {
+                    propertyImpact[property] = true;
+                }
+                break;
+            }
+        }
+    }
+    return propertyImpact;
+}
 -(int) numForwardBytes { return _numForwardBytes; }
 -(int) numReverseBytes { return _numReverseBytes; }
 -(int) numCombinedBytes { return _numCombinedBytes; }
+-(int) numForwardProperties { return _numForwardPropertiesAdded; }
+-(int) numReverseProperties { return _numReversePropertiesAdded; }
+-(int) numCombinedProperties { return _numCombinedPropertiesAdded; }
 -(int) numSpecs { return _numSpecsAdded; }
 -(id<ORIntVarArray>) vars { return _vars; }
 -(id<ORIntVar>*) fixpointVars { return _fixpointVars; }
@@ -658,7 +873,7 @@ const short BytesPerMagic = 4;
     _trail = trail;
     _hashWidth = width;
     _transitionCacheHashWidth = width * 10;
-    _mergeCacheHashWidth = width * 10;
+    _mergeCacheHashWidth = 929;
     _numForwardBytes = [_forwardStateDescriptor numBytes];
     _numReverseBytes = [_reverseStateDescriptor numBytes];
     short extraBytes = _numForwardBytes % BytesPerMagic;

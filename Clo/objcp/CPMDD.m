@@ -80,6 +80,9 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     _rankArcsForSplitting = true;
     _useDefaultArcRank = true;
     _approximateEquivalenceClasses = true;
+    _twoPassSplit = false;
+    _alwaysSplitLastArc = true;
+    _useStateExistence = false;
     
     //Objective info
     _fixpointMinValues = malloc(_numSpecs * sizeof(TRInt));
@@ -97,6 +100,11 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     _forwardQueue = [[CPMDDQueue alloc] initCPMDDQueue:(int)_numVariables+1 width:_relaxationSize isForward:true];
     _reverseQueue = [[CPMDDQueue alloc] initCPMDDQueue:(int)_numVariables+1 width:_relaxationSize isForward:false];
     
+    _diffForwardSel = @selector(diffForwardProperties:to:);
+    _diffForward = (DiffPropertyIMP)[_spec methodForSelector:_diffForwardSel];
+    _diffReverseSel = @selector(diffReverseProperties:to:);
+    _diffReverse = (DiffPropertyIMP)[_spec methodForSelector:_diffReverseSel];
+    
     return self;
 }
 -(void) dealloc {
@@ -108,7 +116,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
         _layers[i] = nil;
         _layerVariableCount[i] += _minDomainsByLayer[i];
         free(_layerVariableCount[i]);
-        free(_layerBitDomains[i]);
+        //free(_layerBitDomains[i]);
     }
     [_layers[_numVariables] release];
     free(_layers);
@@ -164,10 +172,9 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     }
     [self buildLayer:layer];
     
-    [self fillQueues];
-    [self reversePass];
-    
     [self addPropagators];
+    [self fillQueues];
+    [self propagate];
     
     _inPost = false;
     return;
@@ -306,35 +313,37 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             if ([self updateLayer:propagationLayerInfo]) {
                 [self updateAllLayers];
                 [self recordObjectiveBounds];
-                //[self fillQueues];
-                int numPassesWithSplit = 0;
-                while (!([_forwardQueue isEmpty] && [_reverseQueue isEmpty])) {
-                    if (_dualDirectional) {
-                        [_reverseQueue reboot];
-                        [self reversePass];
-                    }
-                    [_forwardQueue reboot];
-                    if (numPassesWithSplit < _maxNumPasses) {
-                        if (_splitAllLayersBeforeFiltering) {
-                            [self forwardPassOnlySplit];
-                            [self forwardPassWithoutSplit];
-                        } else {
-                            [self forwardPassWithSplit];
-                        }
-                        numPassesWithSplit++;
-                    } else {
-                        [self forwardPassWithoutSplit];
-                    }
-                    [self updateObjectiveBounds];
-                }
-                [self updateObjectiveVars];
-                [self updateVariableDomains];
+                [self propagate];
             }
             //_todo = CPChecked;
         } onBehalf:self];
     } else {
         _layerBound[layerIndex] = makeTRInt(_trail, 1);
     }
+}
+-(void) propagate {
+    _passIteration = 0;
+    while (!([_forwardQueue isEmpty] && [_reverseQueue isEmpty])) {
+        if (_dualDirectional) {
+            [_reverseQueue reboot];
+            [self reversePass];
+        }
+        [_forwardQueue reboot];
+        if (_passIteration < _maxNumPasses) {
+            if (_splitAllLayersBeforeFiltering) {
+                [self forwardPassOnlySplit];
+                [self forwardPassWithoutSplit];
+            } else {
+                [self forwardPassWithSplit];
+            }
+        } else {
+            [self forwardPassWithoutSplit];
+        }
+        _passIteration++;
+        [self updateObjectiveBounds];
+    }
+    [self updateObjectiveVars];
+    [self updateVariableDomains];
 }
 -(void) fillQueues {
     for (int i = 0; i <= _numVariables; i++) {
@@ -421,21 +430,23 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     MDDNode* node;
     while ((node = [_reverseQueue dequeue]) != nil) {
         if ([node isDeleted] || [node layer] == _numVariables) continue;
-        bool reverseStateChanged = [self refreshReverseStateFor:node];
-        if (reverseStateChanged) {
-            bool combinedStateChanged = [self updateCombinedStateFor:node];
-            if (combinedStateChanged) {
-                [self enqueueRelativesOf:node]; //Only enqueue children if the combined state changes
-                [_forwardQueue enqueue:node];
-            } else {
-                [self enqueueParentsOf:node];
-            }
-        }
+        [self updateNodeReverse:node layer:[node layer]];
     }
 }
 -(void) forwardPassOnlySplit {
+    _splitPass = 1;
     for (int layerIndex = _firstMergedLayer._val; layerIndex <= _lastMergedLayer._val; layerIndex++) {
-        [self splitLayer:layerIndex];
+        int highestShrunkLayer = [self splitLayer:layerIndex];
+        int jumpDistance = min(layerIndex - (highestShrunkLayer - 1), _maxRebootDistance);
+        layerIndex -= jumpDistance;
+    }
+    if (_twoPassSplit) {
+        _splitPass = 2;
+        for (int layerIndex = _firstMergedLayer._val; layerIndex <= _lastMergedLayer._val; layerIndex++) {
+            int highestShrunkLayer = [self splitLayer:layerIndex];
+            int jumpDistance = min(layerIndex - (highestShrunkLayer - 1), _maxRebootDistance);
+            layerIndex -= jumpDistance;
+        }
     }
 }
 -(void) forwardPassWithSplit {
@@ -456,45 +467,52 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
                 continue;
             }
         }
-        bool forwardStateChanged = [self refreshForwardStateFor:node];
-        bool combinedStateChanged = false;
-        if (forwardStateChanged || _objectiveBoundsChanged) {
-            [self updateCombinedStateFor:node];
-        }
-        [self updateChildrenOf:node stateChanged:(forwardStateChanged || combinedStateChanged)];
-        if ([node isChildless]) {
-            [self removeChildlessNodeFromMDD:node fromLayer:filterLayer];
-        } else if (combinedStateChanged) {
-            if (![self stateExistsFor:node]) {
-                [self deleteInnerNode:node];
-                continue;
-            }
-            [self enqueueRelativesOf:node];
-            [_reverseQueue enqueue:node];
-        } else if (forwardStateChanged) {
-            [self enqueueChildrenOf:node];
-        }
+        [self updateNodeForward:node layer:filterLayer];
     }
 }
 -(void) forwardPassWithoutSplit {
     MDDNode* node;
     while ((node = [_forwardQueue dequeue]) != nil) {
-        bool forwardStateChanged = [self refreshForwardStateFor:node];
-        bool combinedStateChanged = false;
-        if (forwardStateChanged || _objectiveBoundsChanged) {
-            [self updateCombinedStateFor:node];
+        [self updateNodeForward:node layer:[node layer]];
+    }
+}
+-(void) updateNodeForward:(MDDNode*)node layer:(int)layer {
+    bool forwardStateChanged = [self refreshForwardStateFor:node];
+    if (forwardStateChanged || _objectiveBoundsChanged) {
+        bool combinedStateChanged = [self updateCombinedStateFor:node];
+        if (_useStateExistence && ![self stateExistsFor:node]) {
+            [self deleteInnerNode:node];
+            return;
+        }
+        if (combinedStateChanged || _objectiveBoundsChanged) {
+            [self updateParentsOf:node];
+            if ([node isParentless]) {
+                [self removeParentlessNodeFromMDD:node fromLayer:layer];
+            }
         }
         [self updateChildrenOf:node stateChanged:(forwardStateChanged || combinedStateChanged)];
-        if ([node isChildless]) {
-            [self removeChildlessNodeFromMDD:node fromLayer:[node layer]];
-        } else if (combinedStateChanged) {
-            if (![self stateExistsFor:node]) {
-                [self deleteInnerNode:node];
-                continue;
+        if ([node isChildless] && layer != _numVariables) {
+            [self removeChildlessNodeFromMDD:node fromLayer:layer];
+        }
+    }
+}
+-(void) updateNodeReverse:(MDDNode*)node layer:(int)layer {
+    bool reverseStateChanged = [self refreshReverseStateFor:node];
+    if (reverseStateChanged || _objectiveBoundsChanged) {
+        bool combinedStateChanged = [self updateCombinedStateFor:node];
+        if (_useStateExistence && ![self stateExistsFor:node]) {
+            [self deleteInnerNode:node];
+            return;
+        }
+        if (combinedStateChanged || _objectiveBoundsChanged) {
+            [self updateChildrenOf:node stateChanged:true];
+            if ([node isChildless] && [node layer] != _numVariables) {
+                [self removeChildlessNodeFromMDD:node fromLayer:[node layer]];
             }
-            [self enqueueRelativesOf:node];
-        } else if (forwardStateChanged) {
-            [self enqueueChildrenOf:node];
+        }
+        [self updateParentsOf:node];
+        if ([node isParentless] && [node layer] != 0) {
+            [self removeParentlessNodeFromMDD:node fromLayer:[node layer]];
         }
     }
 }
@@ -533,10 +551,21 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
 -(bool) refreshReverseStateFor:(MDDNode*)node {
     bool stateChanged = false;
     
-    char* newValues = [self computeReverseStateFromChildrenOf:node];
+    char* newValues;
+    if ([node childrenChanged]) {
+        newValues = [self computeReverseStateFromChildrenOf:node];
+    } else {
+        newValues = [self updateReverseStateFromChildrenOf:node];
+        if (newValues == nil) {
+            return false;
+        }
+    }
     char* oldValues = [getReverseState(node) stateValues];
     if (memcmp(oldValues, newValues, _numReverseBytes) != 0) {
         stateChanged = true;
+        bool* delta = _diffReverse(_spec, _diffReverseSel, oldValues, newValues);
+        //bool* delta = [_spec diffReverseProperties:oldValues to:newValues];
+        [node setReversePropertyDelta:delta passIteration:_passIteration];
         [node updateReverseState:newValues];
     }
     free(newValues);
@@ -546,10 +575,21 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     if ([node layer] == 0) return false;
     bool stateChanged = false;
     bool merged = false;
-    char* newValues = [self computeForwardStateFromParentsOf:node isMerged:&merged];
+    char* newValues;
+    if ([node parentsChanged]) {
+        newValues = [self computeForwardStateFromParentsOf:node isMerged:&merged];
+    } else {
+        newValues = [self updateForwardStateFromParentsOf:node isMerged:&merged];
+        if (newValues == nil) {
+            return false;
+        }
+    }
     char* oldValues = [getForwardState(node) stateValues];
     if (memcmp(oldValues, newValues, _numForwardBytes) != 0) {
         stateChanged = true;
+        bool* delta = _diffForward(_spec, _diffForwardSel, oldValues, newValues);
+        //bool* delta = [_spec diffForwardProperties:oldValues to:newValues];
+        [node setForwardPropertyDelta:delta passIteration:_passIteration];
         [node updateForwardState:newValues];
     }
     free(newValues);
@@ -557,6 +597,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     return stateChanged;
 }
 -(bool) updateCombinedStateFor:(MDDNode*)node {
+    if (_numCombinedBytes == 0) return false;
     char* oldCombinedState = [getCombinedState(node) stateValues];
     char* newCombinedState = [_spec computeCombinedStateFromProperties:[getForwardState(node) stateValues] reverse:[getReverseState(node) stateValues]];
     if (memcmp(oldCombinedState, newCombinedState, _numCombinedBytes) != 0) {
@@ -590,13 +631,15 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
         int parentLayerIndex = layerInfo.layerIndex-1;
         MDDNode** parentNodes = malloc(_layerSize[parentLayerIndex]._val * sizeof(MDDNode*));
         bool** arcValuesByParent = malloc(_layerSize[parentLayerIndex]._val * sizeof(bool*));
-        int numParentNodes = [self fillNodeArcVarsUsingArcs:arcs parentNodes:parentNodes arcValuesByParent:arcValuesByParent parentLayerIndex:parentLayerIndex];
-        newValues = [self computeForwardStateFromParents:parentNodes arcValueSets:arcValuesByParent numParents:numParentNodes minDom:_minDomainsByLayer[parentLayerIndex] maxDom:_maxDomainsByLayer[parentLayerIndex] isMerged:merged];
+        int* numArcsPerParent = malloc(_layerSize[parentLayerIndex]._val * sizeof(int));
+        int numParentNodes = [self fillNodeArcVarsUsingArcs:arcs parentNodes:parentNodes arcValuesByParent:arcValuesByParent numArcsPerParent:numArcsPerParent parentLayerIndex:parentLayerIndex];
+        newValues = [self computeForwardStateFromParents:parentNodes arcValueSets:arcValuesByParent numParents:numParentNodes numArcsPerParent:numArcsPerParent minDom:_minDomainsByLayer[parentLayerIndex] maxDom:_maxDomainsByLayer[parentLayerIndex] isMerged:merged];
         for (int i = 0; i < numParentNodes; i++) {
             arcValuesByParent[i] += _minDomainsByLayer[parentLayerIndex];
             free(arcValuesByParent[i]);
         }
         free(parentNodes);
+        free(numArcsPerParent);
         free(arcValuesByParent);
     }
     return newValues;
@@ -606,75 +649,130 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     int maxNumParents = min([node numParents],_layerSize[parentLayer]._val);
     MDDNode** parentNodes = malloc(maxNumParents * sizeof(MDDNode*));
     bool** arcValuesByParent = malloc(maxNumParents * sizeof(bool*));
-    int numParentNodes = [self fillNodeArcVarsFromParentsOfNode:node parentNodes:parentNodes arcValuesByParent:arcValuesByParent];
-    char* forwardStateValues = [self computeForwardStateFromParents:parentNodes arcValueSets:arcValuesByParent numParents:numParentNodes minDom:_minDomainsByLayer[parentLayer] maxDom:_maxDomainsByLayer[parentLayer] isMerged:merged];
+    int* numArcsPerParent = malloc(maxNumParents * sizeof(int));
+    int numParentNodes = [self fillNodeArcVarsFromParentsOfNode:node parentNodes:parentNodes arcValuesByParent:arcValuesByParent numArcsPerParent:numArcsPerParent];
+    char* forwardStateValues = [self computeForwardStateFromParents:parentNodes arcValueSets:arcValuesByParent numParents:numParentNodes numArcsPerParent:numArcsPerParent minDom:_minDomainsByLayer[parentLayer] maxDom:_maxDomainsByLayer[parentLayer] isMerged:merged];
     for (int i = 0; i < numParentNodes; i++) {
         arcValuesByParent[i] += _minDomainsByLayer[parentLayer];
         free(arcValuesByParent[i]);
     }
     free(parentNodes);
     free(arcValuesByParent);
+    free(numArcsPerParent);
     return forwardStateValues;
 }
-
-//Not using arc sets for transition values
-/* -(char*) computeForwardStateFromParentsOf:(MDDNode*)node isMerged:(bool*)merged {
-    int numParents = [node numParents];
-    ORTRIdArrayI* parentArcs = [node parents];
-    char* newValues;
-    MDDArc* firstParentArc = [parentArcs at:0];
-    if (_cacheForwardOnArcs) {
-        newValues = malloc(_numForwardBytes);
-        memcpy(newValues, [firstParentArc forwardState], _numForwardBytes);
+-(char*) updateForwardStateFromParentsOf:(MDDNode*)node isMerged:(bool*)merged {
+    int parentLayer = [node layer]-1;
+    int maxNumParents = min([node numParents],_layerSize[parentLayer]._val);
+    MDDNode** parentNodes = malloc(maxNumParents * sizeof(MDDNode*));
+    bool** arcValuesByParent = malloc(maxNumParents * sizeof(bool*));
+    int* numArcsPerParent = malloc(maxNumParents * sizeof(int));
+    int numParentNodes = [self fillNodeArcVarsFromParentsOfNode:node parentNodes:parentNodes arcValuesByParent:arcValuesByParent numArcsPerParent:numArcsPerParent];
+    bool** parentDeltas = malloc(numParentNodes * sizeof(bool*));
+    int numDeltas = 0;
+    for (int i = 0; i < numParentNodes; i++) {
+        bool* parentDelta = [parentNodes[i] forwardDeltaForPassIteration:_passIteration];
+        if (parentDelta != nil) {
+            parentDeltas[numDeltas] = parentDelta;
+            numDeltas++;
+        }
+    }
+    char* forwardStateValues;
+    if (numDeltas) {
+        bool* propertyImpact = [_spec forwardPropertyImpactFrom:parentDeltas numParents:numDeltas variable:_layerToVariable[parentLayer]];
+        forwardStateValues = [self updateForwardStateFromParents:parentNodes arcValueSets:arcValuesByParent numParents:numParentNodes numArcsPerParent:numArcsPerParent minDom:_minDomainsByLayer[parentLayer] maxDom:_maxDomainsByLayer[parentLayer] properties:propertyImpact oldState:[getForwardState(node) stateValues] isMerged:merged];
+        *merged = *merged || [node isMerged];
+        free(propertyImpact);
     } else {
-        bool* arcSet = malloc(sizeof(bool));
-        arcSet[0] = true;
-        arcSet -= [firstParentArc arcValue];
-        newValues = [_spec computeForwardStateFromForward:[getForwardState([firstParentArc parent]) stateValues] combined:[getCombinedState([firstParentArc parent]) stateValues] assigningVariable:_layerToVariable[[node layer]-1] withValues:arcSet minDom:[firstParentArc arcValue] maxDom:[firstParentArc arcValue]];
-        arcSet += [firstParentArc arcValue];
-        free(arcSet);
+        forwardStateValues = nil;
     }
-    for (int parentIndex = 1; parentIndex < numParents; parentIndex++) {
-        MDDArc* parentArc = [parentArcs at:parentIndex];
-        char* arcState;
-        if (_cacheForwardOnArcs) {
-            arcState = [parentArc forwardState];
-        } else {
-            bool* arcSet = malloc(sizeof(bool));
-            arcSet[0] = true;
-            arcSet -= [parentArc arcValue];
-            arcState = [_spec computeForwardStateFromForward:[getForwardState([parentArc parent]) stateValues] combined:[getCombinedState([parentArc parent]) stateValues] assigningVariable:_layerToVariable[[node layer]-1] withValues:arcSet minDom:[parentArc arcValue] maxDom:[parentArc arcValue]];
-            arcSet += [parentArc arcValue];
-            free(arcSet);
-        }
-        if (*merged) {
-            [_spec mergeStateProperties:newValues with:arcState];
-        } else if (memcmp(newValues, arcState, _numForwardBytes) != 0) {
+    for (int i = 0; i < numParentNodes; i++) {
+        arcValuesByParent[i] += _minDomainsByLayer[parentLayer];
+        free(arcValuesByParent[i]);
+    }
+    free(parentNodes);
+    free(arcValuesByParent);
+    free(numArcsPerParent);
+    free(parentDeltas);
+    return forwardStateValues;
+}
+-(char*) updateForwardStateFromParents:(MDDNode**)parents arcValueSets:(bool**)arcValuesByParent numParents:(int)numParentNodes numArcsPerParent:(int*)numArcsPerParent minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState isMerged:(bool*)merged {
+    char* stateValues = [self updateStateFromParent:parents[0] arcValues:arcValuesByParent[0] numArcs:numArcsPerParent[0] minDom:minDom maxDom:maxDom properties:properties oldState:oldState isMerged:merged];
+    for (int parentNodeIndex = 1; parentNodeIndex < numParentNodes; parentNodeIndex++) {
+        char* otherStateValues = [self updateStateFromParent:parents[parentNodeIndex] arcValues:arcValuesByParent[parentNodeIndex] numArcs:numArcsPerParent[parentNodeIndex] minDom:minDom maxDom:maxDom properties:properties oldState:oldState isMerged:merged];
+        if (memcmp(stateValues, otherStateValues, _numForwardBytes) != 0) {
+            [_spec mergeStateProperties:stateValues with:otherStateValues properties:properties];
             *merged = true;
-            [_spec mergeStateProperties:newValues with:arcState];
         }
-        if (!_cacheForwardOnArcs) {
-            free(arcState);
-        }
+        free(otherStateValues);
     }
-    return newValues;
-}*/
--(char*) computeReverseStateFromChildrenOf:(MDDNode*)node {
+    return stateValues;
+}
+
+-(char*) updateReverseStateFromChildrenOf:(MDDNode*)node {
     int nodeLayer = [node layer];
     int maxNumChildren = min([node numChildren],_layerSize[nodeLayer+1]._val);
     MDDNode** childNodes = malloc(maxNumChildren * sizeof(MDDNode*));
     bool** arcValuesByChild = malloc(maxNumChildren * sizeof(bool*));
-    int numChildNodes = [self fillNodeArcVarsFromChildrenOfNode:node childNodes:childNodes arcValuesByChild:arcValuesByChild];
-    char* reverseStateValues = [self computeReverseStateFromChildren:childNodes arcValueSets:arcValuesByChild numChildren:numChildNodes minDom:_minDomainsByLayer[nodeLayer] maxDom:_maxDomainsByLayer[nodeLayer]];
+    int* numArcsPerChild = malloc(maxNumChildren * sizeof(int));
+    int numChildNodes = [self fillNodeArcVarsFromChildrenOfNode:node childNodes:childNodes arcValuesByChild:arcValuesByChild numArcsPerChild:numArcsPerChild];
+    
+    bool** childDeltas = malloc([node numChildren] * sizeof(bool*));
+    int numDeltas = 0;
+    for (int i = 0; i < numChildNodes; i++) {
+        bool* childDelta = [childNodes[i] reverseDeltaForPassIteration:_passIteration];
+        if (childDelta != nil) {
+            childDeltas[numDeltas] = childDelta;
+            numDeltas++;
+        }
+    }
+    char* reverseStateValues;
+    if (numDeltas) {
+        bool* propertyImpact = [_spec reversePropertyImpactFrom:childDeltas numChildren:numDeltas variable:_layerToVariable[nodeLayer]];
+        reverseStateValues = [self updateReverseStateFromChildren:childNodes arcValueSets:arcValuesByChild numChildren:numChildNodes numArcsPerChild:numArcsPerChild minDom:_minDomainsByLayer[nodeLayer] maxDom:_maxDomainsByLayer[nodeLayer] properties:propertyImpact oldState:[getReverseState(node) stateValues]];
+        free(propertyImpact);
+    } else {
+        reverseStateValues = nil;
+    }
     for (int i = 0; i < numChildNodes; i++) {
         arcValuesByChild[i] += _minDomainsByLayer[nodeLayer];
         free(arcValuesByChild[i]);
     }
     free(childNodes);
     free(arcValuesByChild);
+    free(childDeltas);
+    free(numArcsPerChild);
     return reverseStateValues;
 }
--(int) fillNodeArcVarsUsingArcs:(NSArray*)arcs parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent parentLayerIndex:(int)parentLayer {
+-(char*) updateReverseStateFromChildren:(MDDNode**)children arcValueSets:(bool**)arcValuesByChild numChildren:(int)numChildNodes numArcsPerChild:(int*)numArcsPerChild minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState {
+    char* stateValues = [self updateStateFromChild:children[0] arcValues:arcValuesByChild[0] numArcs:numArcsPerChild[0] minDom:minDom maxDom:maxDom properties:properties oldState:oldState];
+    for (int childNodeIndex = 1; childNodeIndex < numChildNodes; childNodeIndex++) {
+        char* otherStateValues = [self updateStateFromChild:children[childNodeIndex] arcValues:arcValuesByChild[childNodeIndex] numArcs:numArcsPerChild[childNodeIndex] minDom:minDom maxDom:maxDom properties:properties oldState:oldState];
+        if (memcmp(stateValues, otherStateValues, _numReverseBytes) != 0) {
+            [_spec mergeReverseStateProperties:stateValues with:otherStateValues properties:properties];
+        }
+        free(otherStateValues);
+    }
+    return stateValues;
+}
+-(char*) computeReverseStateFromChildrenOf:(MDDNode*)node {
+    int nodeLayer = [node layer];
+    int maxNumChildren = min([node numChildren],_layerSize[nodeLayer+1]._val);
+    MDDNode** childNodes = malloc(maxNumChildren * sizeof(MDDNode*));
+    bool** arcValuesByChild = malloc(maxNumChildren * sizeof(bool*));
+    int* numArcsPerChild = malloc(maxNumChildren * sizeof(int));
+    int numChildNodes = [self fillNodeArcVarsFromChildrenOfNode:node childNodes:childNodes arcValuesByChild:arcValuesByChild numArcsPerChild:numArcsPerChild];
+    char* reverseStateValues = [self computeReverseStateFromChildren:childNodes arcValueSets:arcValuesByChild numChildren:numChildNodes numArcsPerChild:numArcsPerChild minDom:_minDomainsByLayer[nodeLayer] maxDom:_maxDomainsByLayer[nodeLayer]];
+    for (int i = 0; i < numChildNodes; i++) {
+        arcValuesByChild[i] += _minDomainsByLayer[nodeLayer];
+        free(arcValuesByChild[i]);
+    }
+    free(childNodes);
+    free(arcValuesByChild);
+    free(numArcsPerChild);
+    return reverseStateValues;
+}
+-(int) fillNodeArcVarsUsingArcs:(NSArray*)arcs parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent numArcsPerParent:(int*)numArcsPerParent parentLayerIndex:(int)parentLayer {
     int numParentNodes = 0;
     int domSize = _maxDomainsByLayer[parentLayer] - _minDomainsByLayer[parentLayer]+1;
     for (MDDArc* arc in arcs) {
@@ -685,6 +783,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             if (parentNodes[i] == parent) {
                 arcValuesByParent[i][arcValue] = true;
                 foundParent = true;
+                numArcsPerParent[i] = numArcsPerParent[i] + 1;
                 break;
             }
         }
@@ -693,12 +792,13 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             arcValuesByParent[numParentNodes] = calloc(domSize, sizeof(bool));
             arcValuesByParent[numParentNodes] -= _minDomainsByLayer[parentLayer];
             arcValuesByParent[numParentNodes][arcValue] = true;
+            numArcsPerParent[numParentNodes] = 1;
             numParentNodes++;
         }
     }
     return numParentNodes;
 }
--(int) fillNodeArcVarsFromParentsOfNode:(MDDNode*)node parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent {
+-(int) fillNodeArcVarsFromParentsOfNode:(MDDNode*)node parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent numArcsPerParent:(int*)numArcsPerParent {
     ORTRIdArrayI* parentArcs = [node parents];
     int parentLayer = [node layer]-1;
     int numParentNodes = 0;
@@ -712,6 +812,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             if (parentNodes[i] == parent) {
                 arcValuesByParent[i][arcValue] = true;
                 foundParent = true;
+                numArcsPerParent[i] = numArcsPerParent[i] + 1;
                 break;
             }
         }
@@ -720,12 +821,13 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             arcValuesByParent[numParentNodes] = calloc(domSize, sizeof(bool));
             arcValuesByParent[numParentNodes] -= _minDomainsByLayer[parentLayer];
             arcValuesByParent[numParentNodes][arcValue] = true;
+            numArcsPerParent[numParentNodes] = 1;
             numParentNodes++;
         }
     }
     return numParentNodes;
 }
--(int) fillNodeArcVarsFromChildrenOfNode:(MDDNode*)node childNodes:(MDDNode**)childNodes arcValuesByChild:(bool**)arcValuesByChild {
+-(int) fillNodeArcVarsFromChildrenOfNode:(MDDNode*)node childNodes:(MDDNode**)childNodes arcValuesByChild:(bool**)arcValuesByChild numArcsPerChild:(int*)numArcsPerChild {
     TRId* childArcs = [node children];
     int layer = [node layer];
     int remainingChildren = [node numChildren];
@@ -741,6 +843,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
                 if (childNodes[i] == child) {
                     arcValuesByChild[i][arcValue] = true;
                     foundChild = true;
+                    numArcsPerChild[i] = numArcsPerChild[i] + 1;
                     break;
                 }
             }
@@ -749,6 +852,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
                 arcValuesByChild[numChildNodes] = calloc(domSize, sizeof(bool));
                 arcValuesByChild[numChildNodes] -= _minDomainsByLayer[layer];
                 arcValuesByChild[numChildNodes][arcValue] = true;
+                numArcsPerChild[numChildNodes] = 1;
                 numChildNodes++;
             }
             remainingChildren--;
@@ -756,75 +860,94 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     }
     return numChildNodes;
 }
--(char*) computeForwardStateFromParents:(MDDNode**)parents arcValueSets:(bool**)arcValuesByParent numParents:(int)numParentNodes minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged {
-    char* stateValues = [self computeStateFromParent:parents[0] arcValues:arcValuesByParent[0] minDom:minDom maxDom:maxDom isMerged:merged];
+-(char*) computeForwardStateFromParents:(MDDNode**)parents arcValueSets:(bool**)arcValuesByParent numParents:(int)numParentNodes numArcsPerParent:(int*)numArcsPerParent minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged {
+    char* stateValues = [self computeStateFromParent:parents[0] arcValues:arcValuesByParent[0] numArcs:numArcsPerParent[0] minDom:minDom maxDom:maxDom isMerged:merged];
     for (int parentNodeIndex = 1; parentNodeIndex < numParentNodes; parentNodeIndex++) {
-        char* otherStateValues = [self computeStateFromParent:parents[parentNodeIndex] arcValues:arcValuesByParent[parentNodeIndex] minDom:minDom maxDom:maxDom isMerged:merged];
-        *merged = true;
-        [_spec mergeStateProperties:stateValues with:otherStateValues];
+        char* otherStateValues = [self computeStateFromParent:parents[parentNodeIndex] arcValues:arcValuesByParent[parentNodeIndex] numArcs:numArcsPerParent[parentNodeIndex] minDom:minDom maxDom:maxDom isMerged:merged];
+        if (memcmp(stateValues, otherStateValues, _numForwardBytes) != 0) {
+            [_spec mergeStateProperties:stateValues with:otherStateValues];
+            *merged = true;
+        }
         free(otherStateValues);
     }
     return stateValues;
 }
--(char*) computeStateFromParent:(MDDNode*)parent arcValues:(bool*)arcValues minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged {
-    if (!*merged) {
-        int foundArc = false;
-        for (int i = minDom; i <= maxDom; i++) {
-            if (arcValues[i]) {
-                if (foundArc) {
-                    *merged = true;
-                    break;
-                } else {
-                    foundArc = true;
-                }
-            }
-        }
-    }
-    return [_spec computeForwardStateFromForward:[getForwardState(parent) stateValues] combined:[getCombinedState(parent) stateValues] assigningVariable:_layerToVariable[[parent layer]] withValues:arcValues minDom:minDom maxDom:maxDom];
+-(char*) updateStateFromParent:(MDDNode*)parent arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState isMerged:(bool*)merged {
+    return [_spec updateForwardStateFromForward:[getForwardState(parent) stateValues] combined:[getCombinedState(parent) stateValues] assigningVariable:_layerToVariable[[parent layer]] withValues:arcValues numArcs:numArcs minDom:minDom maxDom:maxDom properties:properties oldState:oldState merged:merged];
 }
--(char*) computeReverseStateFromChildren:(MDDNode**)children arcValueSets:(bool**)arcValuesByChild numChildren:(int)numChildNodes minDom:(int)minDom maxDom:(int)maxDom {
-    char* stateValues = [self computeStateFromChild:children[0] arcValues:arcValuesByChild[0] minDom:minDom maxDom:maxDom];
+-(char*) computeStateFromParent:(MDDNode*)parent arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged {
+    return [_spec computeForwardStateFromForward:[getForwardState(parent) stateValues] combined:[getCombinedState(parent) stateValues] assigningVariable:_layerToVariable[[parent layer]] withValues:arcValues numArcs:numArcs minDom:minDom maxDom:maxDom merged:merged];
+}
+-(char*) computeReverseStateFromChildren:(MDDNode**)children arcValueSets:(bool**)arcValuesByChild numChildren:(int)numChildNodes numArcsPerChild:(int*)numArcsPerChild minDom:(int)minDom maxDom:(int)maxDom {
+    char* stateValues = [self computeStateFromChild:children[0] arcValues:arcValuesByChild[0] numArcs:numArcsPerChild[0] minDom:minDom maxDom:maxDom];
     for (int childNodeIndex = 1; childNodeIndex < numChildNodes; childNodeIndex++) {
-        char* otherStateValues = [self computeStateFromChild:children[childNodeIndex] arcValues:arcValuesByChild[childNodeIndex] minDom:minDom maxDom:maxDom];
+        char* otherStateValues = [self computeStateFromChild:children[childNodeIndex] arcValues:arcValuesByChild[childNodeIndex] numArcs:numArcsPerChild[childNodeIndex] minDom:minDom maxDom:maxDom];
         [_spec mergeReverseStateProperties:stateValues with:otherStateValues];
         free(otherStateValues);
     }
     return stateValues;
 }
--(char*) computeStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues minDom:(int)minDom maxDom:(int)maxDom {
-    return [_spec computeReverseStateFromProperties:[getReverseState(child) stateValues] combined:[getCombinedState(child) stateValues] assigningVariable:_layerToVariable[[child layer]-1] withValues:arcValues minDom:minDom maxDom:maxDom];
+-(char*) computeStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom {
+    return [_spec computeReverseStateFromProperties:[getReverseState(child) stateValues] combined:[getCombinedState(child) stateValues] assigningVariable:_layerToVariable[[child layer]-1] withValues:arcValues numArcs:numArcs minDom:minDom maxDom:maxDom];
+}
+-(char*) updateStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState {
+    return [_spec updateReverseStateFromReverse:[getReverseState(child) stateValues] combined:[getCombinedState(child) stateValues] assigningVariable:_layerToVariable[[child layer]-1] withValues:arcValues numArcs:numArcs minDom:minDom maxDom:maxDom properties:properties oldState:oldState];
 }
 -(bool) stateExistsFor:(MDDNode*)node {
     return [_spec stateExistsWithForward:[getForwardState(node) stateValues] reverse:[getReverseState(node) stateValues] combined:[getCombinedState(node) stateValues] objectiveMins:_fixpointMinValues objectiveMaxes:_fixpointMaxValues];
+}
+-(void) updateParentsOf:(MDDNode*)node {
+    int layer = [node layer];
+    if (layer == 0) return;
+    MDDStateValues* reverseState = getReverseState(node);
+    char* reverseStateValues = [reverseState stateValues];
+    MDDStateValues* combinedState = getCombinedState(node);
+    char* combinedStateValues = [combinedState stateValues];
+    ORTRIdArrayI* parentArcs = [node parents];
+    int numParents = [node numParents];
+    bool parentsChanged = false;
+    int variableIndex = _layerToVariable[layer-1];
+    for (int parentIndex = 0; parentIndex < numParents; parentIndex++) {
+        MDDArc* parentArc = [parentArcs at:parentIndex];
+        MDDNode* parent = [parentArc parent];
+        int arcValue = [parentArc arcValue];
+        if (![_spec canChooseValue:arcValue forVariable:variableIndex fromParentForward:[getForwardState(parent) stateValues] combined:[getCombinedState(parent) stateValues] toChildReverse:reverseStateValues combined:combinedStateValues objectiveMins:_fixpointMinValues objectiveMaxes:_fixpointMaxValues]) {
+            [self deleteArcWhileCheckingParent:parentArc parentLayer:layer-1];
+            parentsChanged = true;
+            numParents--;
+            parentIndex--;
+        } else {
+            [_reverseQueue enqueue:parent];
+        }
+    }
+    if (parentsChanged) {
+        [_forwardQueue enqueue:node];
+    }
 }
 -(void) updateChildrenOf:(MDDNode*)node stateChanged:(bool)stateChanged {
     int layer = [node layer];
     if (layer == _numVariables) return;
     MDDStateValues* state = getForwardState(node);
     char* stateValues = [state stateValues];
+    char* combinedState = [getCombinedState(node) stateValues];
     TRId* childrenArcs = [node children];
     int remainingChildren = [node numChildren];
+    bool childrenChanged = false;
     int variableIndex = _layerToVariable[layer];
-    TRInt* variableCount = _layerVariableCount[layer];
     for (int childIndex = _minDomainsByLayer[layer]; remainingChildren; childIndex++) {
         if (childrenArcs[childIndex] != nil) {
             MDDArc* childArc = childrenArcs[childIndex];
             MDDNode* child = [childArc child];
-            if (![_spec canChooseValue:childIndex forVariable:variableIndex fromParent:stateValues toChild:[getReverseState(child) stateValues] objectiveMins:_fixpointMinValues objectiveMaxes:_fixpointMaxValues]) {
-                [childArc deleteArc:_inPost];
-                assignTRInt(&variableCount[childIndex], variableCount[childIndex]._val-1, _trail);
-                if ([child isParentless]) {
-                    [self removeParentlessNodeFromMDD:child fromLayer:layer+1];
-                } else if ([child isMerged]) {
-                    [_forwardQueue enqueue:child];
-                }
+            if (![_spec canChooseValue:childIndex forVariable:variableIndex fromParentForward:stateValues combined:combinedState toChildReverse:[getReverseState(child) stateValues] combined:[getCombinedState(child) stateValues] objectiveMins:_fixpointMinValues objectiveMaxes:_fixpointMaxValues]) {
+                [self deleteArcWhileCheckingChild:childArc childLayer:layer+1];
+                childrenChanged = true;
             } else if (stateChanged) {
                 if (_cacheForwardOnArcs) {
                     char* oldState = [childArc forwardState];
                     bool* arcValues = malloc(sizeof(bool));
                     arcValues[0] = true;
                     arcValues -= childIndex;
-                    char* newState = [_spec computeForwardStateFromForward:stateValues combined:[getCombinedState(node) stateValues] assigningVariable:variableIndex withValues:arcValues minDom:childIndex maxDom:childIndex];
+                    char* newState = [_spec computeForwardStateFromForward:stateValues combined:[getCombinedState(node) stateValues] assigningVariable:variableIndex withValues:arcValues numArcs:1  minDom:childIndex maxDom:childIndex];
                     if (memcmp(newState, oldState, _numForwardBytes) != 0) {
                         [childArc replaceForwardStateWith:newState trail:_trail];
                     }
@@ -832,13 +955,18 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
                     free(arcValues);
                     free(newState);
                 }
+                [_forwardQueue enqueue:child];
             }
             
             remainingChildren--;
         }
     }
+    if (childrenChanged) {
+        [_reverseQueue enqueue:node];
+    }
 }
--(void) splitLayer:(int)layer {
+-(int) splitLayer:(int)layer {
+    int highestShrunkLayer = layer+1;
     int variableIndex = _layerToVariable[layer];
     struct LayerInfo layerInfo = {.layerIndex = layer, .variableIndex = variableIndex, .variableCount = _layerVariableCount[layer], .bitDomain = _layerBitDomains[layer], .minDomain = _minDomainsByLayer[layer], .maxDomain = _maxDomainsByLayer[layer]};
     
@@ -850,17 +978,17 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
         }
         if (_splitByConstraint) {
             for (int c = 0; c < _numSpecs && _layerSize[layer]._val < _relaxationSize; c++) {
-                [self splitRankedLayer:layerInfo forConstraint:c];
+                highestShrunkLayer = min(highestShrunkLayer, [self splitRankedLayer:layerInfo forConstraint:c]);
             }
         } else {
-            [self splitRankedLayer:layerInfo forConstraint:-1];
+            highestShrunkLayer = [self splitRankedLayer:layerInfo forConstraint:-1];
         }
     } else if (_splitByConstraint) {
         for (int c = 0; c < _numSpecs && _layerSize[layer]._val < _relaxationSize; c++) {
-            [self splitLayer:layerInfo forConstraint:c];
+            highestShrunkLayer = min(highestShrunkLayer, [self splitLayer:layerInfo forConstraint:c]);
         }
     } else {
-        [self splitLayer:layerInfo forConstraint:-1];
+        highestShrunkLayer = [self splitLayer:layerInfo forConstraint:-1];
     }
     if (layer == _firstMergedLayer._val) {
         if ([self noMergedNodesOnLayer:layer]) {
@@ -880,6 +1008,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             assignTRInt(&_lastMergedLayer, newLastMergedLayer, _trail);
         }
     }
+    return highestShrunkLayer;
 }
 -(bool) noMergedNodesOnLayer:(int)layerIndex {
     int layerSize = _layerSize[layerIndex]._val;
@@ -899,7 +1028,8 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
         [[_splittableNodes extractBest] release];
     }
 }
--(void) splitLayer:(struct LayerInfo)layerInfo forConstraint:(int)c {
+-(int) splitLayer:(struct LayerInfo)layerInfo forConstraint:(int)c {
+    int highestShrunkLayer = layerInfo.layerIndex + 1;
     ORTRIdArrayI* layerNodes = _layers[layerInfo.layerIndex];
     for (int nodeIndex = 0; nodeIndex < _layerSize[layerInfo.layerIndex]._val && _layerSize[layerInfo.layerIndex]._val < _relaxationSize; nodeIndex++) {
         MDDNode* node = [layerNodes at:nodeIndex];
@@ -910,17 +1040,18 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
                 if (_rankArcsForSplitting) {
                     [_candidateSplits buildHeap];
                 }
-                [self splitCandidatesOnLayer:layerInfo];
+                highestShrunkLayer = min(highestShrunkLayer, [self splitCandidatesOnLayer:layerInfo]);
             }
         }
     }
     if (!_fullySplitNodeFirst) {
-        [self splitCandidatesOnLayer:layerInfo];
+        highestShrunkLayer = min(highestShrunkLayer, [self splitCandidatesOnLayer:layerInfo]);
     }
+    return highestShrunkLayer;
 }
--(void) splitRankedLayer:(struct LayerInfo)layerInfo forConstraint:(int)c {
+-(int) splitRankedLayer:(struct LayerInfo)layerInfo forConstraint:(int)c {
+    int highestShrunkLayer = layerInfo.layerIndex + 1;
     ORTRIdArrayI* layerNodes = _layers[layerInfo.layerIndex];
-    
     for (int nodeIndex = 0; nodeIndex < _layerSize[layerInfo.layerIndex]._val && _layerSize[layerInfo.layerIndex]._val < _relaxationSize; nodeIndex++) {
         MDDNode* node = [layerNodes at:nodeIndex];
         if ([node candidateForSplitting]) {
@@ -935,19 +1066,24 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
         [self enqueueChildrenOf:node];
         
         [self splitNode:node layerInfo:layerInfo forConstraint:c];
+        if ([_candidateSplits size] == 1) {
+            [[_candidateSplits extractBest] release];
+            [node setIsMergedNode:false inCreation:_inPost];
+        }
         if (_rankArcsForSplitting) {
             [_candidateSplits buildHeap];
         }
-        [self splitCandidatesOnLayer:layerInfo];
+        highestShrunkLayer = min(highestShrunkLayer, [self splitCandidatesOnLayer:layerInfo]);
         if (![node isDeleted]) {
             [_forwardQueue enqueue:node];
         }
     }
+    return highestShrunkLayer;
 }
 -(void) splitNode:(MDDNode *)node layerInfo:(struct LayerInfo)layerInfo forConstraint:(int)c {
     ArcHashTable* arcHashTable = [[ArcHashTable alloc] initArcHashTable:_hashWidth numBytes:_numForwardBytes constraint:c spec:_spec];
-    [arcHashTable setMatchingRule:_splitByConstraint approximate:_approximateEquivalenceClasses cachedOnArc:_cacheForwardOnArcs];
-    if (_approximateEquivalenceClasses) {
+    [arcHashTable setMatchingRule:_splitByConstraint approximate:(_splitPass == 1 && _approximateEquivalenceClasses) cachedOnArc:_cacheForwardOnArcs];
+    if (_splitPass == 1 && _approximateEquivalenceClasses) {
         [arcHashTable setReverse:[getReverseState(node) stateValues]];
     }
     ORTRIdArrayI* parentArcs = [node parents];
@@ -964,20 +1100,23 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             bool* arcValues = malloc(sizeof(bool));
             arcValues[0] = true;
             arcValues -= [parentArc arcValue];
-            arcState = [_spec computeForwardStateFromForward:[getForwardState([parentArc parent]) stateValues] combined:[getCombinedState([parentArc parent]) stateValues] assigningVariable:_layerToVariable[layerInfo.layerIndex-1] withValues:arcValues minDom:[parentArc arcValue] maxDom:[parentArc arcValue]];
+            arcState = [_spec computeForwardStateFromForward:[getForwardState([parentArc parent]) stateValues] combined:[getCombinedState([parentArc parent]) stateValues] assigningVariable:_layerToVariable[layerInfo.layerIndex-1] withValues:arcValues numArcs:1 minDom:[parentArc arcValue] maxDom:[parentArc arcValue]];
             arcValues += [parentArc arcValue];
             free(arcValues);
         }
         MDDNode* existingNode = [self findExactMatchForState:arcState onLayer:layerInfo];
         if (existingNode != nil && existingNode != node) {
             [parentArc updateChildTo:existingNode inPost:_inPost];
+            if (!_cacheForwardOnArcs) {
+                free(arcState);
+            }
             parentIndex--;
             numParents--;
         } else {
             NSMutableArray* existingArcList;
             int arcHash;
             if (_cacheForwardOnArcs) {
-                if (_approximateEquivalenceClasses && !_splitByConstraint) {
+                if (_splitPass == 1 && _approximateEquivalenceClasses && !_splitByConstraint) {
                     arcHash = [parentArc combinedEquivalenceClasses];
                 } else {
                     arcHash = [parentArc hashValue];
@@ -990,7 +1129,15 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
                 }
             }
             
-            if (![arcHashTable hasMatchingStateProperties:arcState forArc:parentArc hashValue:arcHash arcList:&existingArcList] || (parentIndex == numParents - 1)) {
+            if (_alwaysSplitLastArc && parentIndex == numParents -1) {
+                NSNumber* key = [NSNumber numberWithInt:INT_MAX];
+                NSArray* candidate = [[NSMutableArray alloc] initWithObjects:parentArc, nil];
+                [_candidateSplits addObject:candidate forKey:key];
+                if (!_cacheForwardOnArcs) {
+                    free(arcState);
+                }
+                [key release];
+            } else if (![arcHashTable hasMatchingStateProperties:arcState forArc:parentArc hashValue:arcHash arcList:&existingArcList]) {
                 NSNumber* key;
                 if (_rankArcsForSplitting) {
                     MDDNode* parent = [parentArc parent];
@@ -1025,7 +1172,8 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     MDDStateValues* newState = [[MDDStateValues alloc] initState:newProperties numBytes:_numForwardBytes trail:_trail];
     return [[MDDNode alloc] initNode:_trail minChildIndex:layerInfo.minDomain maxChildIndex:layerInfo.maxDomain state:newState layer:layerInfo.layerIndex indexOnLayer:_layerSize[layerInfo.layerIndex]._val numReverseBytes:_numReverseBytes numCombinedBytes:_numCombinedBytes];
 }
--(void) splitCandidatesOnLayer:(struct LayerInfo)layerInfo {
+-(int) splitCandidatesOnLayer:(struct LayerInfo)layerInfo {
+    int highestShrunkLayer = layerInfo.layerIndex+1;
     while (![_candidateSplits empty] && _layerSize[layerInfo.layerIndex]._val < _relaxationSize) {
         NSArray* candidate = [_candidateSplits extractBest];
         char* newForwardProperties = malloc(_numForwardBytes);
@@ -1033,7 +1181,6 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
         MDDNode* oldChild = [[candidate firstObject] child];
         char* reverse = [getReverseState(oldChild) stateValues];
         [_forwardQueue enqueue:oldChild];
-        //[self enqueueChildrenOf:oldChild];
         TRId* children = [oldChild children];
         bool merged = false;
         char* computedForwardProperties = [self computeForwardStateFromArcs:candidate isMerged:&merged layerInfo:layerInfo];
@@ -1051,7 +1198,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             [getForwardState(newNode) release];
             [newNode release];
             for (MDDArc* arc in candidate) {
-                [self deleteArcWhileCheckingParent:arc parentLayer:layerInfo.layerIndex-1];
+                highestShrunkLayer = min(highestShrunkLayer, [self deleteArcWhileCheckingParent:arc parentLayer:layerInfo.layerIndex-1]);
             }
         }
         if ([oldChild isParentless]) {
@@ -1059,6 +1206,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
         }
         [candidate release];
     }
+    return highestShrunkLayer;
 }
 -(NSNumber*) keyForNode:(MDDNode*)node constraint:(int)constraint {
     if (_useDefaultNodeRank) {
@@ -1096,7 +1244,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     int arcValue = [oldChildArc arcValue];
     MDDNode* child = [oldChildArc child];
     char* childReverse = [(MDDStateValues*)getReverseState(child) stateValues];
-    if ([_spec canChooseValue:arcValue forVariable:layerInfo.variableIndex fromParent:properties toChild:childReverse objectiveMins:_fixpointMinValues objectiveMaxes:_fixpointMaxValues]) {
+    if ([_spec canChooseValue:arcValue forVariable:layerInfo.variableIndex fromParentForward:properties combined:[getCombinedState(node) stateValues] toChildReverse:childReverse combined:[getCombinedState(child) stateValues] objectiveMins:_fixpointMinValues objectiveMaxes:_fixpointMaxValues]) {
         if (!hasChildren) {
             [self addNode:node toLayer:layerInfo.layerIndex];
             [_trail trailRelease:state];
@@ -1107,7 +1255,7 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
             bool* arcValues = malloc(sizeof(bool));
             arcValues[0] = true;
             arcValues -= arcValue;
-            [[MDDArc alloc] initArc:_trail from:node to:child value:arcValue inPost:_inPost state:[_spec computeForwardStateFromForward:properties combined:[getCombinedState(node) stateValues] assigningVariable:layerInfo.variableIndex withValues:arcValues minDom:arcValue maxDom:arcValue] spec:_spec];
+            [[MDDArc alloc] initArc:_trail from:node to:child value:arcValue inPost:_inPost state:[_spec computeForwardStateFromForward:properties combined:[getCombinedState(node) stateValues] assigningVariable:layerInfo.variableIndex withValues:arcValues numArcs:1 minDom:arcValue maxDom:arcValue] spec:_spec];
             arcValues += arcValue;
             free(arcValues);
         } else {
@@ -1122,7 +1270,11 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
 
 
 -(void) deleteInnerNode:(MDDNode*)node {
-    return;
+    int layer = [node layer];
+    if (layer == 0 || layer == _numVariables) failNow();
+    [self checkChildrenOfParentlessNode:node parentLayer:layer-1];
+    [self checkParentsOfChildlessNode:node parentLayer:layer-1];
+    [self removeNode: node onLayer:layer];
 }
 -(void) removeParentlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer {
     if (_layerSize[layer]._val == 1) { failNow(); }
@@ -1133,47 +1285,54 @@ static inline id getCombinedState(MDDNode* n) { return n->_combinedState;}
     TRId* children = [node children];
     int childLayer = layer+1;
     int numChildren = [node numChildren];
-    TRInt* variableCount = _layerVariableCount[layer];
     
     for (int childIndex = _minDomainsByLayer[layer]; numChildren; childIndex++) {
         id childArc = children[childIndex];
         if (childArc != nil) {
-            MDDNode* child = [childArc child];
-            [childArc deleteArc:_inPost];
-            assignTRInt(&variableCount[childIndex], variableCount[childIndex]._val-1, _trail);
-            if ([child isParentless]) {
-                [self removeParentlessNodeFromMDD:child fromLayer:childLayer];
-            } else if ([child isMerged]) {
-                [_forwardQueue enqueue:child];
-            }
+            [self deleteArcWhileCheckingChild:childArc childLayer:childLayer];
             numChildren--;
         }
     }
 }
--(void) removeChildlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer {
-    if (layer == _numVariables) return;
+-(int) removeChildlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer {
+    if (layer == _numVariables) return layer;
     if (_layerSize[layer]._val == 1) { failNow(); }
-    [self checkParentsOfChildlessNode:node parentLayer:layer-1];
+    int highestShrunkLayer = [self checkParentsOfChildlessNode:node parentLayer:layer-1];
     [self removeNode: node onLayer:layer];
+    return highestShrunkLayer;
 }
--(void) checkParentsOfChildlessNode:(MDDNode*)node parentLayer:(int)layer {
+-(int) checkParentsOfChildlessNode:(MDDNode*)node parentLayer:(int)layer {
+    int highestShrunkLayer = layer+1;
     ORTRIdArrayI* parents = [node parents];
-    
     while (![node isParentless]) {
         MDDArc* parentArc = [parents at: 0];
-        [self deleteArcWhileCheckingParent:parentArc parentLayer:layer];
+        highestShrunkLayer = min(highestShrunkLayer, [self deleteArcWhileCheckingParent:parentArc parentLayer:layer]);
     }
+    return highestShrunkLayer;
 }
--(void) deleteArcWhileCheckingParent:(MDDArc*)arc parentLayer:(int)layer {
+-(void) deleteArcWhileCheckingChild:(MDDArc*)arc childLayer:(int)layer {
+    int arcValue = [arc arcValue];
+    MDDNode* child = [arc child];
+    [arc deleteArc:_inPost];
+    if ([child isParentless]) {
+        [self removeParentlessNodeFromMDD:child fromLayer:layer];
+    } else if (_dualDirectional) {
+        [_forwardQueue enqueue:child];
+    }
+    assignTRInt(&_layerVariableCount[layer-1][arcValue], _layerVariableCount[layer-1][arcValue]._val-1, _trail);
+}
+-(int) deleteArcWhileCheckingParent:(MDDArc*)arc parentLayer:(int)layer {
+    int highestShrunkLayer = layer+2;
     int arcValue = [arc arcValue];
     MDDNode* parent = [arc parent];
     [arc deleteArc:_inPost];
     if ([parent isChildless]) {
-        [self removeChildlessNodeFromMDD:parent fromLayer:layer];
+        highestShrunkLayer = [self removeChildlessNodeFromMDD:parent fromLayer:layer];
     } else if (_dualDirectional) {
         [_reverseQueue enqueue:parent];
     }
     assignTRInt(&_layerVariableCount[layer][arcValue], _layerVariableCount[layer][arcValue]._val-1, _trail);
+    return highestShrunkLayer;
 }
 -(void) removeNode:(MDDNode*)node onLayer:(int)layerIndex {
     [self removeNodeAt:[node indexOnLayer] onLayer:layerIndex];

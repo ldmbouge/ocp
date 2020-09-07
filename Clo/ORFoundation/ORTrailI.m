@@ -854,6 +854,7 @@ void freeTRIntArray(TRIntArray a)
    _array -= _low;
    //for(ORInt i = _low; i <= _up._val; i++)
    //   _array[i] = makeTRId(_trail,0);
+    _magic = [_trail magic];
    return self;
 }
 -(void) dealloc
@@ -880,6 +881,7 @@ void freeTRIntArray(TRIntArray a)
    if (idx < _low || idx > _up._val)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORTRIdArrayElement"];
     assignTRId(&_array[idx], value, _trail);
+    _magic = [_trail magic];
 }
 -(void) set: (id) value at: (ORInt) idx inPost:(bool)inPost
 {
@@ -892,6 +894,7 @@ void freeTRIntArray(TRIntArray a)
         _array[idx] = makeTRId(_trail, [value retain]);
     } else {
         assignTRId(&_array[idx], value, _trail);
+        _magic = [_trail magic];
     }
 }
 
@@ -945,6 +948,9 @@ void freeTRIntArray(TRIntArray a)
 -(NSUInteger)count
 {
    return _up._val - _low + 1;
+}
+-(bool)changed {
+    return _magic == [_trail magic];
 }
 -(NSString*) description
 {

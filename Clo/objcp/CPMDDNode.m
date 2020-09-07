@@ -66,6 +66,10 @@
     _inForwardQueue = false;
     _inReverseQueue = false;
     
+    _forwardDeltaMagic = [_trail magic];
+    _reverseDeltaMagic = [_trail magic];
+    _childrenChangedMagic = [_trail magic];
+    
     return self;
 }
 
@@ -84,6 +88,7 @@
         _children += _minChildIndex;
         free(_children);
     }
+    free(_forwardDelta);
     [super dealloc];
 }
 
@@ -95,6 +100,33 @@
 }
 -(void) updateCombinedState:(char*)combinedState {
     [_combinedState replaceStateWith:combinedState trail:_trail];
+}
+
+-(void) setForwardPropertyDelta:(bool*)delta passIteration:(int)passIteration {
+    free(_forwardDelta);
+    _forwardDelta = delta;
+    _forwardDeltaMagic = [_trail magic];
+    _forwardDeltaPass = passIteration;
+}
+-(bool*) forwardDeltaForPassIteration:(int)passIteration {
+    if (passIteration == _forwardDeltaPass && [_trail magic] == _forwardDeltaMagic) {
+        return _forwardDelta;
+    } else {
+        return nil;
+    }
+}
+-(void) setReversePropertyDelta:(bool*)delta passIteration:(int)passIteration {
+    free(_reverseDelta);
+    _reverseDelta = delta;
+    _reverseDeltaMagic = [_trail magic];
+    _reverseDeltaPass = passIteration;
+}
+-(bool*) reverseDeltaForPassIteration:(int)passIteration {
+    if (passIteration == _reverseDeltaPass && [_trail magic] == _reverseDeltaMagic) {
+        return _reverseDelta;
+    } else {
+        return nil;
+    }
 }
 
 -(char*) reverseProperties {
@@ -154,6 +186,7 @@
         }
         assignTRId(&_children[index], childArc, _trail);
     }
+    _childrenChangedMagic = [_trail magic];
 }
 -(void) removeChildAt:(int)index inPost:(bool)inPost {
     if (inPost) {
@@ -163,6 +196,7 @@
         assignTRId(&_children[index], NULL, _trail);
         assignTRInt(&_numChildren, _numChildren._val-1, _trail);
     }
+    _childrenChangedMagic = [_trail magic];
 }
 
 -(bool) inQueue:(bool)forward {
@@ -212,6 +246,9 @@
     assignTRInt(&_indexOnLayer, -1, _trail);
 }
 -(bool) candidateForSplitting { return _isMergedNode._val && _numParents._val > 1; }
+-(bool) parentsChanged { return [_parents changed]; }
+-(bool) childrenChanged { return _childrenChangedMagic == [_trail magic];}
+-(void) updateChildrenMagic { _childrenChangedMagic = [_trail magic]; }
 @end
 
 @implementation MDDArc
@@ -278,6 +315,7 @@
     if (_forwardCache) {
         assignTRInt(&_needToRecalcEquivalenceClasses, 1, _trail);
     }
+    [_parent updateChildrenMagic];
 }
 -(void) setChild:(MDDNode*)child inPost:(bool)inPost {
     if (inPost) {
