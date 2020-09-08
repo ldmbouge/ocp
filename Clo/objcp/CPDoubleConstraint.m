@@ -1325,6 +1325,8 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          
          /* END ERROR PROPAG */
          
+         /* Taylor computation of error */
+         
          gchanged |= changed;
       } while(changed);
    }
@@ -1674,6 +1676,9 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    id<ORRationalInterval> yrTemp;
    id<ORRationalInterval> xr;
    id<ORRationalInterval> yr;
+   id<ORRational> tmp;
+   id<ORRationalInterval> epsilon;
+   id<ORRationalInterval> delta;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y kbpercent:(ORDouble)p
 {
@@ -1704,6 +1709,16 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    yrTemp = [[ORRationalInterval alloc] init];
    xr = [[ORRationalInterval alloc] init];
    yr = [[ORRationalInterval alloc] init];
+   
+   tmp = [[ORRational alloc] init];
+   [tmp set_str:"1/9007199254740992"];
+   epsilon = [[ORRationalInterval alloc] init];
+   [epsilon set_q:tmp and:tmp];
+   //[tmp set_str:"1/44942328371557897693232629769725618340449424473557664318357520289433168951375240783177119330601884005280028469967848339414697442203604155623211857659868531094441973356216371319075554900311523529863270738021251442209537670585615720368478277635206809290837627671146574559986811484619929076208839082406056034304"];
+   [tmp set_str:"1/10"];
+   delta = [[ORRationalInterval alloc] init];
+   [delta set_q:tmp and:tmp];
+   
    return self;
 }
 -(id) init:(CPDoubleVarI*)z equals:(CPDoubleVarI*)x mult:(CPDoubleVarI*)y
@@ -1827,6 +1842,46 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          y.sup = [[yr up] get_inf_d];
          
          /* END ERROR PROPAG */
+         
+         /* Taylor ez computation */
+         
+         // MUL
+         
+         // M2 >= max ( | ex * ey | ) -> M2 = max ( | ex * ey | )
+         [eoTemp set: [[ex mul: ey] abs]];
+         [tmp set: maxQ([eoTemp low], [eoTemp up])];
+         [eoTemp set_q:tmp and: tmp];
+         //NSLog(@"1 - %@", eoTemp);
+
+         // x * ey + y * ex + epsilon * M2
+         // M2 >= max ( | ex * ey | ) -> M2 = max ( | ex * ey | )
+         [ezTemp set: [[[xr mul: ey] add: [yr mul: ex]] add: [epsilon mul: eoTemp]]];
+         //NSLog(@"2 - %@", ezTemp);
+         
+         // RND
+         
+         // M2 >= max ( | x * ey | + | y * ex | + | epsilon * M2 | ) -> M2 = max ( | x * ey | + | y * ex | + | epsilon * M2 | )
+         [eoTemp set: [[[[eoTemp mul: epsilon] abs] add: [[xr mul: ey] abs]] add: [[yr mul: ex] abs]]];
+         [tmp set:[tmp add: maxQ([eoTemp low], [eoTemp up])]];
+         [eoTemp set_q:tmp and: tmp];
+         //NSLog(@"3 - %@", eoTemp);
+         
+         // eo + ezTemp + epsilon * M2 + delta / epsilon
+         // M2 >= max ( | x * ey | + | y * ex | + | epsilon * M2 | ) -> M2 = max ( | x * ey | + | y * ex | + | epsilon * M2 | )
+         // delta / epsilon is too small ~ 7.12e-307, resulting error cannot be computed -> do not compute? error intervals are over-approximation, so computation is still sound
+         [ezTemp set: [[eo add: ezTemp] add: [epsilon mul: eoTemp]]];
+         //NSLog(@"4 - %@", ezTemp);
+         
+         // Update ez with Taylor result
+//         if([ezTemp neq: ez]){
+//            NSLog(@"Taylor - %@", ezTemp);
+//            NSLog(@"Constr - %@", ez);
+//            NSLog(@"T - C  - [%@, %@]", [[ezTemp low] sub: [ez low]], [[ezTemp up] sub: [ez up]]);
+//            NSLog(@"");
+//
+//         }
+         [ez set: [ez proj_inter: ezTemp]];
+         changed |= ez.changed;
          
          gchanged |= changed;
       } while(changed);
