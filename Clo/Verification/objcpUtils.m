@@ -63,6 +63,7 @@
 -(void) printSolutions
 {
    [self printSolutionsI];
+   fflush(stdout);
    NSLog(@"Depth : %d",[[_program tracer] level]);
 }
 -(void) printSolutionsI
