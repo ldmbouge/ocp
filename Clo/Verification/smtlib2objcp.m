@@ -345,6 +345,9 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
                          (intptr_t)smtlib2_objcp_parametric_sort_new(
                                                                      "Bool", NULL),
                          (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withType:OR_BOOL]);
+
+   
+   
    smtlib2_hashtable_set(ret->sorts_,
                          (intptr_t)smtlib2_objcp_parametric_sort_new(
                                                                      "Int", NULL),
@@ -494,6 +497,15 @@ static void smtlib2_objcp_parser_declare_function(smtlib2_parser_interface *p,
    }
 }
 
+static void smtlib2_objcp_parser_mk_fun(smtlib2_context ctx,const char *symbol,smtlib2_sort sort,smtlib2_vector *idx,smtlib2_vector *args)
+{
+   size_t sz = smtlib2_vector_size(args);
+   if(sz){
+      const char* name = (const char*)smtlib2_vector_at(args, 0);
+      printf("test %s", name);
+   }
+   printf("test");
+}
 
 static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
                                                  const char *name,
@@ -504,10 +516,12 @@ static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
    smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
    smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
    
+   printf("defining %s name",name);
+//   auto p = (int)smtlib2_vector_at(params, 0);
+   
 //   [objcpgw countUsage:name];
    
    smtlib2_abstract_parser_define_function(p, name, params, sort, term);
-   
    if (ap->response_ != SMTLIB2_RESPONSE_ERROR && smtlib2_vector_size(yp->defines_) > 0) {
       smtlib2_term_parser *tp = ap->termparser_;
       intptr_t k;
@@ -515,6 +529,16 @@ static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
          smtlib2_vector_push(yp->defines_, k);
       }
    }
+//   else if(params != NULL){
+//      smtlib2_term_parser *tp = ap->termparser_;
+////      void *fun(smtlib2_context ctx,const char *symbol,smtlib2_sort sort,smtlib2_vector *idx,smtlib2_vector *args)
+//      smtlib2_term_parser_set_handler(tp, name,smtlib2_objcp_parser_mk_fun);
+//      
+////      SMTLIB2_OBJCP_SETHANDLER(tp, name, cl);
+////     smtlib2_hashtable_set(tp->let_bindings_,
+////     (intptr_t)smtlib2_strdup(name), (intptr_t)cl);
+//      
+//   }
 }
 
 

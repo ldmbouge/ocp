@@ -2038,19 +2038,19 @@
 }
 -(ORFloat) fmin
 {
-   return [_op fmin];
+   return sqrtf([_op fmin]);
 }
 -(ORFloat) fmax
 {
-   return [_op fmax];
+   return sqrtf([_op fmax]);
 }
 -(ORDouble) dmin
 {
-   return [_op dmin];
+   return sqrtd([_op dmin]);
 }
 -(ORDouble) dmax
 {
-   return [_op dmax];
+   return sqrtd([_op dmax]);
 }
 -(ORExprI*) operand
 {
@@ -2506,27 +2506,27 @@
 }
 -(ORFloat) fmin
 {
-    ORDouble m1 = minDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
-    ORDouble m2 = minDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
-    return minDbl(m1,m2);
+    ORFloat m1 = minFlt([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORFloat m2 = minFlt([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return minFlt(m1,m2);
 }
 -(ORFloat) fmax
 {
-    ORDouble m1 = maxDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
-    ORDouble m2 = maxDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
-    return maxDbl(m1,m2);
+    ORFloat m1 = maxFlt([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORFloat m2 = maxFlt([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return maxFlt(m1,m2);
 }
 -(ORDouble) dmin
 {
-   ORLDouble m1 = minLDbl([_left dmin] * [_right dmin],[_left dmin] * [_right dmax]);
-   ORLDouble m2 = minLDbl([_left dmax] * [_right dmin],[_left dmax] * [_right dmax]);
-   return minLDbl(m1,m2);
+   ORDouble m1 = minDbl([_left dmin] * [_right dmin],[_left dmin] * [_right dmax]);
+   ORDouble m2 = minDbl([_left dmax] * [_right dmin],[_left dmax] * [_right dmax]);
+   return minDbl(m1,m2);
 }
 -(ORDouble) dmax
 {
-   ORLDouble m1 = maxLDbl([_left dmin] * [_right dmin],[_left dmin] * [_right dmax]);
-   ORLDouble m2 = maxLDbl([_left dmax] * [_right dmin],[_left dmax] * [_right dmax]);
-   return maxLDbl(m1,m2);
+   ORDouble m1 = maxDbl([_left dmin] * [_right dmin],[_left dmin] * [_right dmax]);
+   ORDouble m2 = maxDbl([_left dmax] * [_right dmin],[_left dmax] * [_right dmax]);
+   return maxDbl(m1,m2);
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2573,28 +2573,28 @@
 }
 -(ORFloat) fmin
 {
-    ORDouble m1 = minDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
-    ORDouble m2 = minDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
-    return minDbl(m1,m2);
+    ORFloat m1 = minFlt([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
+    ORFloat m2 = minFlt([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
+    return minFlt(m1,m2);
 
 }
 -(ORFloat) fmax
 {
-    ORDouble m1 = maxDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
-    ORDouble m2 = maxDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
-    return maxDbl(m1,m2);
+    ORFloat m1 = maxFlt([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
+    ORFloat m2 = maxFlt([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
+    return maxFlt(m1,m2);
 }
 -(ORDouble) dmin
 {
-   ORLDouble m1 = minLDbl([_left dmin] / [_right dmin],[_left dmin] / [_right dmax]);
-   ORLDouble m2 = minLDbl([_left dmax] / [_right dmin],[_left dmax] / [_right dmax]);
-   return minLDbl(m1,m2);
+   ORDouble m1 = minDbl([_left dmin] / [_right dmin],[_left dmin] / [_right dmax]);
+   ORDouble m2 = minDbl([_left dmax] / [_right dmin],[_left dmax] / [_right dmax]);
+   return minDbl(m1,m2);
 }
 -(ORDouble) dmax
 {
-   ORLDouble m1 = maxLDbl([_left dmin] / [_right dmin],[_left dmin] / [_right dmax]);
-   ORLDouble m2 = maxLDbl([_left dmax] / [_right dmin],[_left dmax] / [_right dmax]);
-   return maxLDbl(m1,m2);
+   ORDouble m1 = maxDbl([_left dmin] / [_right dmin],[_left dmin] / [_right dmax]);
+   ORDouble m2 = maxDbl([_left dmax] / [_right dmin],[_left dmax] / [_right dmax]);
+   return maxDbl(m1,m2);
 }
 -(void) visit: (ORVisitor*) visitor
 {

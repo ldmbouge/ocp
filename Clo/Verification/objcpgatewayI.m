@@ -184,6 +184,7 @@ static id<OBJCPGateway> objcpgw;
 -(OBJCPGatewayI*) initExplicitOBJCPGateway:(ORCmdLineArgs*) opt
 {
    self = [super init];
+   fesetround(FE_TONEAREST); // force rounding mode (ldm change the rounding mode when he load the real lib)
    _model = [ORFactory createModel];
    _toadd = [[NSMutableArray alloc] init];
    _declarations = [[NSMutableDictionary alloc] initWithCapacity:10];
@@ -795,30 +796,23 @@ static id<OBJCPGateway> objcpgw;
    id<ORVar> tv = [self getVariable:t];
    id<ORVar> ev = [self getVariable:e];
    id<ORExpr> res = nil;
-   if([tv.class conformsToProtocol:@protocol(ORIntVar)] && [ev.class conformsToProtocol:@protocol(ORIntVar)]){
-      res = [ORFactory intVar:_model bounds:RANGE(_model, min([(id<ORIntVar>)t low],[(id<ORIntVar>)e low]),max([(id<ORIntVar>)t up], [(id<ORIntVar>)e up]))];
-   }else if(([tv.class conformsToProtocol:@protocol(ORFloatNumber)] || [tv.class conformsToProtocol:@protocol(ORFloatVar)])
-            &&
-            ([ev.class conformsToProtocol:@protocol(ORFloatVar)] || [ev.class conformsToProtocol:@protocol(ORFloatNumber)])){
-      res = [ORFactory floatVar:_model low:minFlt([(id<ORExpr>)t fmin],[(id<ORExpr>)e fmin]) up:maxFlt([(id<ORExpr>)t fmax],[(id<ORExpr>)e fmax])];
-   }else if(([tv.class conformsToProtocol:@protocol(ORDoubleNumber)] || [tv.class conformsToProtocol:@protocol(ORDoubleVar)])
-            &&
-            ([ev.class conformsToProtocol:@protocol(ORDoubleVar)] || [ev.class conformsToProtocol:@protocol(ORDoubleNumber)])){
-      res = [ORFactory doubleVar:_model low:minDbl([(id<ORExpr>)t dmin],[(id<ORExpr>)e dmin]) up:maxDbl([(id<ORExpr>)t dmax],[(id<ORExpr>)e dmax])];
-   }else if([tv.class conformsToProtocol:@protocol(ORBitVar)]){
-      res = [ORFactory bitVar:_model withLength:max([(id<ORBitVar>)tv bitLength],[(id<ORBitVar>)ev bitLength])];
-      id<ORBitVar> bv = [ORFactory bitVar:_model withLength:1];
-      if([((id<ORExpr>)c).class conformsToProtocol:@protocol(ORIntVar)])
-         [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)c]];
-      else {//complex expr
-         id<ORIntVar> b = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-         [_model add:[b eq:c]];
-         [_model add:[ORFactory bit:bv booleq:(id<ORIntVar>)b]];
-      }
-      [_model add:[ORFactory bit:bv then:(id<ORBitVar>)tv else:(id<ORBitVar>)ev result:(id<ORBitVar>)res]];
-      return res;
+   ORVType type = [(id<ORExpr>) t vtype];
+   switch(type){
+      case ORTFloat:
+         res = [ORFactory floatVar:_model];
+         break;
+      case ORTDouble:
+         res = [ORFactory doubleVar:_model];
+         break;
+      case ORTBool:
+         return [[(id<ORExpr>)c imply:t] land:[[(id<ORExpr>)c neg] imply:e]];
+      case ORTInt:
+         res = [ORFactory intVar:_model];
+         break;
+      case ORTBit:
+      default:
+         assert(NO);
    }
-   
    [_model add:[(id<ORExpr>)c imply:[res eq:tv]]];
    [_model add:[[(id<ORExpr>)c neg] imply:[res eq:ev]]];
    return res;

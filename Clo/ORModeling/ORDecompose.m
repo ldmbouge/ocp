@@ -2156,7 +2156,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
       [self reifyEQc:_model boolean:rv other:left constant:right];
    } else{
       if ([left isVariable] && [right isVariable] && left.getId == right.getId)
-         [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
+            [_model addConstraint:[ORFactory equalc:_model var:rv to:1]];
       id<ORFloatLinear> linLeft   = [ORNormalizer floatLinearFrom:left model:_model];
       id<ORFloatLinear> linRight  = [ORNormalizer floatLinearFrom:right model:_model];
       id<ORFloatVar> varLeft  = [ORNormalizer floatVarIn:linLeft for:_model];

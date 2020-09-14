@@ -1138,7 +1138,7 @@
 @implementation CPFloatTernaryMult
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x mult:(CPFloatVarI*)y kbpercent:(ORDouble)p
 {
-   self = [super initCPCoreConstraint: [x engine]];
+      self = [super initCPCoreConstraint: [x engine]];
    _z = z;
    _x = x;
    _y = y;
