@@ -2046,11 +2046,11 @@
 }
 -(ORDouble) dmin
 {
-   return sqrtd([_op dmin]);
+   return sqrt([_op dmin]);
 }
 -(ORDouble) dmax
 {
-   return sqrtd([_op dmax]);
+   return sqrt([_op dmax]);
 }
 -(ORExprI*) operand
 {
