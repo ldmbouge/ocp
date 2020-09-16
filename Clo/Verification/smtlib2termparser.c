@@ -50,6 +50,7 @@ smtlib2_term_parser *smtlib2_term_parser_new(smtlib2_context ctx)
     ret->symbol_handlers_ = smtlib2_hashtable_new(smtlib2_hashfun_str,
                                                   smtlib2_eqfun_str);
     ret->function_term_handler_ = NULL;
+    ret->function_term_params_handler_ = NULL;
     ret->number_term_handler_ = NULL;
     ret->let_bindings_ = smtlib2_hashtable_new(smtlib2_hashfun_str,
                                                smtlib2_eqfun_str);
@@ -92,9 +93,14 @@ smtlib2_term smtlib2_term_parser_make_term(smtlib2_term_parser *tp,
         if (def) {
             smtlib2_vector *params = smtlib2_term_parser_get_params(tp, def);
             if (params) {
+//               TODO VISIT EXPR AND USE ARGS
+               assert(tp->function_term_handler_);
+               ret = tp->function_term_params_handler_(tp->ctx_, symbol, args, def);
+               if(!ret){
                 smtlib2_term_parser_format_error(
                     tp, "macros with parameters not supported yet");
-                return NULL;
+               }
+                return ret;
             } else {
                 if (args) {
                     smtlib2_term_parser_format_error(
@@ -290,6 +296,12 @@ void smtlib2_term_parser_set_handler(smtlib2_term_parser *tp,
     smtlib2_hashtable_set(tp->symbol_handlers_, (intptr_t)s, (intptr_t)handler);
 }
 
+void smtlib2_term_parser_set_function_params_handler(
+    smtlib2_term_parser *tp,
+    smtlib2_term_parser_function_param_handler handler)
+{
+    tp->function_term_params_handler_ = handler;
+}
 
 void smtlib2_term_parser_set_function_handler(
     smtlib2_term_parser *tp,

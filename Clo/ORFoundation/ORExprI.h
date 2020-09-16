@@ -618,6 +618,3 @@
 -(ORBool) isConstant;
 -(void) visit:(ORVisitor*) v;
 @end
-
-
-

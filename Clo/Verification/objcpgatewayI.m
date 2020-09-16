@@ -147,6 +147,13 @@ static id<OBJCPGateway> objcpgw;
    _type = (OBJCPType*)type;
    _size = size;
    _var = nil;
+   _isArg = NO;
+   return self;
+}
+-(OBJCPDecl*)initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size isArg:(ORBool)isarg
+{
+   [self initExplicitWithSize:name withType:type andSize:size];
+   _isArg = isarg;
    return self;
 }
 -(NSString*) description
@@ -161,7 +168,11 @@ static id<OBJCPGateway> objcpgw;
 {
    return _type;
 }
--(id<ORVar>) getVariable
+-(ORBool) isArg
+{
+   return _isArg;
+}
+-(id<ORExpr>) getVariable
 {
    return _var;
 }
@@ -169,7 +180,7 @@ static id<OBJCPGateway> objcpgw;
 {
    return _size;
 }
--(void) setVar:(id<ORVar>) var
+-(void) setVar:(id<ORExpr>) var
 {
    _var = var;
 }
@@ -187,7 +198,8 @@ static id<OBJCPGateway> objcpgw;
    fesetround(FE_TONEAREST); // force rounding mode (ldm change the rounding mode when he load the real lib)
    _model = [ORFactory createModel];
    _toadd = [[NSMutableArray alloc] init];
-   _declarations = [[NSMutableDictionary alloc] initWithCapacity:10];
+   _declarations = [[NSMutableArray alloc] init];
+   [_declarations addObject: [[NSMutableDictionary alloc] initWithCapacity:10]];
    _instances = [[NSMutableDictionary alloc] initWithCapacity:10];
    _types = [[NSMutableDictionary alloc] initWithCapacity:10];
    _options = opt;
@@ -195,9 +207,21 @@ static id<OBJCPGateway> objcpgw;
    _trueVar = [ORFactory intVar:_model value:1];
    return self;
 }
+-(void)dealloc {
+   [_toadd removeAllObjects];
+   [_toadd release];
+   [_toadd removeAllObjects];
+   [_declarations release];
+   [_instances release];
+  [super dealloc];
+}
 -(id<ORModel>) getModel
 {
    return _model;
+}
+-(NSMutableDictionary*) getCurrentDeclarations
+{
+   return [_declarations lastObject];
 }
 -(objcp_context) objcp_mk_context{
    NSLog(@"Make context not implemented");
@@ -211,12 +235,12 @@ static id<OBJCPGateway> objcpgw;
    NSLog(@"Make app not implemented");
    return NULL;
 }
--(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type
+-(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type isArg:(ORBool) isarg
 {
    NSString* nameString =[[NSString alloc] initWithUTF8String:name];
    OBJCPType* t = (OBJCPType*) type;
-   OBJCPDecl* d = [[OBJCPDecl alloc] initExplicitWithSize:nameString withType:type andSize:[t getSize]];
-   [_declarations  setObject:d forKey:nameString];
+   OBJCPDecl* d = [[OBJCPDecl alloc] initExplicitWithSize:nameString withType:type andSize:[t getSize] isArg:isarg];
+   [[self getCurrentDeclarations]  setObject:d forKey:nameString];
    return (void*)t;
 }
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t{
@@ -225,8 +249,8 @@ static id<OBJCPGateway> objcpgw;
 }
 -(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name
 {
-   NSString *key = [[NSString alloc] initWithUTF8String:name];
-   OBJCPDecl* d = [_declarations objectForKey:key];
+   NSString *key = [[[NSString alloc] initWithUTF8String:name] autorelease];
+   OBJCPDecl* d = [[self getCurrentDeclarations] objectForKey:key];
    return d;
 }
 //create or return variable from declaration
@@ -237,11 +261,20 @@ static id<OBJCPGateway> objcpgw;
    ORUInt size = [decl getSize];
    objcp_var_type type = [[decl getType] getType];
    objcp_expr res = [decl getVariable];
+   ORBool isArg = [decl isArg];
    if(res == nil){
-      res = [self objcp_mk_var_from_type:type andName:name andSize:size];
+      res = [self objcp_mk_var_from_type:type andName:name andSize:size isArg:isArg];
       [decl setVar:res];
    }
    return res;
+}
+-(objcp_expr) objcp_handle_function:(objcp_context) ctx withBody:(objcp_expr) e withArgs:(NSArray*)args
+{
+   ExprCloneAndSubstitue * v = [[[ExprCloneAndSubstitue alloc] initWithValues:args] autorelease];
+   [(id<ORExpr>)e visit:v];
+   id<ORExpr> rv = [v result];
+   [v release];
+   return rv;
 }
 #warning need to encapsulate fp_number in struct to factorise next function
 -(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type  andName:(NSString*) name andSize:(ORUInt) size withValue:(fp_number)value
@@ -272,41 +305,47 @@ static id<OBJCPGateway> objcpgw;
    return res;
 }
 
--(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size
+-(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size isArg:(ORBool)isarg
 {
    objcp_expr res = nil;
-   switch (type) {
-      case OR_BOOL:
-         res = [ORFactory intVar:_model domain:RANGE(_model,0,1) name:name];
-         break;
-      case OR_INT:
-         res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT) name:name];
-         break;
-      case OR_REAL:
-         res = [ORFactory realVar:_model name:name];
-         break;
-      case OR_BV:
-      {
-         unsigned int wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
-         ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-         ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
-         for(int i=0; i< wordlength;i++){
-            low[i] = 0;
-            up[i] = CP_UMASK;
+   if(isarg){
+//      just a trick the index of the variable is the current size of the declaration structure
+//      since we push a new declaration "context" before each new function
+      res = [[ORExprPlaceHolderI alloc] initORExprPlaceHolderI:(ORInt)([[self getCurrentDeclarations] count] - 1) withTracker:_model];
+   }else{
+      switch (type) {
+         case OR_BOOL:
+            res = [ORFactory intVar:_model domain:RANGE(_model,0,1) name:name];
+            break;
+         case OR_INT:
+            res = [ORFactory intVar:_model bounds:RANGE(_model,-MAXINT,MAXINT) name:name];
+            break;
+         case OR_REAL:
+            res = [ORFactory realVar:_model name:name];
+            break;
+         case OR_BV:
+         {
+            unsigned int wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
+            ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+            ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+            for(int i=0; i< wordlength;i++){
+               low[i] = 0;
+               up[i] = CP_UMASK;
+            }
+            if (size%BITSPERWORD != 0)
+               up[0] >>= BITSPERWORD - (size % BITSPERWORD);
+            res = [ORFactory bitVar:_model low:low up:up bitLength:size name:name];
+            break;
          }
-         if (size%BITSPERWORD != 0)
-            up[0] >>= BITSPERWORD - (size % BITSPERWORD);
-         res = [ORFactory bitVar:_model low:low up:up bitLength:size name:name];
-         break;
+         case OR_FLOAT:
+            res = [ORFactory floatVar:_model name:name];
+            break;
+         case OR_DOUBLE:
+            res = [ORFactory doubleVar:_model name:name];
+            break;
+         default:
+            break;
       }
-      case OR_FLOAT:
-         res = [ORFactory floatVar:_model name:name];
-         break;
-      case OR_DOUBLE:
-         res = [ORFactory doubleVar:_model name:name];
-         break;
-      default:
-         break;
    }
    return res;
 }
@@ -443,7 +482,7 @@ static id<OBJCPGateway> objcpgw;
          printf("%s",[[_model description] UTF8String]);
       id<LogicHandler> lh ;
       @try {
-         lh = [OBJCPGatewayI logicToHandler:_logic withModel:_model withOptions:_options withDeclaration:_declarations];
+         lh = [OBJCPGatewayI logicToHandler:_logic withModel:_model withOptions:_options withDeclaration:[self getCurrentDeclarations]];
       } @catch (ORExecutionError *exception) {
          printf("ERROR : %s\n",[exception msg]);
          return NO;
@@ -539,7 +578,7 @@ static id<OBJCPGateway> objcpgw;
 }
 -(objcp_expr) objcp_mk_constant:(objcp_context)ctx fromString:(const char*) rep width:(ORUInt) width base:(ORUInt)base
 {
-   return [[ConstantWrapper alloc] init:rep width:width base:base];
+   return [[[ConstantWrapper alloc] init:rep width:width base:base] autorelease];
 }
 -(id<ORVar>) getVariable:(objcp_expr)e
 {
@@ -547,6 +586,16 @@ static id<OBJCPGateway> objcpgw;
       return (id<ORVar>)[(ConstantWrapper*)e makeVariable];
    return  (id<ORVar>)e;
 }
+
+- (void)objcp_new_scope {
+   [_declarations addObject:[[NSMutableDictionary alloc] init]];
+}
+
+
+- (void)objcp_pop_scope {
+   [_declarations removeLastObject];
+}
+
 @end
 
 @implementation OBJCPGatewayI (Int)
@@ -1386,12 +1435,12 @@ static id<OBJCPGateway> objcpgw;
    if(e->_width == E_SIZE && m->_width == M_SIZE){
       float f = floatFromParts([m uintValue],[e uintValue],[s uintValue]);
       NSLog(@"%16.16e",f);
-      return [[ConstantWrapper alloc] initWithFloat:f];
+      return [[[ConstantWrapper alloc] initWithFloat:f] autorelease];
    }
    if(e->_width == ED_SIZE && m->_width == MD_SIZE){
       double f = doubleFromParts([m ulongValue],[e uintValue],[s uintValue]);
       NSLog(@"%20.20e",f);
-      return [[ConstantWrapper alloc] initWithDouble:f];
+      return [[[ConstantWrapper alloc] initWithDouble:f] autorelease];
    }
    return nil;
 }

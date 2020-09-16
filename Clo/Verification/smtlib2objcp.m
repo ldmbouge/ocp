@@ -49,6 +49,10 @@ static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
                                                  smtlib2_vector *params,
                                                  smtlib2_sort sort,
                                                  smtlib2_term term);
+static void smtlib2_objcp_parser_declare_variable(smtlib2_parser_interface *p,
+                                                  const char *name,
+                                                  smtlib2_sort sort);
+
 static smtlib2_sort smtlib2_objcp_parser_make_sort(smtlib2_parser_interface *p,
                                                    const char *sortname,
                                                    smtlib2_vector *index);
@@ -60,6 +64,8 @@ static smtlib2_sort smtlib2_objcp_parser_make_parametric_sort(
                                                               const char *name,
                                                               smtlib2_vector *tps);
 
+static smtlib2_term  smtlib2_objcp_parser_pop_scope(smtlib2_parser_interface *p);
+static smtlib2_term  smtlib2_objcp_parser_push_scope(smtlib2_parser_interface *p);
 static void smtlib2_objcp_parser_push(smtlib2_parser_interface *p, int n);
 static void smtlib2_objcp_parser_pop(smtlib2_parser_interface *p, int n);
 static void smtlib2_objcp_parser_assert_formula(smtlib2_parser_interface *p,
@@ -77,6 +83,10 @@ static void smtlib2_objcp_parser_get_value(smtlib2_parser_interface *p,
                                            smtlib2_vector *terms);
 static void smtlib2_objcp_parser_get_unsat_core(smtlib2_parser_interface *p);
 
+static smtlib2_term smtlib2_objcp_parser_mk_function_params(smtlib2_context ctx,
+                                                     const char *symbol,
+                                                     smtlib2_vector *args,
+                                                     smtlib2_term expr);
 static smtlib2_term smtlib2_objcp_parser_mk_function(smtlib2_context ctx,
                                                      const char *symbol,
                                                      smtlib2_sort sort,
@@ -251,10 +261,14 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new_with_opts(Options opt)
    pi->make_function_sort = smtlib2_objcp_parser_make_function_sort;
    pi->make_parametric_sort = smtlib2_objcp_parser_make_parametric_sort;
    pi->define_sort = smtlib2_objcp_parser_define_sort;
-   
+   pi->declare_variable = smtlib2_objcp_parser_declare_variable;
+   pi->push_quantifier_scope = smtlib2_objcp_parser_push_scope;
+   pi->pop_quantifier_scope = smtlib2_objcp_parser_pop_scope;
+
    tp = ((smtlib2_abstract_parser *)ret)->termparser_;
    smtlib2_term_parser_set_function_handler(tp,
                                             smtlib2_objcp_parser_mk_function);
+   smtlib2_term_parser_set_function_params_handler(tp,smtlib2_objcp_parser_mk_function_params);
    smtlib2_term_parser_set_number_handler(tp,
                                           smtlib2_objcp_parser_mk_number);
    
@@ -481,12 +495,11 @@ static void smtlib2_objcp_parser_declare_function(smtlib2_parser_interface *p,
                                                   const char *name,
                                                   smtlib2_sort sort)
 {
-   //   fprintf(stdout, "Declaring function\n");
    smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
    smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
    
    if (ap->response_ != SMTLIB2_RESPONSE_ERROR) {
-      objcp_var_decl d = [objcpgw objcp_mk_var_decl:yp->ctx_ withName:(char *)name andType:(objcp_type)sort];
+      objcp_var_decl d = [objcpgw objcp_mk_var_decl:yp->ctx_ withName:(char *)name andType:(objcp_type)sort isArg:NO];
       if (d) {
          ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
       } else {
@@ -496,15 +509,30 @@ static void smtlib2_objcp_parser_declare_function(smtlib2_parser_interface *p,
       }
    }
 }
-
-static void smtlib2_objcp_parser_mk_fun(smtlib2_context ctx,const char *symbol,smtlib2_sort sort,smtlib2_vector *idx,smtlib2_vector *args)
-{
-   size_t sz = smtlib2_vector_size(args);
-   if(sz){
-      const char* name = (const char*)smtlib2_vector_at(args, 0);
-      printf("test %s", name);
+static smtlib2_term  smtlib2_objcp_parser_pop_scope(smtlib2_parser_interface *p){
+   [objcpgw objcp_pop_scope];
+   return NULL;
+}
+static smtlib2_term  smtlib2_objcp_parser_push_scope(smtlib2_parser_interface *p){
+   [objcpgw objcp_new_scope];
+   return NULL;
+}
+static void smtlib2_objcp_parser_declare_variable(smtlib2_parser_interface *p,
+                                                  const char *name,
+                                                  smtlib2_sort sort){
+   smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
+   smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
+  
+   if (ap->response_ != SMTLIB2_RESPONSE_ERROR) {
+      objcp_var_decl d = [objcpgw objcp_mk_var_decl:yp->ctx_ withName:(char *)name andType:(objcp_type)sort isArg:YES];
+      if (d) {
+         ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
+      } else {
+         ap->response_ = SMTLIB2_RESPONSE_ERROR;
+         ap->errmsg_ = smtlib2_sprintf(
+                                       "error declaring function `%s'", name);
+      }
    }
-   printf("test");
 }
 
 static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
@@ -516,11 +544,6 @@ static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
    smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
    smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
    
-   printf("defining %s name",name);
-//   auto p = (int)smtlib2_vector_at(params, 0);
-   
-//   [objcpgw countUsage:name];
-   
    smtlib2_abstract_parser_define_function(p, name, params, sort, term);
    if (ap->response_ != SMTLIB2_RESPONSE_ERROR && smtlib2_vector_size(yp->defines_) > 0) {
       smtlib2_term_parser *tp = ap->termparser_;
@@ -529,16 +552,6 @@ static void smtlib2_objcp_parser_define_function(smtlib2_parser_interface *p,
          smtlib2_vector_push(yp->defines_, k);
       }
    }
-//   else if(params != NULL){
-//      smtlib2_term_parser *tp = ap->termparser_;
-////      void *fun(smtlib2_context ctx,const char *symbol,smtlib2_sort sort,smtlib2_vector *idx,smtlib2_vector *args)
-//      smtlib2_term_parser_set_handler(tp, name,smtlib2_objcp_parser_mk_fun);
-//      
-////      SMTLIB2_OBJCP_SETHANDLER(tp, name, cl);
-////     smtlib2_hashtable_set(tp->let_bindings_,
-////     (intptr_t)smtlib2_strdup(name), (intptr_t)cl);
-//      
-//   }
 }
 
 
@@ -1010,6 +1023,20 @@ static void smtlib2_objcp_parser_get_unsat_core(smtlib2_parser_interface *p)
          ap->errmsg_ = smtlib2_strdup(":produce-unsat-cores option not set");
       }
    }
+}
+
+static smtlib2_term smtlib2_objcp_parser_mk_function_params(smtlib2_context ctx,
+                                                     const char *symbol,
+                                                     smtlib2_vector *args,
+                                                     smtlib2_term expr)
+{
+ objcp_context yctx = YCTX(ctx);
+   NSMutableArray* arr = [[[NSMutableArray alloc] init] autorelease];
+   size_t sz = smtlib2_vector_size(args);
+   for(size_t i = 0; i < sz; i++){
+      [arr addObject:(objcp_expr)smtlib2_vector_at(args, i)];
+   }
+ return [objcpgw objcp_handle_function:yctx withBody:expr withArgs:arr];
 }
 
 

@@ -12,7 +12,7 @@
    id<ORModel> _model;
    NSMutableArray*      _toadd;
    NSMutableDictionary* _types;
-   NSMutableDictionary* _declarations;
+   NSMutableArray* _declarations;
    NSMutableDictionary* _exprDeclarations;
    NSMutableDictionary* _instances;
    ORCmdLineArgs* _options;
@@ -21,13 +21,14 @@
 }
 -(OBJCPGatewayI*) initExplicitOBJCPGateway:(ORCmdLineArgs*)opt;
 -(id<ORModel>) getModel;
+-(NSMutableDictionary*) getCurrentDeclarations;
 -(objcp_context) objcp_mk_context;
 -(void) objcp_del_context:(objcp_context) ctxt;
 -(objcp_expr) objcp_mk_app:(objcp_context) ctx expr:(objcp_expr) f args:(objcp_expr*) args num:(unsigned int)n;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type args:(id) a0,...;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withType:(objcp_var_type) type withSize:(unsigned int) size;
--(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type;
+-(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type isArg:(ORBool)isarg;
 -(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type  andName:(NSString*) name andSize:(ORUInt) size withValue:(fp_number)value;
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t;
 -(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name;
@@ -36,7 +37,7 @@
 -(void) objcp_set_logic:(const char*) logic;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
 -(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range;
--(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size;
+-(objcp_expr) objcp_mk_var_from_type:(objcp_var_type) type andName:(NSString*) name andSize:(ORUInt) size isArg:(ORBool)isarg;
 -(void) objcp_push:(objcp_context) ctx;
 -(void) objcp_pop:(objcp_context) ctx;
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr;

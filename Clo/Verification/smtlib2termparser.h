@@ -51,10 +51,17 @@ typedef smtlib2_term (*smtlib2_term_parser_functionhandler)(
                                                           smtlib2_vector *index,
                                                           smtlib2_vector *args);
 
+typedef smtlib2_term (*smtlib2_term_parser_function_param_handler)(
+                                                          smtlib2_context ctx,
+                                                          const char *symbol,
+                                                          smtlib2_vector *args,
+                                                          smtlib2_term expr);
+
 struct smtlib2_term_parser {
     smtlib2_context ctx_;
     smtlib2_hashtable *symbol_handlers_;
     smtlib2_term_parser_functionhandler function_term_handler_;
+    smtlib2_term_parser_function_param_handler function_term_params_handler_;
     smtlib2_term_parser_numberhandler number_term_handler_;
     smtlib2_hashtable *let_bindings_;
     smtlib2_vector *let_levels_;
@@ -95,6 +102,9 @@ void smtlib2_term_parser_set_handler(smtlib2_term_parser *tp,
 void smtlib2_term_parser_set_function_handler(
     smtlib2_term_parser *tp,
     smtlib2_term_parser_functionhandler handler);
+void smtlib2_term_parser_set_function_params_handler(
+    smtlib2_term_parser *tp,
+    smtlib2_term_parser_function_param_handler handler);
 void smtlib2_term_parser_set_number_handler(
     smtlib2_term_parser *tp,
     smtlib2_term_parser_numberhandler handler);

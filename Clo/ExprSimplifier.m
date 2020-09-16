@@ -7,6 +7,34 @@
 
 #import "ExprSimplifier.h"
 
+@implementation ORExprPlaceHolderI
+-(id<ORExpr>)initORExprPlaceHolderI:(ORInt) index withTracker:(id<ORTracker>) tracker;
+{
+   self = [super init];
+   index_ = index;
+   tracker_ = tracker;
+   return self;
+}
+-(id<ORExpr>)bind:(NSArray*)args
+{
+   return args[index_];
+}
+-(id<ORTracker>) tracker
+{
+   return tracker_;
+}
+-(NSString*)description {
+   return [NSString stringWithFormat:@"Placeholder[index:%d]",index_];
+}
+-(void)visit:(ORVisitorSMT*)v {
+   [v visitExprPlaceHolderI:self];
+}
+@end
+
+@implementation ORVisitorSMT
+-(void) visitExprPlaceHolderI:(ORExprPlaceHolderI*) e
+{}
+@end
 
 @implementation ExprCounter
 +(NSDictionary*)count:(id<ORExpr>)e
@@ -117,7 +145,7 @@
       [[c right] visit:self];
    }
 }
--(void) visitExprLGthenI: (ORExprBinaryI*) c
+-(void) visitExprGthenI: (ORExprBinaryI*) c
 {
    if([self count:c] < 2){
       [[c left] visit:self];
@@ -194,6 +222,187 @@
 {
    if([self count:c] < 2)
       [[c operand] visit:self];
+}
+@end
+
+
+
+@implementation ExprCloneAndSubstitue{
+   NSArray* values_;
+}
+-(id<ORExpr>)result
+{
+   return _rv;
+}
+-(ExprCloneAndSubstitue*)initWithValues:(NSArray*) values
+{
+   self = [super init];
+   values_ = values;
+   return self;
+}
+-(id<ORExpr>)doIt:(id<ORExpr>)e
+{
+   id<ORExpr> old = _rv;
+   _rv = nil;
+   [e visit:self];
+   id<ORExpr> retVal = _rv;
+   _rv = old;
+   return retVal;
+}
+-(void) visitFloatVar:(id<ORFloatVar>)v
+{
+   _rv = v;
+}
+-(void) visitDoubleVar:(id<ORDoubleVar>)v
+{
+   _rv = v;
+}
+-(void) visitIntVar:(id<ORIntVar>)v
+{
+   _rv = v;
+}
+-(void) visitExprPlaceHolderI: (ORExprPlaceHolderI*) c
+{
+   _rv = [c bind:values_];
+}
+-(void) visitExprUnaryMinusI:  (ORExprUnaryMinusI *) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op minus];
+}
+-(void) visitExprMulI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l mul:r];
+}
+-(void) visitExprDivI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l div:r];
+}
+-(void) visitExprPlusI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l plus:r];
+}
+-(void) visitExprMinusI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l sub:r];
+}
+-(void) visitExprAssignI:(ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l set:r];
+}
+-(void) visitExprEqualI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l eq:r];
+}
+-(void) visitExprNEqualI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l neq:r];
+}
+-(void) visitExprLEqualI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l leq:r];
+}
+-(void) visitExprGEqualI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l geq:r];
+}
+-(void) visitExprLThenI: (ORExprLEqualI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l lt:r];
+}
+-(void) visitExprGthenI: (ORExprBinaryI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l gt:r];
+}
+-(void) visitExprDisjunctI: (ORExprLogiqueI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l lor:r];
+}
+-(void) visitExprConjunctI: (ORExprLogiqueI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l land:r];
+}
+-(void) visitExprImplyI: (ORExprLogiqueI*) c
+{
+   id<ORExpr> l = [self doIt:[c left]];
+   id<ORExpr> r = [self doIt:[c right]];
+   _rv = [l imply:r];
+}
+-(void) visitExprNegateI: (ORExprNegateI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op neg];
+}
+-(void) visitExprSqrtI: (ORExprSqrtI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op sqrt];
+}
+-(void) visitExprIsZeroI: (ORExprIsZeroI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op isZero];
+}
+-(void) visitExprIsPositiveI: (ORExprIsPositiveI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op isPositive];
+}
+-(void) visitExprIsInfiniteI: (ORExprIsInfiniteI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op isInfinite];
+}
+-(void) visitExprIsNormalI: (ORExprIsNormalI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op isNormal];
+}
+-(void) visitExprIsSubnormalI: (ORExprIsSubnormalI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op isSubnormal];
+}
+-(void) visitExprToFloatI: (ORExprToFloatI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op toFloat];
+}
+-(void) visitExprToDoubleI: (ORExprToDoubleI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op toDouble];
+}
+-(void) visitExprAbsI: (ORExprAbsI*) c
+{
+   id<ORExpr> op = [self doIt:[c operand]];
+   _rv = [op abs];
 }
 @end
 
@@ -933,7 +1142,7 @@
 {
    [self doIt:e];
 }
--(void) visitExprLGthenI: (ORExprBinaryI*) e
+-(void) visitExprGthenI: (ORExprBinaryI*) e
 {
    [self doIt:e];
 }

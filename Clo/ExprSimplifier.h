@@ -3,11 +3,34 @@
 #import <ORModeling/ORModeling.h>
 
 
+@interface ORExprPlaceHolderI : ORExprI<ORExpr,NSCoding>{
+   ORInt index_;
+   id<ORTracker> tracker_;
+}
+-(id<ORExpr>)initORExprPlaceHolderI:(ORInt) index withTracker:(id<ORTracker>) tracker;
+-(id<ORExpr>)bind:(NSArray*)args;
+-(id<ORTracker>) tracker;
+-(NSString*)description;
+-(void)visit:(ORVisitor*)v;
+@end
+
+@interface  ORVisitorSMT : ORNOopVisit
+-(void) visitExprPlaceHolderI:(ORExprPlaceHolderI*)e;
+@end
+
 @interface ExprCounter : ORNOopVisit {
    NSMutableDictionary* _theSet;
 }
 -(id)init:(NSMutableDictionary*)theSet;
 +(NSDictionary*)count:(id<ORExpr>)e;
+@end
+
+@interface ExprCloneAndSubstitue : ORVisitorSMT
+{
+id<ORExpr> _rv;
+}
+-(id)initWithValues:(NSArray*)values;
+-(id<ORExpr>) result;
 @end
 
 
