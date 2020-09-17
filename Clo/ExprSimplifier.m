@@ -249,6 +249,14 @@
    _rv = old;
    return retVal;
 }
+-(void) visitFloat:(id<ORFloatNumber>)e
+{
+   _rv = e;
+}
+-(void) visitDouble:(id<ORFloatNumber>)e
+{
+   _rv = e;
+}
 -(void) visitFloatVar:(id<ORFloatVar>)v
 {
    _rv = v;
