@@ -478,8 +478,10 @@ static id<OBJCPGateway> objcpgw;
 {
    [self addConstraints];
    @autoreleasepool {
-      if([_options printModel])
-         printf("%s",[[_model description] UTF8String]);
+      if([_options printModel]){
+         printf("%s\n",[[_model description] UTF8String]);
+         fflush(stdout);
+      }
       id<LogicHandler> lh ;
       @try {
          lh = [OBJCPGatewayI logicToHandler:_logic withModel:_model withOptions:_options withDeclaration:[self getCurrentDeclarations]];
