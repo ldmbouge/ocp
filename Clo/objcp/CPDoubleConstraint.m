@@ -1715,7 +1715,7 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
    epsilon = [[ORRationalInterval alloc] init];
    [epsilon set_q:tmp and:tmp];
    //[tmp set_str:"1/44942328371557897693232629769725618340449424473557664318357520289433168951375240783177119330601884005280028469967848339414697442203604155623211857659868531094441973356216371319075554900311523529863270738021251442209537670585615720368478277635206809290837627671146574559986811484619929076208839082406056034304"];
-   [tmp set_str:"1/10"];
+   [tmp set_d:7.120236347223044425888744695463693005501491137479461857770e-307];
    delta = [[ORRationalInterval alloc] init];
    [delta set_q:tmp and:tmp];
    
@@ -1869,18 +1869,21 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          // eo + ezTemp + epsilon * M2 + delta / epsilon
          // M2 >= max ( | x * ey | + | y * ex | + | epsilon * M2 | ) -> M2 = max ( | x * ey | + | y * ex | + | epsilon * M2 | )
          // delta / epsilon is too small ~ 7.12e-307, resulting error cannot be computed -> do not compute? error intervals are over-approximation, so computation is still sound
-         [ezTemp set: [[eo add: ezTemp] add: [epsilon mul: eoTemp]]];
+         [ezTemp set: [[eo add: ezTemp] add: [[epsilon mul: eoTemp] add:delta]]];
          //NSLog(@"4 - %@", ezTemp);
          
+
+         
          // Update ez with Taylor result
-//         if([ezTemp neq: ez]){
-//            NSLog(@"Taylor - %@", ezTemp);
-//            NSLog(@"Constr - %@", ez);
-//            NSLog(@"T - C  - [%@, %@]", [[ezTemp low] sub: [ez low]], [[ezTemp up] sub: [ez up]]);
-//            NSLog(@"");
-//
-//         }
+         if([ezTemp neq: ez]){
+            NSLog(@"Taylor - %@", ezTemp);
+            NSLog(@"Constr - %@", ez);
+            NSLog(@"T - C  - [%@, %@]", [[ezTemp low] sub: [ez low]], [[ezTemp up] sub: [ez up]]);
+            NSLog(@"");
+
+         }
          [ez set: [ez proj_inter: ezTemp]];
+         NSLog(@"Inter   - %@", ez);
          changed |= ez.changed;
          
          gchanged |= changed;

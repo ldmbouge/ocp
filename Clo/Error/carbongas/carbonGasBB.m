@@ -182,18 +182,23 @@ void motivating_example_d_c(bool continuous, int argc, const char * argv[]) {
       id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"p"];
       //id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.11 string:@"111/100" name:@"k"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORRationalVar> rQ = [ORFactory rationalVar:mdl name:@"rQ"];
       id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
       id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
+      
+      [mdl add:[ORFactory channel:r with:rQ]];
       
       /* Initialization of constants */
       [mdl add:[p set: @(3.0)]];
       
       /* Declaration of constraints */
       [mdl add:[r set:[[[x mul: p] plus: y] div: w]]];
-      [mdl add:[r leq:@(10.0)]];
+     // [mdl add:[r leq:@(10.0)]];
       
 //      [mdl add:[r set:[[x mul: x] plus: x]]];
 //      [mdl add:[r leq:@(1.0)]];
+      [zero set_d:10];
+      [mdl add:[[rQ plus:er] leq: zero]];
       
       /* Declaration of constraints over errors */
       [mdl add: [erAbs eq: [er abs]]];
@@ -245,7 +250,9 @@ void motivating_example_d_c(bool continuous, int argc, const char * argv[]) {
             [zQ set: [[[xQ mul: pQ] add: yQ] div: wQ]];
             //[zQ set: [[xQ mul: xQ] add: xQ]];
 
-            if(z <= 10.0){
+            [pQ set_d: 10.0];
+            //if([z <= 10.0){
+            if([zQ leq: pQ]) {
             [ez set: [zQ sub: zF]];
             } else {
                [ez setZero];
@@ -266,6 +273,83 @@ void motivating_example_d_c(bool continuous, int argc, const char * argv[]) {
       }];
    }
 }
+
+void fptaylor_talk_example_d_c(bool continuous, int argc, const char * argv[]) {
+   @autoreleasepool {
+      /* Creation of model */
+      id<ORModel> mdl = [ORFactory createModel];
+            
+      /* Declaration of model variables */
+      id<ORDoubleVar> x = [ORFactory doubleInputVar:mdl low:0.5 up:1 name:@"x"];
+      id<ORDoubleVar> y = [ORFactory doubleInputVar:mdl low:0.5 up:1 name:@"y"];
+      id<ORDoubleVar> p = [ORFactory doubleConstantVar:mdl value:1.0 string:@"1/1" name:@"1"];
+      id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+      id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+      id<ORRationalVar> erAbs = [ORFactory rationalVar:mdl name:@"erAbs"];
+      
+      /* Initialization of constants */
+      [mdl add:[p set: @(1.0)]];
+      
+      /* Declaration of constraints */
+      [mdl add:[r set:[p div:[x plus: y]]]];
+            
+      /* Declaration of constraints over errors */
+      [mdl add: [erAbs eq: [er abs]]];
+      [mdl maximize:erAbs];
+      
+      /* Display model */
+      NSLog(@"model: %@",mdl);
+      
+      /* Construction of solver */
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<ORDoubleVarArray> vs = [mdl doubleVars];
+      id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+      
+      /* Solving */
+      [cp solve:^{
+         /* Branch-and-bound search strategy to maximize ezAbs, the error in absolute value of z */
+         [cp branchAndBoundSearchD:vars out:erAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+            /* Split strategy */
+            [cp floatSplit:i withVars:x];
+         }
+                           compute:^(NSMutableArray* arrayValue, NSMutableArray* arrayError){
+            ORDouble x = [[arrayValue objectAtIndex:0] doubleValue];
+            ORDouble y = [[arrayValue objectAtIndex:1] doubleValue];
+            ORDouble p = 1.0;
+            
+            id<ORRational> xQ = [[ORRational alloc] init];
+            id<ORRational> yQ = [[ORRational alloc] init];
+            id<ORRational> pQ = [[ORRational alloc] init];
+            id<ORRational> zQ = [[ORRational alloc] init];
+            id<ORRational> zF = [[ORRational alloc] init];
+            id<ORRational> ez = [[[ORRational alloc] init] autorelease];
+            
+            [pQ set_str:"1/1"];
+            [xQ setInput:x with:[arrayError objectAtIndex:0]];
+            [yQ setInput:y with:[arrayError objectAtIndex:1]];
+
+            ORDouble z = p/(x+y);
+            [zF set_d:z];
+            
+            [zQ set:[pQ div:[xQ add: yQ]]];
+
+            [ez set: [zQ sub: zF]];
+            
+            [xQ release];
+            [yQ release];
+            [pQ release];
+            [zQ release];
+            [zF release];
+            
+            [arrayValue addObject:[NSNumber numberWithDouble:z]];
+            [arrayError addObject:ez];
+            
+            return ez;
+         }];
+      }];
+   }
+}
+
 
 
 void carbonGas_d_c_3B(bool continuous, int argc, const char * argv[]) {
@@ -702,14 +786,167 @@ void test_linear3(int search, int argc, const char * argv[]) {
    }
 }
 
+id<ORRationalInterval> ulp_computation_d(const double_interval f){
+   id<ORRationalInterval> ulp = [[ORRationalInterval alloc] init];
+   id<ORRational> tmp0 = [[ORRational alloc] init];
+   id<ORRational> tmp1 = [[ORRational alloc] init];
+   id<ORRational> tmp2 = [[ORRational alloc] init];
+   id<ORRational> tmp3 = [[ORRational alloc] init];
+   
+   if(f.inf == -INFINITY || f.sup == INFINITY){
+      [tmp1 setNegInf];
+      [tmp2 setPosInf];
+      [ulp set_q:tmp1 and:tmp2];
+   }else if(fabs(f.inf) == DBL_MAX || fabs(f.sup) == DBL_MAX){
+      [tmp0 set_d: nextafter(DBL_MAX, -INFINITY) - DBL_MAX];
+      [tmp1 set_d: 2.0];
+      [tmp2 set: [tmp0 div: tmp1]];
+      [tmp3 set: [tmp0 div: tmp1]];
+      [ulp set_q:[tmp2 neg] and:tmp3];
+   } else{
+      ORDouble inf, sup;
+//      id<ORRational> nextInf = [[ORRational alloc] init];
+//      id<ORRational> nextSup = [[ORRational alloc] init];
+//      id<ORRational> infQ = [[ORRational alloc] init];
+//      id<ORRational> supQ = [[ORRational alloc] init];
+      
+
+      inf = minDbl(nextafter(f.inf, -INFINITY) - f.inf, nextafter(f.sup, -INFINITY) - f.sup);
+      sup = maxDbl(nextafter(f.inf, +INFINITY) - f.inf, nextafter(f.sup, +INFINITY) - f.sup);
+      
+//      [infQ set_d:f.inf];
+//      [supQ set_d:f.sup];
+//
+//      [nextInf set_d:nextafter(f.inf, -INFINITY)];
+//      [nextSup set_d:nextafter(f.sup, -INFINITY)];
+//      [tmp0 set: minQ([nextInf sub:infQ], [nextSup sub: supQ])];
+//
+//      [nextInf set_d:nextafter(f.inf, +INFINITY)];
+//      [nextSup set_d:nextafter(f.sup, +INFINITY)];
+//      [tmp3 set: maxQ([nextInf sub:infQ], [nextSup sub: supQ])];
+//
+//      [infQ release];
+//      [supQ release];
+//      [nextInf release];
+//      [nextSup release];
+      
+      [tmp0 set_d: inf];
+      [tmp1 set_d: 2.0];
+      [ulp.low set: [tmp0 div: tmp1]];
+      [tmp3 set_d: sup];
+      [ulp.up set: [tmp3 div: tmp1]];
+   }
+   
+   [tmp0 release];
+   [tmp1 release];
+   [tmp2 release];
+   [tmp3 release];
+   [ulp autorelease];
+   
+   return ulp;
+}
+
+
 int main(int argc, const char * argv[]) {
    //carbonGas_f(1, argc, argv);
    //carbonGas_d(1, argc, argv);
    carbonGas_d_c(1, argc, argv);
    //motivating_example_d_c(1, argc, argv);
+   //fptaylor_talk_example_d_c(1, argc, argv);
    //test_linear2(0,argc,argv);
    //carbonGas_d_c_3B(1, argc, argv);
    //test_d_c_3B(1, argc, argv);
    //test_Q_3B(1, argc, argv);
+   
+   
+//   id<ORRationalInterval> x = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> y = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> z = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> tmp1 = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> tmp2 = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> tmp3 = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> tmp4 = [[ORRationalInterval alloc] init];
+//   id<ORRationalInterval> tmp5 = [[ORRationalInterval alloc] init];
+//   id<ORRational> r = [[ORRational alloc] init];
+   
+//   double_interval xF;
+//   xF.inf = 0.5;
+//   xF.sup = 1.0;
+//   tmp1 = ulp_computation_d(xF);
+   //y = ulp_computation_d(xF);
+//   NSLog(@"%p", &x);
+//   NSLog(@"%p", &y);
+//      [x set_d:4.99999999999999722444e-01 and:1.00000000000000044409e+00];
+//   [x set: [x add: tmp1]];
+//      [y set_d:4.99999999999999722444e-01 and:1.00000000000000044409e+00];
+//      NSLog(@"%p", &x);
+//      NSLog(@"%p", &y);
+
+   
+   //[z set_d:-INFINITY and:+INFINITY];
+//   [r set_str:"1/9007199254740992"];
+//   [tmp1 set_q:[r neg] and:r];
+//   [r set_str:"21/10"];
+//   [tmp2 set_q:r and:r];
+//   [r set_str:"161/10"];
+//   [tmp3 set_q:r and:r];
+//   [r set_str:"41/10"];
+//   [tmp4 set_q:r and:r];
+//   [r setOne];
+//   [tmp5 set_q:r and:r];
+//
+//   [z set:  [[tmp5 div: [x add: y]] add: [[[tmp5 neg] div: [x add: y]] add: [[[[[[x neg] div: [[x add: y] mul: [x add: y]]] sub: [[y neg] div: [[x add: y] mul: [x add: y]]]] sub: [[tmp2 mul: tmp1] div: [[x add: y] mul: [x add: y]]]] add: [tmp3 mul: tmp1]] add: [tmp4 mul: tmp1]]]]];
+//   NSLog(@"Taylor error: %@", z);
+//
+//   [z set: [[tmp5 div: [x add: y]] add: z]];
+//   NSLog(@"Taylor error: %@", z);
+//
+//   [z set: [tmp5 div: [x add: y]]];
+//   NSLog(@"Taylor error: %@", z);
+
+   
+   
+   /*
+    Optimal Solution: +2.77496244317962505395e-16 @ (5620916183001279/20287045687609920889658676346880) (+3.33066907387547011431e-16 @ (5404319552844595/16225927682921332736278099132416)) [1.2] thread: 0 time: 0.514
+    Input Values:
+    x: 5.00000189762581537245e-01 -5.55111512312578270212e-17 @ (-1/18014398509481984)
+    y: 5.00000155304659799071e-01 -5.55111512312578270212e-17 @ (-1/18014398509481984)
+    output: 9.99999654932877568569e-01 +2.77496244317962505395e-16 @ (1407073608217819/5070604150611699439360467271680)
+
+    */
+   
+   
+   
+//   fesetround(FE_TONEAREST);
+//   double x = 5.00000189762581537245e-01;
+//   double y = 5.00000155304659799071e-01;
+//   double z = -INFINITY;
+//
+//   id<ORRational> xQ = [[ORRational alloc] init];
+//   id<ORRational> exQ = [[ORRational alloc] init];
+//   id<ORRational> yQ = [[ORRational alloc] init];
+//   id<ORRational> eyQ = [[ORRational alloc] init];
+//   id<ORRational> oneQ = [[ORRational alloc] init];
+//   id<ORRational> zQ = [[ORRational alloc] init];
+//   id<ORRational> zF = [[ORRational alloc] init];
+//   id<ORRational> ezQ = [[ORRational alloc] init];
+//
+//   [exQ set_str:"-1/18014398509481984"];
+//   [eyQ set_str:"-1/18014398509481984"];
+//   [xQ setInput:x with:exQ];
+//   [yQ setInput:y with:eyQ];
+//   [oneQ setOne];
+//
+//   z = 1/(x+y);
+//
+//   [zQ set: [oneQ div:[xQ add: yQ]]];
+//
+//   [zF set_d:z];
+//
+//   [ezQ set: [zQ sub: zF]];
+//
+//   NSLog(@"");
+//   NSLog(@"Input Values:\nx: %10.20e %@\ny: %10.20e %@\noutput: %10.20e %@", x, exQ, y, eyQ, z, ezQ);
+   
    return 0;
 }
