@@ -1312,7 +1312,7 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitFloatSqrt: (id<ORAbs>) cstr
+-(void) visitFloatSqrt: (id<ORSqrt>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORFloatVar> res = (id<ORFloatVar>)[cstr res];
@@ -1821,7 +1821,7 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitDoubleSqrt: (id<ORAbs>) cstr
+-(void) visitDoubleSqrt: (id<ORSqrt>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORDoubleVar> res = (id<ORDoubleVar>)[cstr res];
