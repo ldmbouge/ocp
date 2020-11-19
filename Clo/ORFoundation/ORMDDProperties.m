@@ -123,6 +123,51 @@
 -(int) initialValue { return _initialValue; }
 @end
 
+@implementation MDDPWindowShort
+-(id) initMDDPWindowShort:(short)pId initialValue:(short)initialValue defaultValue:(short)defaultValue windowSize:(int)windowSize {
+    self = [super initMDDPropertyDescriptor:pId];
+    _initialValue = initialValue;
+    _defaultValue = defaultValue;
+    _windowSize = windowSize;
+    return self;
+}
+-(int) storageSize { return _windowSize*16; }
+-(void) initializeState:(char*)state {
+    short* stateArray = (short*)&state[_byteOffset];
+    stateArray[0] = _initialValue;
+    for (int i = 1; i < _windowSize; i++) {
+        stateArray[i] = _defaultValue;
+    }
+}
+-(short) get:(char*)state at:(int)index {
+    return ((short*)&state[_byteOffset])[index];
+}
+-(void) set:(short)value forState:(char*)state at:(int)index {
+    ((short*)&state[_byteOffset])[index] = value;
+}
+-(void) set:(char*)value forState:(char*)state slideBy:(int)numSlide {
+    memcpy(state + _byteOffset + (numSlide * 2), value + _byteOffset, (_windowSize-numSlide) * 2);
+}
+-(void) set:(char*)state toMinOf:(char*)state1 and:(char*)state2 {
+    short* stateArray = (short*)&state[_byteOffset];
+    short* state1Array = (short*)&state1[_byteOffset];
+    short* state2Array = (short*)&state2[_byteOffset];
+    
+    for (int i = 0; i < _windowSize; i++) {
+        stateArray[i] = state1Array[i] < state2Array[i] ? state1Array[i] : state2Array[i];
+    }
+}
+-(void) set:(char*)state toMaxOf:(char*)state1 and:(char*)state2 {
+    short* stateArray = (short*)&state[_byteOffset];
+    short* state1Array = (short*)&state1[_byteOffset];
+    short* state2Array = (short*)&state2[_byteOffset];
+    
+    for (int i = 0; i < _windowSize; i++) {
+        stateArray[i] = state1Array[i] > state2Array[i] ? state1Array[i] : state2Array[i];
+    }
+}
+@end
+
 @implementation MDDStateDescriptor {
 @protected
     MDDPropertyDescriptor** _properties;

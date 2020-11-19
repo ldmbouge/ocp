@@ -69,7 +69,7 @@
 @end
 */
 @interface ORMDDStateSpecification : ORConstraintI<ORMDDStateSpecification>
--(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(id)specs recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
+-(ORMDDStateSpecification*)initORMDDStateSpecification:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(id)specs recommendationStyle:(MDDRecommendationStyle)recommendationStyle splitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering maxSplitIter:(int)maxSplitIter maxRebootDistance:(int)maxRebootDistance useStateExistence:(bool)useStateExistence numNodesSplitAtATime:(int)numNodesSplitAtATime numNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent splittingStyle:(int)splittingStyle;
 -(id<ORIntVarArray>) vars;
 -(ORInt) relaxationSize;
 -(id) specs;
@@ -77,7 +77,7 @@
 @end
 
 @interface ORMDDSpecs : ORConstraintI<ORMDDSpecs>
--(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x numForwardProperties:(int)numTopDownProperties numReverseProperties:(int)numBottomUpProperties numCombinedProperties:(int)numCombinedProperties;
+-(ORMDDSpecs*)initORMDDSpecs:(id<ORIntVarArray>)x numForwardProperties:(int)numTopDownProperties numReverseProperties:(int)numBottomUpProperties numCombinedProperties:(int)numCombinedProperties constraintPriority:(int)constraintPriority;
 -(id<ORIntVarArray>) vars;
 @end
 

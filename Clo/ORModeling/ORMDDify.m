@@ -131,7 +131,14 @@
     bool _maximize;
     int _width;
     MDDRecommendationStyle _recommendationStyle;
+    bool _splitAllLayersBeforeFiltering;
+    int _maxSplitIter;
+    int _maxRebootDistance;
     ORInt _variableOverlap;
+    bool _useStateExistence;
+    int _numNodesSplitAtATime;
+    bool _numNodesDefinedAsPercent;
+    int _splittingStyle;
     ORInt _numSpecs;
     
     NSMutableArray* _mddSpecConstraints;
@@ -158,7 +165,14 @@
     _notes = notes;
     _width = [_notes findGeneric: DDWidth];
     _recommendationStyle = [_notes findGeneric: DDRecommendationStyle];
+    _splitAllLayersBeforeFiltering = [_notes findGeneric: DDSplitAllLayersBeforeFiltering];
+    _maxSplitIter = [_notes findGeneric:DDMaxSplitIter];
+    _maxRebootDistance = [_notes findGeneric:DDMaxRebootDistance];
     _variableOverlap = [_notes findGeneric: DDComposition];
+    _useStateExistence = [_notes findGeneric: DDUseStateExistence];
+    _numNodesSplitAtATime = [_notes findGeneric: DDNumNodesSplitAtATime];
+    _numNodesDefinedAsPercent = [_notes findGeneric: DDNumNodesDefinedAsPercent];
+    _splittingStyle = [_notes findGeneric: DDSplittingStyle];
     [m applyOnVar: ^(id<ORVar> x) {
         [_into addVariable:x];
     }
@@ -184,14 +198,14 @@
     if ([_mddSpecConstraints count] > 0) {
         if (_variableOverlap == 0) {
             [self combineMDDSpecs:m];
-            id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables size:_width specs:_mddSpecification recommendationStyle:_recommendationStyle];
+            id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:_variables size:_width specs:_mddSpecification recommendationStyle:_recommendationStyle splitAllLayersBeforeFiltering:_splitAllLayersBeforeFiltering maxSplitIter:_maxSplitIter maxRebootDistance:_maxRebootDistance useStateExistence:_useStateExistence numNodesSplitAtATime:_numNodesSplitAtATime numNodesDefinedAsPercent:_numNodesDefinedAsPercent splittingStyle:_splittingStyle];
             [_into trackConstraintInGroup: mddConstraint];
             [_into addConstraint: mddConstraint];
         } else {
             MDDStateSpecification** specs = [self createMDDSpecs:m];
             for (int i = 0; i < _numSpecs; i++) {
                 MDDStateSpecification* spec = specs[i];
-                id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:[spec vars] size:_width specs:spec recommendationStyle:_recommendationStyle];
+                id<ORConstraint> mddConstraint = [ORFactory MDDStateSpecification:m var:[spec vars] size:_width specs:spec recommendationStyle:_recommendationStyle splitAllLayersBeforeFiltering:_splitAllLayersBeforeFiltering maxSplitIter:_maxSplitIter maxRebootDistance:_maxRebootDistance useStateExistence:_useStateExistence numNodesSplitAtATime:_numNodesSplitAtATime numNodesDefinedAsPercent:_numNodesDefinedAsPercent splittingStyle:_splittingStyle];
                 [_into trackConstraintInGroup: mddConstraint];
                 [_into addConstraint: mddConstraint];
             }
@@ -276,7 +290,7 @@
                 //If was already in the intersection
                 if (!notInIntersection[varIndex]) {
                     //If still is, then increment intersectionSize.  Otherwise set it to not be in intersection
-                    if ([initialVars contains:initialVars[varIndex]]) {
+                    if ([otherVars contains:initialVars[varIndex]]) {
                         intersectionSize++;
                     } else {
                         //notInIntersection[varIndex] = true;

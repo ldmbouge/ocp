@@ -675,8 +675,8 @@
    return o;
 }
 
-+(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma {
-    id<CPConstraint> o = [[CPIRMDD alloc] initCPIRMDD:cp over:x relaxationSize:relaxationSize spec:spec recommendationStyle:recommendationStyle gamma:gamma];
++(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle splitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering maxSplitIter:(int)maxSplitIter maxRebootDistance:(int)maxRebootDistance useStateExistence:(bool)useStateExistence  numNodesSplitAtATime:(int)numNodesSplitAtATime numNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent splittingStyle:(int)splittingStyle gamma:(id*)gamma {
+    id<CPConstraint> o = [[CPIRMDD alloc] initCPIRMDD:cp over:x relaxationSize:relaxationSize spec:spec recommendationStyle:recommendationStyle splitAllLayersBeforeFiltering:splitAllLayersBeforeFiltering maxSplitIter:maxSplitIter maxRebootDistance:maxRebootDistance useStateExistence:useStateExistence  numNodesSplitAtATime:numNodesSplitAtATime numNodesDefinedAsPercent:numNodesDefinedAsPercent splittingStyle:splittingStyle gamma:gamma];
     [[x tracker] trackMutable:o];
     return o;
 }

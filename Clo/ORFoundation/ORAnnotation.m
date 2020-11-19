@@ -228,6 +228,41 @@
     GenericIndex index = DDComposition;
     [self genericConstraint: index value: composition];
 }
+-(void) ddSplitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering
+{
+    GenericIndex index = DDSplitAllLayersBeforeFiltering;
+    [self genericConstraint:index value:splitAllLayersBeforeFiltering];
+}
+-(void) ddMaxSplitIter:(int)maxSplitIter
+{
+    GenericIndex index = DDMaxSplitIter;
+    [self genericConstraint:index value:maxSplitIter];
+}
+-(void) ddMaxRebootDistance:(int)maxRebootDistance
+{
+    GenericIndex index = DDMaxRebootDistance;
+    [self genericConstraint:index value:maxRebootDistance];
+}
+-(void) ddUseStateExistence:(bool)useStateExistence
+{
+    GenericIndex index = DDUseStateExistence;
+    [self genericConstraint:index value:useStateExistence];
+}
+-(void) ddNumNodesSplitAtATime:(int)numNodesSplitAtATime
+{
+    GenericIndex index = DDNumNodesSplitAtATime;
+    [self genericConstraint:index value:numNodesSplitAtATime];
+}
+-(void) ddNumNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent
+{
+    GenericIndex index = DDNumNodesDefinedAsPercent;
+    [self genericConstraint:index value:numNodesDefinedAsPercent];
+}
+-(void) ddSplittingStyle:(int)splittingStyle
+{
+    GenericIndex index = DDSplittingStyle;
+    [self genericConstraint:index value:splittingStyle];
+}
 
 -(NSString*) description
 {

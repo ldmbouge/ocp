@@ -101,7 +101,7 @@
 
 +(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 
-+(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma;
++(id<CPConstraint>) MDDStateSpecification: (id<CPEngine>) cp over: (id<CPIntVarArray>) x size:(ORInt)relaxationSize spec:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle splitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering maxSplitIter:(int)maxSplitIter maxRebootDistance:(int)maxRebootDistance useStateExistence:(bool)useStateExistence  numNodesSplitAtATime:(int)numNodesSplitAtATime numNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent splittingStyle:(int)splittingStyle gamma:(id*)gamma;
 @end
 
 @interface CPFactory (ORReal)

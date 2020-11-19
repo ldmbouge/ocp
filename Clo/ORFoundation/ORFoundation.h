@@ -51,6 +51,8 @@
 
 #import <ORFoundation/ORMDDProperties.h>
 #import <ORFoundation/ORCustomMDDStates.h>
+#import <ORFoundation/ORMDDNode.h>
+#import <ORFoundation/CPMDDHashTables.h>
 
 #if defined(__APPLE__)
 #import "TargetConditionals.h"

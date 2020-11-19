@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import <objcp/CPMDDNode.h>
+#import <ORFoundation/ORMDDNode.h>
 
 @interface CircularQueue : NSObject {
 @protected
@@ -30,16 +30,19 @@
 -(bool) hasUnmarkedNodeFor:(bool)isForward;
 @end
 
+@interface DeletionCircularQueue : CircularQueue
+@end
+
 @interface CPMDDQueue : NSObject {
 @protected
     int _numLayers;
-    int _width;
     bool _isForward;
     CircularQueue* __strong *_layerQueues;
     int _numNodes;
     int _currentLayer;
 }
 -(id) initCPMDDQueue:(int)numLayers width:(int)width isForward:(bool)isForward;
+-(id) initCPMDDQueue:(int)numLayers widths:(int*)widths isForward:(bool)isForward;
 -(void) reboot;
 -(void) rebootTo:(int)layer;
 -(void) clear;
@@ -50,4 +53,7 @@
 -(int) numOnLayer:(int)layer;
 -(bool) hasDeletedNodeOnLayer:(int)layer;
 -(bool) hasUnmarkedNodeOnLayer:(int)layer;
+@end
+
+@interface CPMDDDeletionQueue : CPMDDQueue
 @end

@@ -94,15 +94,22 @@ autoreleasepool {
     let numArguments = arguments.count
     
     let fileName = numArguments > 1 ? arguments[1] : "/Users/rebeccagentzel/Downloads/workforce100"
-    let mode = numArguments > 2 ? Int(arguments[2]) : 2
+    let mode = numArguments > 2 ? Int(arguments[2]) : 1
     let relaxationSize = numArguments > 3 ? Int32(arguments[3]) : 1
-    let withArcs = numArguments > 4 ? Bool(arguments[4]) : true
-    let usingClosures = numArguments > 5 ? Bool(arguments[5]) : true
-    //let usingFirstFail = numArguments > 6 ? Bool(arguments[6]) : false
-    let equalBuckets = numArguments > 7 ? Bool(arguments[7]) : true
-    let usingSlack = numArguments > 8 ? Bool(arguments[8]) : false
-    let recommendationStyle = numArguments > 9 ? Int(arguments[9]) : 0
-    let variableOverlap = numArguments > 10 ? Int32(arguments[10]) : 0
+    let usingFirstFail = numArguments > 4 ? Bool(arguments[4]) : false
+    let splitAllLayersBeforeFiltering = numArguments > 5 ? Bool(arguments[5]) : true
+    let maxSplitIter = numArguments > 6 ? Int32(arguments[6]) : 10
+    let maxRebootDistance = numArguments > 7 ? Int32(arguments[7]) : 0
+    let recommendationStyle = numArguments > 8 ? Int(arguments[8]) : 0
+    let variableOverlap = numArguments > 9 ? Int32(arguments[9]) : 80
+    let useStateExistence = numArguments > 10 ? Bool(arguments[10]) : true
+    let nodePriorityMode = numArguments > 11 ? Int32(arguments[11]) : 0
+    let candidatePriorityMode = numArguments > 12 ? Int32(arguments[12]) : 0
+    let stateEquivalenceMode = numArguments > 13 ? Int32(arguments[13]) : 3
+    let numNodesSplitAtATime = numArguments > 14 ? Int32(arguments[14]) : 1
+    let numNodesDefinedAsPercent = numArguments > 15 ? Bool(arguments[15]) : false
+    let splittingStyle = numArguments > 16 ? Int32(arguments[16]) : 0
+    let printSolutions = numArguments > 17 ? Bool(arguments[17]) : true
     
     //mode = 0, classic, series of inequalities
     //mode = 1, classic, all-differents
@@ -129,7 +136,8 @@ autoreleasepool {
 
     let emp = ORFactory.intVarArray(m, range: JR, domain: ER)
     
-    if mode == 0 {
+    
+    if mode! == 0 {
         for i in 0..<AJ.count {
             for j in i+1 ..< AJ.count {
                 if (overlap(AJ[i],AJ[j])) {
@@ -137,14 +145,13 @@ autoreleasepool {
                 }
             }
         }
-    } else if mode == 1 {
+    } else if mode! == 1 {
         for c in cliques {
             notes.dc(m.add(ORFactory.alldifferent(all(m,c) { i in emp[i] })))
         }
-    } else if mode == 2 {
+    } else if mode! == 2 {
         for c in cliques {
-            //m.add(allDiffMDDWithSetsAndClosures(all(m,c) { i in emp[i]}))
-            m.add(allDiffDualDirectionalMDDWithSetsAndClosures(all(m,c) { i in emp[i]}))
+            m.add(improvedAllDiffDualDirectionalMDDWithSetsAndClosures(all(m,c) { i in emp[i]}, constraintPriority: 0, nodePriorityMode: nodePriorityMode!, candidatePriorityMode: candidatePriorityMode!, stateEquivalenceMode: stateEquivalenceMode!))
         }
     }
     var objectiveUpperBound = 0
@@ -159,20 +166,22 @@ autoreleasepool {
     }
     let objectiveDomain = range(m, 0...objectiveUpperBound)
     let objectiveVariable = ORFactory.intVar(m, domain: objectiveDomain)
+
     if mode! > 1 {
-        if (!usingClosures!) {
-            print("Must use closures")
-        }
-        m.maximizeVar(objectiveVariable)
-        m.add(sumMDD(m: m, vars: emp, weightMatrix: compat, equal: objectiveVariable))
-        
         notes.ddWidth(relaxationSize!)
         notes.ddRelaxed(relaxationSize! > 0)
-        notes.ddEqualBuckets(equalBuckets!)
-        notes.dd(withArcs: withArcs!)
-        notes.dd(usingSlack: usingSlack!)
         notes.ddRecommendationStyle(MDDRecommendationStyle(rawValue: MDDRecommendationStyle.RawValue(recommendationStyle!)))
         notes.ddVariableOverlap(variableOverlap!)
+        notes.ddSplitAllLayers(beforeFiltering: splitAllLayersBeforeFiltering!)
+        notes.ddMaxSplitIter(maxSplitIter!)
+        notes.ddMaxRebootDistance(maxRebootDistance!)
+        notes.ddUseStateExistence(useStateExistence!)
+        notes.ddNumNodesSplit(atATime: numNodesSplitAtATime!)
+        notes.ddNumNodesDefined(asPercent: numNodesDefinedAsPercent!)
+        notes.ddSplittingStyle(splittingStyle!)
+        
+        m.maximizeVar(objectiveVariable)
+        m.add(sumMDD(m: m, vars: emp, weightMatrix: compat, equal: objectiveVariable, constraintPriority: 0, nodePriorityMode: nodePriorityMode!, candidatePriorityMode: candidatePriorityMode!, stateEquivalenceMode: stateEquivalenceMode!))
     } else {
         var compatMatrix : [ORIntArray] = [];
         for i in JR.low()...JR.up() {
@@ -188,8 +197,6 @@ autoreleasepool {
     //let cp = ORFactory.createCPProgram(m)
     
     var postEnd:ORLong = 0
-    
-    var outputText = ""
     
     cp.search {
         Do(cp) {
@@ -218,7 +225,6 @@ autoreleasepool {
                         largest = ORInt(compat[Int(bestVarIndex)][Int(value)])
                     }
                 }
-                outputText += String(bestVarIndex) + " = " + String(bestValue) + "\n"
                 return equal(cp, emp[bestVarIndex], bestValue) | diff(cp, emp[bestVarIndex], bestValue)
             }
         })
@@ -226,8 +232,10 @@ autoreleasepool {
           Do(cp) {
             let qs = (0..<AJ.count).map { i in cp.intValue(emp[ORInt(i)]) },
                 f  = cp.objectiveValue()!
-            print("sol is: \(qs) f = \(f)")
-            print(cp.nbFailures())
+            if printSolutions! {
+                print("sol is: \(qs) f = \(f)")
+                print(cp.nbFailures())
+            }
             nbSol.incr(cp)
         }
     }
@@ -235,6 +243,4 @@ autoreleasepool {
     print("Solver status: \(cp)\n")
     print("Time to post: \(postEnd - programStart)\n")
     print("Quitting: \(programEnd - programStart)\n")
-    
-    print(outputText)
 }

@@ -283,10 +283,10 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORVar>)x equal:(id<ORVar>)res;
 +(id<ORConstraint>) geq:(id<ORTracker>)model  x: (id<ORIntVar>)x y: (id<ORIntVar>) y plus:(ORInt)c;
 
-+(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(id)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle;
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(id)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle splitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering maxSplitIter:(int)maxSplitIter maxRebootDistance:(int)maxRebootDistance useStateExistence:(bool)useStateExistence numNodesSplitAtATime:(int)numNodesSplitAtATime numNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent splittingStyle:(int)splittingStyle;
 
-+(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize;
-+(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numForwardProperties:(int)numForwardProperties numReverseProperties:(int)numReverseProperties numCombinedProperties:(int)numCombinedProperties;
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize constraintPriority:(int)constraintPriority;
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numForwardProperties:(int)numForwardProperties numReverseProperties:(int)numReverseProperties numCombinedProperties:(int)numCombinedProperties constraintPriority:(int)constraintPriority;
 +(id<MDDStateDescriptor>) MDDStateDescriptor;
 
 

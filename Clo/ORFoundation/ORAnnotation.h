@@ -29,7 +29,14 @@ typedef enum {
     DDEqualBuckets,
     DDUsingSlack,
     DDRecommendationStyle,
-    DDComposition
+    DDComposition,
+    DDSplitAllLayersBeforeFiltering,
+    DDMaxSplitIter,
+    DDMaxRebootDistance,
+    DDUseStateExistence,
+    DDNumNodesSplitAtATime,
+    DDNumNodesDefinedAsPercent,
+    DDSplittingStyle
 } GenericIndex;
 
 typedef enum {
@@ -59,6 +66,13 @@ typedef enum {
 -(void) ddUsingSlack:(bool)usingSlack;
 -(void) ddRecommendationStyle:(MDDRecommendationStyle)recommendationStyle;
 -(void) ddVariableOverlap:(ORInt)composition;
+-(void) ddSplitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering;
+-(void) ddMaxSplitIter:(int)maxSplitIter;
+-(void) ddMaxRebootDistance:(int)maxRebootDistance;
+-(void) ddUseStateExistence:(bool)useStateExistence;
+-(void) ddNumNodesSplitAtATime:(int)numNodesSplitAtATime;
+-(void) ddNumNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent;
+-(void) ddSplittingStyle:(int)splittingStyle;
 
 -(ORInt) findGeneric:(GenericIndex) index;
 -(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr;

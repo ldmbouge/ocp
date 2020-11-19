@@ -14,9 +14,16 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <CPUKernel/CPGroup.h>
 #import <objcp/CPIntVarI.h>
-#import <objcp/CPMDDNode.h>
-#import <objcp/CPMDDHashTables.h>
 #import <objcp/CPMDDQueue.h>
+
+struct LayerInfo {
+    int layerIndex;
+    int variableIndex;
+    TRInt* variableCount;
+    TRInt* bitDomain;
+    int minDomain;
+    int maxDomain;
+};
 
 typedef bool* (*DiffPropertyIMP)(id,SEL,char*, char*);
 @interface CPIRMDD : CPCoreConstraint {
@@ -29,6 +36,8 @@ typedef bool* (*DiffPropertyIMP)(id,SEL,char*, char*);
     int _numReverseBytes;
     int _numCombinedBytes;
     int _numSpecs;
+    int _minConstraintPriority;
+    int _maxConstraintPriority;
     int _hashWidth;
     bool _dualDirectional;
     
@@ -46,6 +55,7 @@ typedef bool* (*DiffPropertyIMP)(id,SEL,char*, char*);
     int* _layerToVariable;
     TRInt** _layerVariableCount;
     TRInt* _layerSize;
+    struct LayerInfo* _layerInfos;
     
     //Domain info
     int* _minDomainsByLayer;
@@ -57,6 +67,14 @@ typedef bool* (*DiffPropertyIMP)(id,SEL,char*, char*);
     bool _inPost;
     CPMDDQueue* _forwardQueue;
     CPMDDQueue* _reverseQueue;
+    CPMDDDeletionQueue* _forwardDeletionQueue;
+    CPMDDDeletionQueue* _reverseDeletionQueue;
+    
+    //Reused variables
+    MDDNode* __strong *_nodes;
+    bool** _arcValuesByNode;
+    int* _numArcsPerNode;
+    bool** _deltas;
     
     //Splitting queues
     ORPQueue* _candidateSplits;
@@ -64,28 +82,32 @@ typedef bool* (*DiffPropertyIMP)(id,SEL,char*, char*);
 
     //Heuristic info
     int _relaxationSize;
+    int* _relaxationSizes;
     MDDRecommendationStyle _recommendationStyle;
     int _passIteration;
-    int _maxNumPasses;
+    int _maxSplitIter;
     int _maxRebootDistance;
     
     //Split heuristic info
     bool _cacheForwardOnArcs;
+    bool _cacheReverseOnArcs;
     bool _splitAllLayersBeforeFiltering;
-    bool _splitByConstraint;
-    bool _fullySplitNodeFirst;
-    bool _rankNodesForSplitting;
     bool _useDefaultNodeRank;
-    bool _rankArcsForSplitting;
     bool _useDefaultArcRank;
     bool _approximateEquivalenceClasses;
-    bool _twoPassSplit;
-    bool _alwaysSplitLastArc;
+    bool _additionalExactSplit;
+    bool _additionalSplitByLayer;
     bool _useStateExistence;
+    int _numNodesSplitAtATime;
+    bool _numNodesDefinedAsPercent;
+    bool _variableRelaxationSize;
     
+    ArcHashTable* _forwardArcHashTable;
+    ArcHashTable* _reverseArcHashTable;
     int _splitPass;
     
     //Objective info
+    bool _objectiveVarsUsed;
     TRInt* _fixpointMinValues;
     TRInt* _fixpointMaxValues;
     id<CPIntVar> __strong *_fixpointVars;
@@ -99,7 +121,7 @@ typedef bool* (*DiffPropertyIMP)(id,SEL,char*, char*);
     SEL _diffReverseSel;
     DiffPropertyIMP _diffReverse;
 }
--(id) initCPIRMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification *)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle gamma:(id*)gamma;
+-(id) initCPIRMDD:(id<CPEngine>)engine over:(id<CPIntVarArray>)x relaxationSize:(ORInt)relaxationSize spec:(MDDStateSpecification *)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle splitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering maxSplitIter:(int)maxSplitIter maxRebootDistance:(int)maxRebootDistance useStateExistence:(bool)useStateExistence  numNodesSplitAtATime:(int)numNodesSplitAtATime numNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent splittingStyle:(int)splittingStyle gamma:(id*)gamma;
 //Constraint info
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -116,16 +138,9 @@ typedef bool* (*DiffPropertyIMP)(id,SEL,char*, char*);
 -(void) addNode:(MDDNode*)node toLayer:(int)layerIndex;
 -(void) buildLayer:(int)layerIndex;
 -(MDDNode*) createNodeWithProperties:(char*)properties onLayer:(int)layerIndex;
+-(MDDNode*) createNodeWithEmptyPropertiesOnLayer:(int)layerIndex;
 
 //Propagation
-struct LayerInfo {
-    int layerIndex;
-    int variableIndex;
-    TRInt* variableCount;
-    TRInt* bitDomain;
-    int minDomain;
-    int maxDomain;
-};
 -(void) addPropagators;
 -(void) addPropagatorForLayer:(int)layerIndex;
 -(void) propagate;
@@ -138,9 +153,16 @@ struct LayerInfo {
 
 //Passes
 -(void) reversePass;
+-(void) reversePassOnlySplit;
 -(void) forwardPassOnlySplit;
 -(void) forwardPassWithSplit;
 -(void) forwardPassWithoutSplit;
+-(int) secondPassOnLayer:(int)layerIndex;
+-(bool) candidateLayerForSplitting:(int)layer;
+-(void) checkForwardDeletionOnLayer:(int)layer;
+-(void) checkReverseDeletionOnLayer:(int)layer;
+-(int) forwardPassCheckDeletion;
+-(int) reversePassCheckDeletion;
 -(void) updateNodeForward:(MDDNode*)node layer:(int)layer;
 -(void) updateNodeReverse:(MDDNode*)node layer:(int)layer;
 -(void) enqueueRelativesOf:(MDDNode*)node;
@@ -151,31 +173,36 @@ struct LayerInfo {
 -(bool) refreshForwardStateFor:(MDDNode*)node;
 -(bool) updateCombinedStateFor:(MDDNode*)node;
 -(char*) computeForwardStateFromArcs:(NSArray*)arcs isMerged:(bool*)merged layerInfo:(struct LayerInfo)layerInfo;
+-(char*) computeReverseStateFromArcs:(NSArray*)arcs isMerged:(bool*)merged layerInfo:(struct LayerInfo)layerInfo;
 -(char*) computeForwardStateFromParentsOf:(MDDNode*)node isMerged:(bool*)merged;
 -(char*) updateForwardStateFromParentsOf:(MDDNode*)node isMerged:(bool*)merged;
--(char*) computeReverseStateFromChildrenOf:(MDDNode*)node;
--(int) fillNodeArcVarsUsingArcs:(NSArray*)arcs parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent numArcsPerParent:(int*)numArcsPerParent parentLayerIndex:(int)parentLayer;
--(int) fillNodeArcVarsFromParentsOfNode:(MDDNode*)node parentNodes:(MDDNode**)parentNodes arcValuesByParent:(bool**)arcValuesByParent numArcsPerParent:(int*)numArcsPerParent;
--(char*) computeForwardStateFromParents:(MDDNode**)parents arcValueSets:(bool**)arcValuesByParent numParents:(int)numParentNodes numArcsPerParent:(int*)numArcsPerParent minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged;
--(char*) updateForwardStateFromParents:(MDDNode**)parents arcValueSets:(bool**)arcValuesByParent numParents:(int)numParentNodes numArcsPerParent:(int*)numArcsPerParent minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState isMerged:(bool*)merged;
+-(char*) computeReverseStateFromChildrenOf:(MDDNode*)node isMerged:(bool*)merged;
+-(char*) updateReverseStateFromChildrenOf:(MDDNode*)node isMerged:(bool*)merged;
+-(int) fillNodeArcVarsUsingArcs:(NSArray*)arcs parentLayerIndex:(int)parentLayer;
+-(int) fillNodeArcVarsUsingArcs:(NSArray*)arcs childLayerIndex:(int)childLayer;
+-(int) fillNodeArcVarsFromParentsOfNode:(MDDNode*)node;
+-(char*) computeForwardStateFromNumParents:(int)numParentNodes minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged;
+-(char*) updateForwardStateFromNumParents:(int)numParentNodes minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState isMerged:(bool*)merged;
 -(char*) computeStateFromParent:(MDDNode*)parent arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged;
 -(char*) updateStateFromParent:(MDDNode*)parent arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState isMerged:(bool*)merged;
--(int) fillNodeArcVarsFromChildrenOfNode:(MDDNode*)node childNodes:(MDDNode**)childNodes arcValuesByChild:(bool**)arcValuesByChild numArcsPerChild:(int*)numArcsPerChild;
--(char*) computeReverseStateFromChildren:(MDDNode**)children arcValueSets:(bool**)arcValuesByChild numChildren:(int)numChildNodes numArcsPerChild:(int*)numArcsPerChild minDom:(int)minDom maxDom:(int)maxDom;
--(char*) updateReverseStateFromChildren:(MDDNode**)children arcValueSets:(bool**)arcValuesByChild numChildren:(int)numChildNodes numArcsPerChild:(int*)numArcsPerChild minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState;
--(char*) computeStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom;
--(char*) updateStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState;
+-(int) fillNodeArcVarsFromChildrenOfNode:(MDDNode*)node;
+-(char*) computeReverseStateFromNumChildren:(int)numChildNodes minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged;
+-(char*) updateReverseStateFromNumChildren:(int)numChildNodes minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState isMerged:(bool*)merged;
+-(char*) computeStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom isMerged:(bool*)merged;
+-(char*) updateStateFromChild:(MDDNode*)child arcValues:(bool*)arcValues numArcs:(int)numArcs minDom:(int)minDom maxDom:(int)maxDom properties:(bool*)properties oldState:(char*)oldState isMerged:(bool*)merged;
 -(bool) stateExistsFor:(MDDNode*)node;
 -(void) updateParentsOf:(MDDNode*)node;
 -(void) updateChildrenOf:(MDDNode*)node stateChanged:(bool)stateChanged;
--(int) splitLayer:(int)layer;
+-(void) splitLayer:(int)layer forward:(bool)forward;
+-(void) updateFirstAndLastMergedLayersAfterSplitting:(int)layer;
 -(bool) noMergedNodesOnLayer:(int)layerIndex;
 -(void) emptySplittingQueues;
--(int) splitLayer:(struct LayerInfo)layerInfo forConstraint:(int)c;
--(int) splitRankedLayer:(struct LayerInfo)layerInfo forConstraint:(int)c;
--(void) splitNode:(MDDNode *)node layerInfo:(struct LayerInfo)layerInfo forConstraint:(int)c;
--(MDDNode*) splitArc:(char*)arcState layerInfo:(struct LayerInfo)layerInfo;
--(int) splitCandidatesOnLayer:(struct LayerInfo)layerInfo;
+-(void) fillSplittableNodesForLayer:(int)layer atPriority:(int)priority forward:(bool)forward;
+-(void) forwardSplitNode:(MDDNode *)node layerInfo:(struct LayerInfo)layerInfo priorityLevel:(int)c;
+-(void) reverseSplitNode:(MDDNode *)node layerInfo:(struct LayerInfo)layerInfo priorityLevel:(int)c;
+-(void) forwardSplitCandidatesOnLayer:(struct LayerInfo)layerInfo;
+-(void) reverseSplitCandidatesOnLayer:(struct LayerInfo)layerInfo;
+-(NSNumber*) keyForNode:(MDDNode*)node priority:(int)priority forward:(bool)forward;
 -(MDDNode*)findExactMatchForState:(char*)state onLayer:(struct LayerInfo)layerInfo;
 -(bool) checkChildrenOfNewNode:(MDDNode*)node withOldChildren:(MDDArc**)oldChildArcs layerInfo:(struct LayerInfo)layerInfo;
 -(bool) checkChildOfNewNode:(MDDNode*)node oldArc:(MDDArc*)oldChildArc alreadyFoundChildren:(bool)hasChildren layerInfo:(struct LayerInfo)layerInfo;
@@ -185,10 +212,10 @@ struct LayerInfo {
 -(void) deleteInnerNode:(MDDNode*)node;
 -(void) removeParentlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer;
 -(void) checkChildrenOfParentlessNode:(MDDNode*)node parentLayer:(int)layer;
--(int) removeChildlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer;
--(int) checkParentsOfChildlessNode:(MDDNode*)node parentLayer:(int)layer;
+-(void) removeChildlessNodeFromMDD:(MDDNode*)node fromLayer:(int)layer;
+-(void) checkParentsOfChildlessNode:(MDDNode*)node parentLayer:(int)layer;
 -(void) deleteArcWhileCheckingChild:(MDDArc*)arc childLayer:(int)layer;
--(int) deleteArcWhileCheckingParent:(MDDArc*)arc parentLayer:(int)layer;
+-(void) deleteArcWhileCheckingParent:(MDDArc*)arc parentLayer:(int)layer;
 -(void) removeNode:(MDDNode*)node onLayer:(int)layerIndex;
 -(void) removeNodeAt:(int)index onLayer:(int)layerIndex;
 
@@ -200,9 +227,13 @@ struct LayerInfo {
 -(ORInt) recommendationFor:(id<CPIntVar>)x;
 
 //Debug functions
+-(void) DEBUGcheckLayerVariableCountCorrectness;
 -(void) DEBUGcheckNodeLayerIndexCorrectness;
 -(void) DEBUGcheckQueueCounts;
 -(void) DEBUGcheckArcPointerConsistency;
 -(void) DEBUGcheckQueuesHaveNoDeletedNodes;
 -(void) DEBUGcheckNodesInQueueMarkedInQueue;
+-(void) DEBUGcheckNoParentlessNodes;
+-(void) DEBUGcheckNoChildlessNodes;
+-(void) drawGraph;
 @end

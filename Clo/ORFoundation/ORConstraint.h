@@ -422,6 +422,13 @@ enum ORGroupType {
 -(ORInt) relaxationSize;
 -(id) specs;
 -(int) recommendationStyle;
+-(bool) splitAllLayersBeforeFiltering;
+-(int) maxSplitIter;
+-(int) maxRebootDistance;
+-(bool) useStateExistence;
+-(int) numNodesSplitAtATime;
+-(bool) numNodesDefinedAsPercent;
+-(int) splittingStyle;
 @end
 
 @protocol MDDStateDescriptor <NSObject>
@@ -443,10 +450,12 @@ enum ORGroupType {
 -(void)addForwardStateCounter:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addForwardStateBool:(ORInt)lookup withDefaultValue:(bool)value;
 -(void)addForwardStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size;
+-(void)addForwardStateWindow:(ORInt)lookup withInitialValue:(short)initialValue defaultValue:(short)value size:(ORInt)size;
 -(void)addReverseStateInt:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addReverseStateCounter:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addReverseStateBool:(ORInt)lookup withDefaultValue:(bool)value;
 -(void)addReverseStateBitSequence:(ORInt)lookup withDefaultValue:(bool)value size:(int)size;
+-(void)addReverseStateWindow:(ORInt)lookup withInitialValue:(short)initialValue defaultValue:(short)value size:(ORInt)size;
 -(void)addCombinedStateInt:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addCombinedStateCounter:(int)lookup withDefaultValue:(ORInt)value;
 -(void)addCombinedStateBool:(ORInt)lookup withDefaultValue:(bool)value;
@@ -464,8 +473,8 @@ enum ORGroupType {
 -(id<ORIntVar>)fixpointVar;
 -(DDFixpointBoundClosure)fixpointMin;
 -(DDFixpointBoundClosure)fixpointMax;
--(DDNodePriorityClosure)nodePriorityClosure;
--(DDArcPriorityClosure)arcPriorityClosure;
+-(DDNodeSplitValueClosure)nodeSplitValueClosure;
+-(DDCandidateSplitValueClosure)candidateSplitValueClosure;
 -(DDStateEquivalenceClassClosure)approximateEquivalenceClosure;
 -(int)numForwardProperties;
 -(int)numReverseProperties;
@@ -474,13 +483,19 @@ enum ORGroupType {
 -(int*)forwardPropertyImpactCount;
 -(int**)reversePropertyImpact;
 -(int*)reversePropertyImpactCount;
+-(int) constraintPriority;
 
 
--(void)setAsDualDirectionalAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
--(void) setAsDualDirectionalAllDifferent:(int)numVariables domain:(id<ORIntRange>)domain;
--(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights lower:(int)lb upper:(int)ub;
--(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights equal:(id<ORIntVar>)equal;
--(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weightMatrix:(int**)weights equal:(id<ORIntVar>)equal;
+-(void)setAsDualDirectionalAmongConstraint:(id<ORIntRange>)range lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void) setAsDualDirectionalAllDifferent:(int)numVariables domain:(id<ORIntRange>)domain nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void) setAsImprovedDualDirectionalAllDifferent:(int)numVariables domain:(id<ORIntRange>)domain nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights lower:(int)lb upper:(int)ub nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weights:(int*)weights equal:(id<ORIntVar>)equal nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void) setAsDualDirectionalSum:(int)numVars maxDom:(int)maxDom weightMatrix:(int**)weights equal:(id<ORIntVar>)equal nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void)defineAsAbsDiff:(id<ORIntRange>)range nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void)defineAsGCC:(id<ORIntRange>)range lowerBounds:(int*)lb upperBounds:(int*)ub numVars:(int)numVars nodePriorityMode:(int)nodePriorityMode candidatePriorityMode:(int)candidatePriorityMode stateEquivalenceMode:(int)stateEquivalenceMode;
+-(void) setAsDualDirectionalSequence:(id<ORIntRange>)range numVars:(int)numVars length:(int)length lb:(int)lb ub:(int)lb values:(id<ORIntSet>)values;
+-(void)setAsImprovedDualDirectionalSequence:(id<ORIntRange>)range numVars:(int)numVars length:(int)length lb:(int)lb ub:(int)ub values:(id<ORIntSet>)values;
 @end
 
 @protocol ORRegular<ORConstraint>

@@ -1813,9 +1813,16 @@
         id<CPIntVarArray>    a = [self concreteArray: (id)or];
         ORInt relaxationSize   = [cstr relaxationSize];
         MDDRecommendationStyle recommendationStyle = [cstr recommendationStyle];
+        bool splitAllLayersBeforeFiltering = [cstr splitAllLayersBeforeFiltering];
+        int maxSplitIter = [cstr maxSplitIter];
+        int maxRebootDistance = [cstr maxRebootDistance];
+        bool useStateExistence = [cstr useStateExistence];
+        int numNodesSplitAtATime = [cstr numNodesSplitAtATime];
+        bool numNodesDefinedAsPercent = [cstr numNodesDefinedAsPercent];
+        int splittingStyle = [cstr splittingStyle];
         id<CPConstraint> concreteCstr;
         MDDStateSpecification* spec = [cstr specs];
-        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a size:relaxationSize spec:spec recommendationStyle:recommendationStyle gamma:_gamma];
+        concreteCstr = [CPFactory MDDStateSpecification:_engine over: a size:relaxationSize spec:spec recommendationStyle:recommendationStyle splitAllLayersBeforeFiltering:splitAllLayersBeforeFiltering maxSplitIter:maxSplitIter maxRebootDistance:maxRebootDistance useStateExistence:useStateExistence numNodesSplitAtATime:numNodesSplitAtATime numNodesDefinedAsPercent:numNodesDefinedAsPercent splittingStyle:splittingStyle gamma:_gamma];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

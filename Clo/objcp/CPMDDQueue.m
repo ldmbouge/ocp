@@ -104,16 +104,58 @@
 }
 @end
 
+@implementation DeletionCircularQueue
+-(void) retractIndex:(int)index forward:(bool)isForward {
+    [_queue[index] release];
+    if (index == _front) {
+        _queue[index] = nil;
+        _front++;
+        if (_front == _size) {
+            _front = 0;
+        }
+    } else if (index == _rear-1) {
+        _queue[index] = nil;
+        _rear--;
+        if (_rear < 0) {
+            _rear += _size;
+        }
+    } else {
+        _queue[index] = _queue[_front];
+        [_queue[index] addToDeletionQueue:isForward index:index];
+        _queue[_front] = nil;
+        _front++;
+        if (_front == _size) {
+            _front = 0;
+        }
+    }
+    _count--;
+    return;
+}
+@end
+
 @implementation CPMDDQueue
 -(id) initCPMDDQueue:(int)numLayers width:(int)width isForward:(bool)isForward {
     self = [super init];
     
     _numLayers = numLayers;
-    _width = width;
     _isForward = isForward;
     _layerQueues = (CircularQueue* __strong *)calloc(sizeof(CircularQueue*), _numLayers);
     for (int i = 0; i < _numLayers; i++) {
-        _layerQueues[i] = [[CircularQueue alloc] initCircularQueue:_width];
+        _layerQueues[i] = [[CircularQueue alloc] initCircularQueue:width];
+    }
+    _numNodes = 0;
+    _currentLayer = _isForward ? 0 : _numLayers-1;
+    
+    return self;
+}
+-(id) initCPMDDQueue:(int)numLayers widths:(int*)widths isForward:(bool)isForward {
+    self = [super init];
+    
+    _numLayers = numLayers;
+    _isForward = isForward;
+    _layerQueues = (CircularQueue* __strong *)calloc(sizeof(CircularQueue*), _numLayers);
+    for (int i = 0; i < _numLayers; i++) {
+        _layerQueues[i] = [[CircularQueue alloc] initCircularQueue:widths[i]];
     }
     _numNodes = 0;
     _currentLayer = _isForward ? 0 : _numLayers-1;
@@ -184,5 +226,74 @@
 }
 -(bool) hasUnmarkedNodeOnLayer:(int)layer {
     return [_layerQueues[layer] hasUnmarkedNodeFor:_isForward];
+}
+@end
+
+@implementation CPMDDDeletionQueue
+-(id) initCPMDDQueue:(int)numLayers width:(int)width isForward:(bool)isForward {
+    self = [super init];
+    
+    _numLayers = numLayers;
+    _isForward = isForward;
+    _layerQueues = (DeletionCircularQueue* __strong *)calloc(sizeof(DeletionCircularQueue*), _numLayers);
+    for (int i = 0; i < _numLayers; i++) {
+        _layerQueues[i] = [[DeletionCircularQueue alloc] initCircularQueue:width];
+    }
+    _numNodes = 0;
+    _currentLayer = _isForward ? 0 : _numLayers-1;
+    
+    return self;
+}
+-(id) initCPMDDQueue:(int)numLayers widths:(int*)widths isForward:(bool)isForward {
+    self = [super init];
+    
+    _numLayers = numLayers;
+    _isForward = isForward;
+    _layerQueues = (DeletionCircularQueue* __strong *)calloc(sizeof(DeletionCircularQueue*), _numLayers);
+    for (int i = 0; i < _numLayers; i++) {
+        _layerQueues[i] = [[DeletionCircularQueue alloc] initCircularQueue:widths[i]];
+    }
+    _numNodes = 0;
+    _currentLayer = _isForward ? 0 : _numLayers-1;
+    
+    return self;
+}
+-(void) clear {
+    if (_numNodes) {
+        for (int i = 0; i < _numLayers; i++) {
+            for (int j = [_layerQueues[i] count]; j > 0; j--) {
+                MDDNode* node = [_layerQueues[i] dequeue];
+                [node removeFromDeletionQueue:_isForward];
+                [node release];
+            }
+        }
+        _numNodes = 0;
+    }
+}
+-(void) enqueue:(MDDNode*)node {
+    if (![node inDeletionQueue:_isForward]) {
+        [node addToDeletionQueue:_isForward index: [_layerQueues[[node layer]] enqueue:node]];
+        _numNodes++;
+    }
+}
+-(MDDNode*) dequeue {
+    while (_currentLayer >= 0 && _currentLayer < _numLayers && [_layerQueues[_currentLayer] isEmpty]) {
+        _currentLayer = _currentLayer + (_isForward ? 1 : -1);
+    }
+    if (_currentLayer < 0 || _currentLayer == _numLayers) {
+        return nil;
+    }
+    _numNodes--;
+    MDDNode* removedNode = [_layerQueues[_currentLayer] dequeue];
+    [removedNode removeFromDeletionQueue:_isForward];
+    [removedNode release];
+    return removedNode;
+}
+-(void) retract:(MDDNode*)node {
+    if ([node inDeletionQueue:_isForward]) {
+        [_layerQueues[[node layer]] retractIndex:[node indexInDeletionQueue:_isForward] forward:_isForward];
+        [node removeFromDeletionQueue:_isForward];
+        _numNodes--;
+    }
 }
 @end

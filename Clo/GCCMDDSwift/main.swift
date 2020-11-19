@@ -13,18 +13,19 @@ import ORProgram
 
 autoreleasepool {
     let m  = ORFactory.createModel(),
-        R0 = range(m, 1...20),
+        R0 = range(m, 1...15),
         R1 = range(m,1...5),
         notes = ORFactory.annotation(),
         nbSol = ORFactory.mutable(m, value: 0)
     let t0    = ORRuntimeMonitor.cputime()
-    let ub : [Int:Int] = [1:2, 2:5, 3:10, 4:2, 5:1]
+    let lb : [Int32] = [1, 3, 2, 0, 1]
+    let ub : [Int32] = [2, 5, 10, 2, 1]
     
     let vars = ORFactory.intVarArray(m, range: R0, domain: R1)
 
-    m.add(gccMDD(vars, ub: ub))
+    m.add(gccMDD(vars, lb: lb, ub: ub, constraintPriority: 0, nodePriorityMode: 0, candidatePriorityMode: 0, stateEquivalenceMode: 0))
 
-    notes.ddWidth(10)
+    notes.ddWidth(1)
     notes.ddRelaxed(true)
     let cp = ORFactory.createCPMDDProgram(m, annotation: notes)
     cp.search {

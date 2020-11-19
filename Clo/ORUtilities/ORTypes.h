@@ -143,6 +143,6 @@ typedef bool (^DDStateExistsClosure)(char*,char*,char*,ORInt,ORInt);
 typedef bool (^DDArcExistsClosure)(char*,char*,char*,char*,ORInt, ORInt, ORInt);
 typedef void (^DDMergeClosure)(char*,char*,char*);
 typedef int (^DDFixpointBoundClosure)(char*);
-typedef int (^DDNodePriorityClosure)(char*, char*, char*);
-typedef int (^DDArcPriorityClosure)(char*, char*, char*, char*, int);
 typedef int (^DDStateEquivalenceClassClosure)(char*,char*);
+typedef int (^DDNodeSplitValueClosure)(char*, char*, char*, id);
+typedef int (^DDCandidateSplitValueClosure)(id);

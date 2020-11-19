@@ -451,6 +451,11 @@ extension ORMDDSpecs {
             self.addForwardStateBitSequence(ORInt(key), withDefaultValue: value, size:Int32(size))
         }
     }
+    func stateWindow<Key>(_ d : [(Key,Int,Int,Int)]) -> Void where Key : BinaryInteger {
+        for (key,initialValue,defaultValue,size) in d {
+            self.addForwardStateWindow(ORInt(key), withInitialValue:Int16(initialValue), defaultValue: Int16(defaultValue), size:Int32(size))
+        }
+    }
     func bottomUpState<Key>(_ d : [(Key,Bool,Int)]) -> Void where Key : BinaryInteger {
         for (key,value,size) in d {
             self.addReverseStateBitSequence(ORInt(key), withDefaultValue: value, size:Int32(size))
@@ -461,14 +466,24 @@ extension ORMDDSpecs {
             self.addReverseStateCounter(ORInt(k), withDefaultValue: ORInt(v))
         }
     }
+    func reverseStateWindow<Key>(_ d : [(Key,Int,Int,Int)]) -> Void where Key : BinaryInteger {
+        for (key,initialValue,defaultValue,size) in d {
+            self.addReverseStateWindow(ORInt(key), withInitialValue:Int16(initialValue), defaultValue: Int16(defaultValue), size:Int32(size))
+        }
+    }
+    func combinedState<Key,Value>(_ d : [(Key,Value)]) -> Void where Key : BinaryInteger,Value : BinaryInteger {
+        for (k,v) in d {
+            self.addCombinedStateCounter(ORInt(k), withDefaultValue: ORInt(v))
+        }
+    }
     func state2<Key,Value>(_ d : Dictionary<Key,Value>) -> [Key] where Key : BinaryInteger {
         for (k,v) in d {
             self.addForwardStateCounter(k as! Int32, withDefaultValue: (ORInt)( v as! Int))
         }
         return Array(d.keys)
     }
-    func setAsDualDirectionalAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!) {
-        self.setAsDualDirectionalAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values)
+    func setAsDualDirectionalAmong(_ domainRange : ORIntRange!, _ lb : Int, _ ub : Int, _ values : ORIntSet!, _ nodePriorityMode: Int32, _ candidatePriorityMode: Int32, _ stateEquivalenceMode: Int32) {
+        self.setAsDualDirectionalAmongConstraint(domainRange, lb: Int32(lb), ub: Int32(ub), values:values, nodePriorityMode: nodePriorityMode, candidatePriorityMode: candidatePriorityMode, stateEquivalenceMode: stateEquivalenceMode)
     }
 }
 
@@ -565,18 +580,18 @@ extension Bool {
 // MDD constraints
 // -----------------------------------------------------------------------------------------------------------------
 
-public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet) -> ORMDDSpecs {
+public func amongMDDClosures(m : ORTracker,x : ORIntVarArray,lb : Int, ub : Int,values : ORIntSet, constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
     let minC = 0,maxC = 1
     let udom = arrayDomains(x)
-    let mdd = ORFactory.mddSpecs(m, variables: x, numForwardProperties: 2, numReverseProperties: 2, numCombinedProperties: 0)
+    let mdd = ORFactory.mddSpecs(m, variables: x, numForwardProperties: 2, numReverseProperties: 2, numCombinedProperties: 0, constraintPriority: constraintPriority)
     mdd.state([(minC, 0),(maxC, 0)])
     mdd.bottomUpState([(minC, 0),(maxC, 0)])
     
-    mdd.setAsDualDirectionalAmong(udom,lb,ub,values)
+    mdd.setAsDualDirectionalAmong(udom,lb,ub,values,nodePriorityMode, candidatePriorityMode, stateEquivalenceMode)
     return mdd
 }
 
-public func allDiffDualDirectionalMDDWithSetsAndClosures(_ vars : ORIntVarArray) -> ORMDDSpecs {
+public func allDiffDualDirectionalMDDWithSetsAndClosures(_ vars : ORIntVarArray, constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
     let m = vars.tracker(),
         udom = arrayDomains(vars)
     let domSize = Int(udom.size()),
@@ -584,55 +599,73 @@ public func allDiffDualDirectionalMDDWithSetsAndClosures(_ vars : ORIntVarArray)
     let someDown = 0, allDown = 1, numAssignedDown = 2,
         someUp = 0, allUp = 1
         
-    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 2, numCombinedProperties: 0)
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 2, numCombinedProperties: 0, constraintPriority: constraintPriority)
     mdd.state([(someDown, false, domSize),(allDown, false, domSize)])
     mdd.state([(numAssignedDown,0)])
     mdd.bottomUpState([(someUp, false, domSize),(allUp, false, domSize)])
-    mdd.setAsDualDirectionalAllDifferent(numVars, domain: udom)
+    mdd.setAsDualDirectionalAllDifferent(numVars, domain: udom, nodePriorityMode: nodePriorityMode, candidatePriorityMode: candidatePriorityMode, stateEquivalenceMode: stateEquivalenceMode)
+    return mdd
+}
+public func improvedAllDiffDualDirectionalMDDWithSetsAndClosures(_ vars : ORIntVarArray, constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        udom = arrayDomains(vars)
+    let domSize = Int(udom.size()),
+        numVars = Int32(vars.count())
+    let someDown = 0, allDown = 1, numInSomeDown = 2, numAssignedDown = 3,
+        someUp = 0, allUp = 1, numInSomeUp = 2,
+        numInSomeCombined = 0
+        
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 4, numReverseProperties: 3, numCombinedProperties: 1, constraintPriority: constraintPriority)
+    mdd.state([(someDown, false, domSize),(allDown, false, domSize)])
+    mdd.state([(numInSomeDown, 0), (numAssignedDown,0)])
+    mdd.bottomUpState([(someUp, false, domSize),(allUp, false, domSize)])
+    mdd.bottomUpState([(numInSomeUp, 0)])
+    mdd.combinedState([(numInSomeCombined, 0)])
+    mdd.setAsImprovedDualDirectionalAllDifferent(numVars, domain: udom, nodePriorityMode: nodePriorityMode, candidatePriorityMode: candidatePriorityMode, stateEquivalenceMode: stateEquivalenceMode)
     return mdd
 }
 
-public func sumMDD(m : ORTracker,vars : ORIntVarArray, weights : [Int], lb : Int32, ub : Int32) -> ORMDDSpecs {
+public func sumMDD(m : ORTracker,vars : ORIntVarArray, weights : [Int], lb : Int32, ub : Int32, constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
     let udom = arrayDomains(vars)
     let maxDom = udom.up(),
         numVars = Int(vars.count())
     let minDown = 0, maxDown = 1, numAssignedDown = 2,
-        minUp = 0, maxUp = 1
+        minUp = 0, maxUp = 1, numAssignedUp = 2
     var int32Weights : [Int32] = []
     for weight in weights { int32Weights.append(Int32(weight)) }
     let weightsPointer = UnsafeMutablePointer<Int32>.allocate(capacity: numVars)
     weightsPointer.initialize(from: int32Weights, count: numVars)
         
-    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 2, numCombinedProperties: 0)
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 3, numCombinedProperties: 0, constraintPriority: constraintPriority)
     mdd.state([(minDown, 0), (maxDown, 0), (numAssignedDown, 0)])
-    mdd.bottomUpState([(minUp, 0), (maxUp, 0)])
-    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weights: weightsPointer, lower: lb, upper: ub)
+    mdd.bottomUpState([(minUp, 0), (maxUp, 0), (numAssignedUp, 0)])
+    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weights: weightsPointer, lower: lb, upper: ub, nodePriorityMode: nodePriorityMode, candidatePriorityMode: candidatePriorityMode, stateEquivalenceMode: stateEquivalenceMode)
     return mdd
 }
-public func sumMDD(m : ORTracker,vars : ORIntVarArray, weights : [Int], equal : ORIntVar) -> ORMDDSpecs {
+public func sumMDD(m : ORTracker,vars : ORIntVarArray, weights : [Int], equal : ORIntVar, constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
     let udom = arrayDomains(vars)
     let maxDom = udom.up(),
         numVars = Int(vars.count())
     let minDown = 0, maxDown = 1, numAssignedDown = 2,
-        minUp = 0, maxUp = 1
+        minUp = 0, maxUp = 1, numAssignedUp = 2
     var int32Weights : [Int32] = []
     for weight in weights { int32Weights.append(Int32(weight)) }
     let weightsPointer = UnsafeMutablePointer<Int32>.allocate(capacity: numVars)
     weightsPointer.initialize(from: int32Weights, count: numVars)
         
-    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 2, numCombinedProperties: 0)
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 3, numCombinedProperties: 0, constraintPriority: constraintPriority)
     mdd.state([(minDown, 0), (maxDown, 0), (numAssignedDown, 0)])
-    mdd.bottomUpState([(minUp, 0), (maxUp, 0)])
-    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weights: weightsPointer, equal: equal)
+    mdd.bottomUpState([(minUp, 0), (maxUp, 0), (numAssignedUp, 0)])
+    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weights: weightsPointer, equal: equal, nodePriorityMode: nodePriorityMode, candidatePriorityMode: candidatePriorityMode, stateEquivalenceMode: stateEquivalenceMode)
     return mdd
 }
-public func sumMDD(m : ORTracker,vars : ORIntVarArray, weightMatrix : [[Int]], equal : ORIntVar) -> ORMDDSpecs {
+public func sumMDD(m : ORTracker,vars : ORIntVarArray, weightMatrix : [[Int]], equal : ORIntVar, constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
     let udom = arrayDomains(vars)
     let maxDom = udom.up(),
         domSize = udom.size(),
         numVars = Int(vars.count())
     let minDown = 0, maxDown = 1, numAssignedDown = 2,
-        minUp = 0, maxUp = 1
+        minUp = 0, maxUp = 1, numAssignedUp = 2
     let weightMatrixPointer = UnsafeMutablePointer<UnsafeMutablePointer<Int32>?>.allocate(capacity: numVars)
     weightMatrixPointer.initialize(repeating: UnsafeMutablePointer<Int32>.allocate(capacity: Int(domSize)), count: numVars)
     for i in 0..<numVars {
@@ -643,24 +676,83 @@ public func sumMDD(m : ORTracker,vars : ORIntVarArray, weightMatrix : [[Int]], e
         weightMatrixPointer[i] = weightsPointer
     }
         
-    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 2, numCombinedProperties: 0)
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 3, numCombinedProperties: 0, constraintPriority: constraintPriority)
     mdd.state([(minDown, 0), (maxDown, 0), (numAssignedDown, 0)])
-    mdd.bottomUpState([(minUp, 0), (maxUp, 0)])
-    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weightMatrix: weightMatrixPointer, equal: equal)
+    mdd.bottomUpState([(minUp, 0), (maxUp, 0), (numAssignedUp, 0)])
+    mdd.setAsDualDirectionalSum(Int32(numVars), maxDom: maxDom, weightMatrix: weightMatrixPointer, equal: equal, nodePriorityMode: nodePriorityMode, candidatePriorityMode: candidatePriorityMode, stateEquivalenceMode: stateEquivalenceMode)
     return mdd
 }
 
-public func seqDualDirectionalMDDClosuresWithBitSequence(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>) -> ORMDDSpecs {
+public func sequenceMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>, constraintPriority : Int32) -> ORMDDSpecs {
     let m = vars.tracker(),
-        minCounts = 0,
-        maxCounts = 1,
-        numAssigned = 2,
+        minForward = 0, maxForward = 1, ancestorMin = 2, ancestorMax = 3, numAssigned = 4,
+        minReverse = 0, maxReverse = 1, descendentMin = 2, descendentMax = 3,
+        minCombined = 0, maxCombined = 1,
         valueSet = ORFactory.intSet(m, set: values)
     let udom = arrayDomains(vars)
-    let mdd = ORFactory.mddSpecs(m, variables: vars, stateSize: 3)
-    //Each bit sequence is a len*2 shorts
-    mdd.state([(minCounts, false, len * 16), (maxCounts, false, len * 16)])
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 5, numReverseProperties: 4, numCombinedProperties: 2, constraintPriority: constraintPriority)
+    mdd.state([(minForward, 0), (maxForward, 0)])
+    mdd.stateWindow([(ancestorMin, 0, -1, len), (ancestorMax, 0, -1, len)])
     mdd.state([numAssigned:0])
-    //mdd.setAsDualDirectionalSequenceWithBitSequence(udom, len, lb, ub, valueSet)
+    mdd.bottomUpState([(minReverse, 0), (maxReverse, vars.size)])
+    mdd.reverseStateWindow([(descendentMin, 0, -1, len), (descendentMax, len, -1, len)])
+    mdd.combinedState([(minCombined, 0), (maxCombined, len)])
+    mdd.setAsDualDirectionalSequence(udom, numVars: Int32(vars.size), length: Int32(len), lb: Int32(lb), ub: Int32(ub), values: valueSet)
     return mdd;
+}
+public func improvedSequenceMDD(_ vars : ORIntVarArray,len : Int,lb : Int,ub : Int,values : Set<Int>, constraintPriority : Int32) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        minForward = 0, maxForward = 1, ancestorMin = 2, ancestorMax = 3, minRowAncestors = 4, maxRowAncestors = 5, numAssigned = 6,
+        minReverse = 0, maxReverse = 1, descendentMin = 2, descendentMax = 3, minRowDescendents = 4, maxRowDescendents = 5,
+        minCombined = 0, maxCombined = 1,
+        valueSet = ORFactory.intSet(m, set: values)
+    let udom = arrayDomains(vars)
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 7, numReverseProperties: 6, numCombinedProperties: 2, constraintPriority: constraintPriority)
+    mdd.state([(minForward, 0), (maxForward, 0)])
+    mdd.stateWindow([(ancestorMin, 0, -1, len), (ancestorMax, 0, -1, len)])
+    mdd.state([(minRowAncestors, false, len-1), (maxRowAncestors, false, len-1)])
+    mdd.state([numAssigned:0])
+    mdd.bottomUpState([(minReverse, 0), (maxReverse, vars.size)])
+    mdd.reverseStateWindow([(descendentMin, 0, -1, len), (descendentMax, len, -1, len)])
+    mdd.bottomUpState([(minRowDescendents, false, len-1), (maxRowDescendents, false, len-1)])
+    mdd.combinedState([(minCombined, 0), (maxCombined, len)])
+    mdd.setAsImprovedDualDirectionalSequence(udom, numVars: Int32(vars.size), length: Int32(len), lb: Int32(lb), ub: Int32(ub), values: valueSet)
+    return mdd;
+}
+
+public func absDiffMDD(_ vars : ORIntVarArray, constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        udom = arrayDomains(vars)
+    let domSize = Int(udom.size())
+    let someDown = 0, allDown = 1, layerIndex = 2,
+        someUp = 0, allUp = 1, layerIndexUp = 2
+        
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 3, numCombinedProperties: 0, constraintPriority: constraintPriority)
+    mdd.state([(someDown, false, domSize),(allDown, false, domSize)])
+    mdd.state([(layerIndex,0)])
+    mdd.bottomUpState([(someUp, false, domSize),(allUp, false, domSize)])
+    mdd.bottomUpState([(layerIndexUp,3)])
+    mdd.define(asAbsDiff:udom, nodePriorityMode : nodePriorityMode, candidatePriorityMode : candidatePriorityMode, stateEquivalenceMode : stateEquivalenceMode)
+    return mdd
+}
+
+public func gccMDD(_ vars : ORIntVarArray, lb : [Int32], ub : [Int32], constraintPriority : Int32, nodePriorityMode : Int32, candidatePriorityMode : Int32, stateEquivalenceMode : Int32) -> ORMDDSpecs {
+    let m = vars.tracker(),
+        udom = arrayDomains(vars),
+        numVars = Int(vars.count())
+    let domSize = Int(udom.size())
+    let minDown = 0, maxDown = 1, numAssignedDown = 2,
+        minUp = 0, maxUp = 1
+    
+    let lbPointer = UnsafeMutablePointer<Int32>.allocate(capacity: domSize)
+    let ubPointer = UnsafeMutablePointer<Int32>.allocate(capacity: domSize)
+    lbPointer.initialize(from: lb, count: Int(domSize))
+    ubPointer.initialize(from: ub, count: Int(domSize))
+        
+    let mdd = ORFactory.mddSpecs(m, variables: vars, numForwardProperties: 3, numReverseProperties: 2, numCombinedProperties: 0, constraintPriority: constraintPriority)
+    mdd.stateWindow([(minDown, 0, 0, domSize),(maxDown, 0, 0, domSize)])
+    mdd.state([(numAssignedDown,0)])
+    mdd.reverseStateWindow([(minUp, 0, 0, domSize),(maxUp, 0, 0, domSize)])
+    mdd.define(asGCC:udom, lowerBounds:lbPointer, upperBounds:ubPointer, numVars:Int32(numVars), nodePriorityMode : nodePriorityMode, candidatePriorityMode : candidatePriorityMode, stateEquivalenceMode : stateEquivalenceMode)
+    return mdd
 }

@@ -57,6 +57,20 @@
 -(void) setBitSequence:(char*)value forState:(char*)state;
 @end
 
+@interface MDDPWindowShort : MDDPropertyDescriptor {
+@protected
+    short _initialValue;
+    short _defaultValue;
+    int _windowSize;
+}
+-(id) initMDDPWindowShort:(short)pId initialValue:(short)initialValue defaultValue:(short)defaultValue windowSize:(int)windowSize;
+-(short) get:(char*)state at:(int)index;
+-(void) set:(short)value forState:(char *)state at:(int)index;
+-(void) set:(char*)value forState:(char*)state slideBy:(int)numSlide;
+-(void) set:(char*)state toMinOf:(char*)state1 and:(char*)state2;
+-(void) set:(char*)state toMaxOf:(char*)state1 and:(char*)state2;
+@end
+
 @interface MDDStateDescriptor : NSObject {
 @protected
     int _currentPropertyIndex;

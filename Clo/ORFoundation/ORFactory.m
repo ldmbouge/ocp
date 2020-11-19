@@ -1112,22 +1112,22 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 // =====================================================================================================================
 
 @implementation ORFactory (Constraints)
-+(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle
++(id<ORConstraint>) MDDStateSpecification:(id<ORTracker>)model var:(id<ORIntVarArray>)x size:(ORInt)relaxationSize specs:(MDDStateSpecification*)spec recommendationStyle:(MDDRecommendationStyle)recommendationStyle splitAllLayersBeforeFiltering:(bool)splitAllLayersBeforeFiltering maxSplitIter:(int)maxSplitIter maxRebootDistance:(int)maxRebootDistance useStateExistence:(bool)useStateExistence numNodesSplitAtATime:(int)numNodesSplitAtATime numNodesDefinedAsPercent:(bool)numNodesDefinedAsPercent splittingStyle:(int)splittingStyle
 {
-    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x size:relaxationSize specs:spec recommendationStyle:recommendationStyle];
+    id<ORConstraint> o = [[ORMDDStateSpecification alloc] initORMDDStateSpecification:x size:relaxationSize specs:spec recommendationStyle:recommendationStyle splitAllLayersBeforeFiltering:splitAllLayersBeforeFiltering maxSplitIter:maxSplitIter maxRebootDistance:maxRebootDistance useStateExistence:useStateExistence numNodesSplitAtATime:numNodesSplitAtATime numNodesDefinedAsPercent:numNodesDefinedAsPercent splittingStyle:splittingStyle];
     [model trackObject:o];
     return o;
 }
 
-+(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x stateSize:(int)stateSize constraintPriority:(int)constraintPriority
 {
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numForwardProperties:stateSize numReverseProperties:0 numCombinedProperties:0];
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numForwardProperties:stateSize numReverseProperties:0 numCombinedProperties:0 constraintPriority:constraintPriority];
     [model trackObject:o];
     return o;
 }
-+(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numForwardProperties:(int)numForwardProperties numReverseProperties:(int)numReverseProperties numCombinedProperties:(int)numCombinedProperties
++(id<ORMDDSpecs>) MDDSpecs:(id<ORTracker>)model variables:(id<ORIntVarArray>)x numForwardProperties:(int)numForwardProperties numReverseProperties:(int)numReverseProperties numCombinedProperties:(int)numCombinedProperties constraintPriority:(int)constraintPriority
 {
-    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numForwardProperties:numForwardProperties numReverseProperties:numReverseProperties numCombinedProperties:numCombinedProperties];
+    id<ORMDDSpecs> o = [[ORMDDSpecs alloc] initORMDDSpecs:x numForwardProperties:numForwardProperties numReverseProperties:numReverseProperties numCombinedProperties:numCombinedProperties constraintPriority:constraintPriority];
     [model trackObject:o];
     return o;
 }
