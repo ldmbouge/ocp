@@ -247,7 +247,7 @@
       [_engine add:cg];
       id<CPEngine> old = _engine;
       _engine = (id)cg;
-      [g enumerateObjectWithBlock:^(id<ORGroup> ck) {
+      [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
          [ck visit:self];
       }];
       _engine = old;

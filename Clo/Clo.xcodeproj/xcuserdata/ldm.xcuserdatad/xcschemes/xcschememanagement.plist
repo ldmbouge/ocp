@@ -44,10 +44,20 @@
 			<key>orderHint</key>
 			<integer>118</integer>
 		</dict>
+		<key>AllIntervalSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>159</integer>
+		</dict>
 		<key>AmongMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>148</integer>
+		</dict>
+		<key>AmongNurseSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>151</integer>
 		</dict>
 		<key>AtomicTest.xcscheme</key>
 		<dict>
@@ -127,7 +137,7 @@
 		<key>GCCMDDSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>156</integer>
+			<integer>161</integer>
 		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
@@ -254,6 +264,11 @@
 			<key>orderHint</key>
 			<integer>138</integer>
 		</dict>
+		<key>SequenceNurseSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>152</integer>
+		</dict>
 		<key>SequentialCombinatorExample.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -284,6 +299,11 @@
 			<key>orderHint</key>
 			<integer>139</integer>
 		</dict>
+		<key>SumAllDiffSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>153</integer>
+		</dict>
 		<key>TASCA-Keeloq.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -308,6 +328,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>94</integer>
+		</dict>
+		<key>TestMDD.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>154</integer>
 		</dict>
 		<key>UTC.xcscheme</key>
 		<dict>
@@ -347,7 +372,7 @@
 		<key>allDiffMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>155</integer>
+			<integer>157</integer>
 		</dict>
 		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
@@ -362,7 +387,7 @@
 		<key>amongMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>151</integer>
+			<integer>156</integer>
 		</dict>
 		<key>amongSwift 1.xcscheme_^#shared#^_</key>
 		<dict>
@@ -502,7 +527,7 @@
 		<key>dummy.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>152</integer>
+			<integer>158</integer>
 		</dict>
 		<key>dxAES.xcscheme</key>
 		<dict>
@@ -867,12 +892,12 @@
 		<key>sequenceAltMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>153</integer>
+			<integer>160</integer>
 		</dict>
 		<key>sequenceMDD.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>154</integer>
+			<integer>155</integer>
 		</dict>
 		<key>shiploading.xcscheme_^#shared#^_</key>
 		<dict>

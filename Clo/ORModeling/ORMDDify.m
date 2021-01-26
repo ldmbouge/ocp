@@ -173,7 +173,7 @@
     _numNodesSplitAtATime = [_notes findGeneric: DDNumNodesSplitAtATime];
     _numNodesDefinedAsPercent = [_notes findGeneric: DDNumNodesDefinedAsPercent];
     _splittingStyle = [_notes findGeneric: DDSplittingStyle];
-    [m applyOnVar: ^(id<ORVar> x) {
+    [m applyOnVar: ^(id<ORObject> x) {
         [_into addVariable:x];
     }
        onMutables: ^(id<ORObject> x) {
@@ -182,7 +182,7 @@
      onImmutables: ^(id<ORObject> x) {
          [_into addImmutable:x];
      }
-     onConstraints: ^(id<ORConstraint> c) {
+     onConstraints: ^(id<ORObject> c) {
         [_into setCurrent:c];
         if ([c conformsToProtocol:@protocol(ORMDDSpecs)]) { //Should check if c is MDDifiable.  aka if it has a visit function down below
             [c visit: self];
@@ -191,7 +191,7 @@
         }
         [_into setCurrent:nil];
     }
-      onObjective: ^(id<ORObjectiveFunction> o) {
+      onObjective: ^(id<ORObject> o) {
           [o visit: self];
       }];
     

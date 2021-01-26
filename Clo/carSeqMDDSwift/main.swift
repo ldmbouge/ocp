@@ -123,7 +123,7 @@ autoreleasepool {
     let arguments = CommandLine.arguments
     let numArguments = arguments.count
     
-    let fileName = numArguments > 1 ? arguments[1] : "/Users/rebeccagentzel/Downloads/carseq_01"
+    let fileName = numArguments > 1 ? arguments[1] : "/Users/ldm/Desktop/data/dataMini"
     let mode = numArguments > 2 ? Int(arguments[2]) : 6
     let relaxationSize = numArguments > 3 ? Int32(arguments[3]) : 8
     let usingFirstFail = numArguments > 4 ? Bool(arguments[4]) : false
@@ -184,10 +184,11 @@ autoreleasepool {
     }
     
     var varOrdering : [Int] = Array(0..<cars.count)
-    varOrdering.sort {
-        abs(cars.count/2 - $0) < abs(cars.count/2 - $1)
+   varOrdering.sort {
+      let fc = abs(cars.count / 2 - $0),
+          sc = abs(cars.count / 2 - $1)
+      return fc < sc
     }
-
     let line  = ORFactory.intVarArray(m, range: CR, domain: CF)
     let setup = ORFactory.boolVarMatrix(m, range: OR, CR)
     //Requires decomposition matches initial line
