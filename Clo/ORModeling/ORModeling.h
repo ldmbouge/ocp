@@ -39,11 +39,11 @@ PORTABLE_BEGIN
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 
--(void) applyOnVar:(void(^)(id<ORObject>))doVar
-        onMutables:(void(^)(id<ORObject>))doMutables
-      onImmutables:(void(^)(id<ORObject>))doImmutables
-     onConstraints:(void(^)(id<ORObject>))doCons
-       onObjective:(void(^)(id<ORObject>))ofun;
+-(void) applyOnVar:(void(^)(__kindof id<ORObject>))doVar
+        onMutables:(void(^)(__kindof id<ORObject>))doMutables
+      onImmutables:(void(^)(__kindof id<ORObject>))doImmutables
+     onConstraints:(void(^)(__kindof id<ORObject>))doCons
+       onObjective:(void(^)(__kindof id<ORObject>))ofun;
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
 -(id<ORVarArray>)FPVars;

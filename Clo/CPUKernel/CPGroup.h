@@ -33,7 +33,7 @@
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure: (id<CPClosureList>) evt;
 -(void) scheduleValueClosure: (id<CPValueEvent>) evt;
--(void) enumerateWithBlock:(void(^)(ORInt,id<ORConstraint>))block;
+-(void) enumerateWithBlock:(void(^)(ORInt,__kindof id<ORConstraint>))block;
 -(void) post;
 -(ORStatus) post: (id<ORConstraint>) c;
 -(void) propagate;

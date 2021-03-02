@@ -52,7 +52,7 @@
 #import <ORFoundation/fpi.h>
 
 #if defined(__APPLE__)
-#import "TargetConditionals.h"
+#import <TargetConditionals.h>
 #endif
 
 ORStatus tryfail(ORStatus(^block)(void),ORStatus(^handle)(void));

@@ -87,7 +87,7 @@ enum ORGroupType {
 @protocol ORGroup <ORObject,ORConstraint>
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(void)clear;
--(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(void)enumerateObjectWithBlock:(void(^)(__kindof id<ORConstraint>))block;
 -(ORInt) size;
 -(NSSet*) variables;
 -(id<ORConstraint>) at: (ORInt) idx;

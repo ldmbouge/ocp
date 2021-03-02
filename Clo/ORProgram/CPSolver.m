@@ -520,7 +520,7 @@
 }
 -(void) solve: (ORClosure) search
 {
-#warning [rg] check limitCounter
+#warning [rg] is limitCounter in the right place?
    limitCounter = makeTRInt(_trail,0);
    _objective = [_engine objective];
    [self doOnStartup];
@@ -3357,7 +3357,7 @@ onFailure: (ORInt2Void) onFailure
 {
    [_search switchOnDepth: s1 to: s2 limit: depth];
 }
--(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(id<ORVar>)) criteria1 to: (ORDouble(^)(id<ORVar>)) criteria2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b limit: (ORInt) depth restricted:(id<ORDisabledVarArray>) x
+-(void) switchSearchOnDepthUsingProperties:(ORDouble(^)(__kindof id<ORVar>)) criteria1 to: (ORDouble(^)(__kindof id<ORVar>)) criteria2 do:(void(^)(ORUInt,id<ORDisabledVarArray>))b limit: (ORInt) depth restricted:(id<ORDisabledVarArray>) x
 {
    ORTrackDepth * t = [[ORTrackDepth alloc] initORTrackDepth:_trail tracker:self];
    id<ORSelect> select = [ORFactory select: _engine

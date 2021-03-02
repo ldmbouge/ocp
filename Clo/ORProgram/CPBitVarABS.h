@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORProgram/CPProgram.h>
-#import "CPBitVarHeuristic.h"
+#import <ORProgram/CPBitVarHeuristic.h>
 #import <ORProgram/CPBitVarBaseHeuristic.h>
 #import <objcp/CPVar.h>
 

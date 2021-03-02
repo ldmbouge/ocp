@@ -1847,43 +1847,43 @@ id<ORRationalInterval> compute_eo_div_d(const double_interval x, const double_in
          
          // MUL
          
-         // M2 >= max ( | ex * ey | ) -> M2 = max ( | ex * ey | )
-         [eoTemp set: [[ex mul: ey] abs]];
-         [tmp set: maxQ([eoTemp low], [eoTemp up])];
-         [eoTemp set_q:tmp and: tmp];
-         //NSLog(@"1 - %@", eoTemp);
+//         // M2 >= max ( | ex * ey | ) -> M2 = max ( | ex * ey | )
+//         [eoTemp set: [[ex mul: ey] abs]];
+//         [tmp set: maxQ([eoTemp low], [eoTemp up])];
+//         [eoTemp set_q:tmp and: tmp];
+//         //NSLog(@"1 - %@", eoTemp);
+//
+//         // x * ey + y * ex + epsilon * M2
+//         // M2 >= max ( | ex * ey | ) -> M2 = max ( | ex * ey | )
+//         [ezTemp set: [[[xr mul: ey] add: [yr mul: ex]] add: [epsilon mul: eoTemp]]];
+//         //NSLog(@"2 - %@", ezTemp);
+//         
+//         // RND
+//         
+//         // M2 >= max ( | x * ey | + | y * ex | + | epsilon * M2 | ) -> M2 = max ( | x * ey | + | y * ex | + | epsilon * M2 | )
+//         [eoTemp set: [[[[eoTemp mul: epsilon] abs] add: [[xr mul: ey] abs]] add: [[yr mul: ex] abs]]];
+//         [tmp set:[tmp add: maxQ([eoTemp low], [eoTemp up])]];
+//         [eoTemp set_q:tmp and: tmp];
+//         //NSLog(@"3 - %@", eoTemp);
+//         
+//         // eo + ezTemp + epsilon * M2 + delta / epsilon
+//         // M2 >= max ( | x * ey | + | y * ex | + | epsilon * M2 | ) -> M2 = max ( | x * ey | + | y * ex | + | epsilon * M2 | )
+//         // delta / epsilon is too small ~ 7.12e-307, resulting error cannot be computed -> do not compute? error intervals are over-approximation, so computation is still sound
+//         [ezTemp set: [[eo add: ezTemp] add: [[epsilon mul: eoTemp] add:delta]]];
+//         //NSLog(@"4 - %@", ezTemp);
+         
 
-         // x * ey + y * ex + epsilon * M2
-         // M2 >= max ( | ex * ey | ) -> M2 = max ( | ex * ey | )
-         [ezTemp set: [[[xr mul: ey] add: [yr mul: ex]] add: [epsilon mul: eoTemp]]];
-         //NSLog(@"2 - %@", ezTemp);
          
-         // RND
-         
-         // M2 >= max ( | x * ey | + | y * ex | + | epsilon * M2 | ) -> M2 = max ( | x * ey | + | y * ex | + | epsilon * M2 | )
-         [eoTemp set: [[[[eoTemp mul: epsilon] abs] add: [[xr mul: ey] abs]] add: [[yr mul: ex] abs]]];
-         [tmp set:[tmp add: maxQ([eoTemp low], [eoTemp up])]];
-         [eoTemp set_q:tmp and: tmp];
-         //NSLog(@"3 - %@", eoTemp);
-         
-         // eo + ezTemp + epsilon * M2 + delta / epsilon
-         // M2 >= max ( | x * ey | + | y * ex | + | epsilon * M2 | ) -> M2 = max ( | x * ey | + | y * ex | + | epsilon * M2 | )
-         // delta / epsilon is too small ~ 7.12e-307, resulting error cannot be computed -> do not compute? error intervals are over-approximation, so computation is still sound
-         [ezTemp set: [[eo add: ezTemp] add: [[epsilon mul: eoTemp] add:delta]]];
-         //NSLog(@"4 - %@", ezTemp);
-         
-
-         
-         // Update ez with Taylor result
-         if([ezTemp neq: ez]){
-            NSLog(@"Taylor - %@", ezTemp);
-            NSLog(@"Constr - %@", ez);
-            NSLog(@"T - C  - [%@, %@]", [[ezTemp low] sub: [ez low]], [[ezTemp up] sub: [ez up]]);
-            NSLog(@"");
-
-         }
-         [ez set: [ez proj_inter: ezTemp]];
-         NSLog(@"Inter   - %@", ez);
+//         // Update ez with Taylor result
+//         if([ezTemp neq: ez]){
+//            NSLog(@"Taylor - %@", ezTemp);
+//            NSLog(@"Constr - %@", ez);
+//            NSLog(@"T - C  - [%@, %@]", [[ezTemp low] sub: [ez low]], [[ezTemp up] sub: [ez up]]);
+//            NSLog(@"");
+//
+//         }
+//         //[ez set: [ez proj_inter: ezTemp]];
+//         NSLog(@"Inter   - %@", ez);
          changed |= ez.changed;
          
          gchanged |= changed;
