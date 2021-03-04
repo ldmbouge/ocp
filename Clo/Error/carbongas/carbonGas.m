@@ -121,6 +121,9 @@ void carbonGas_d_c(int search, int argc, const char * argv[]) {
         id<ORDoubleVar> n = [ORFactory doubleVar:mdl name:@"n"];
         id<ORDoubleVar> k = [ORFactory doubleConstantVar:mdl value:1.3806503e-23 string:@"13806503/1000000000000000000000000000000" name:@"k"];
         id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
+        id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+       id<ORRationalVar> erUlp = [ORFactory rationalVar:mdl name:@"t"];
+       id<ORRationalVar> rQ = [ORFactory rationalVar:mdl from:r];
         
         /* Initialization of constants */
         [mdl add:[p set: @(3.5e7)]];
@@ -129,6 +132,11 @@ void carbonGas_d_c(int search, int argc, const char * argv[]) {
         
         /* Declaration of constraints */
         [mdl add:[r set: [[[p plus: [[a mul: [n div: v]] mul: [n div: v]]] mul: [v sub: [n mul: b]]] sub: [[k mul: n] mul: t]]]];
+       
+       [zero set_d:0];
+       //[mdl add: [r gt: @(1.0e+07)]];
+       //[mdl add:[er eq: zero]];
+       [mdl add: [[rQ plus: er] eq: rQ]];
 
         NSLog(@"model: %@",mdl);
         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
@@ -151,6 +159,8 @@ void carbonGas_d_c(int search, int argc, const char * argv[]) {
            NSLog(@"k : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:k],[cp maxD:k],[cp minDQ:k],[cp maxDQ:k],[cp bound:k] ? "YES" : "NO");
            NSLog(@"v : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
            NSLog(@"r : [%20.20e;%20.20e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+           NSLog(@"er: [%@;%@] (%s)",[cp minQ:er],[cp maxQ:er],[cp bound:er] ? "YES" : "NO");
+           NSLog(@"ul: [%@;%@] (%s)",[cp minQ:erUlp],[cp maxQ:erUlp],[cp bound:erUlp] ? "YES" : "NO");
             if (search)
                 check_it_d(getDmin(p), getDmin(a), getDmin(b), getDmin(t), getDmin(n), getDmin(k), getDmin(v), getDmin(r), [cp minErrorDQ:r]);
         }];
@@ -383,11 +393,65 @@ void carbonGas_f(int search, int argc, const char * argv[]) {
     }
 }
 
+
+void simple(int search, int argc, const char * argv[]) {
+    @autoreleasepool {
+        /* Creation of model */
+        id<ORModel> mdl = [ORFactory createModel];
+        
+        /* Declaration of rational numbers */
+        id<ORRational> zero = [[ORRational alloc] init];
+        
+        /* Initialization of rational numbers */
+        [zero setZero];
+        
+        /* Declaration of model variables */
+        id<ORDoubleVar> v = [ORFactory doubleInputVar:mdl low:1 up:2 name:@"x"];
+        id<ORDoubleVar> p = [ORFactory doubleVar:mdl name:@"a"];
+        id<ORDoubleVar> a = [ORFactory doubleConstantVar:mdl value:0.2 string:@"2/10" name:@"b"];
+        id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"z"];
+        id<ORRationalVar> er = [ORFactory errorVar:mdl of:r];
+       id<ORRationalVar> erUlp = [ORFactory rationalVar:mdl name:@"t"];
+       id<ORRationalVar> rQ = [ORFactory rationalVar:mdl from:r];
+        
+        /* Initialization of constants */
+        [mdl add:[p set: @(4.0)]];
+        
+        /* Declaration of constraints */
+       [mdl add:[r set: [[p mul: v] div: [a plus: v]]]];
+       
+       [zero set_d:0];
+       //[mdl add: [r gt: @(1.0e+07)]];
+       //[mdl add:[er eq: zero]];
+       [mdl add: [[rQ plus: er] eq: rQ]];
+
+        NSLog(@"model: %@",mdl);
+        id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+        id<ORDoubleVarArray> vs = [mdl doubleVars];
+        id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
+       
+        [cp solve:^{
+            if (search)
+               [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
+                    [cp floatSplit:i withVars:x];
+                }];
+            NSLog(@"%@",cp);
+            /* format of 8.8e to have the same value displayed as in FLUCTUAT */
+            /* Use printRational(ORRational r) to print a rational inside the solver */
+           NSLog(@"a : [%1.10e;%1.10e]±[%@;%@] (%s)",[cp minD:p],[cp maxD:p],[cp minDQ:p],[cp maxDQ:p],[cp bound:p] ? "YES" : "NO");
+           NSLog(@"b : [%1.10e;%1.10e]±[%@;%@] (%s)",[cp minD:a],[cp maxD:a],[cp minDQ:a],[cp maxDQ:a],[cp bound:a] ? "YES" : "NO");
+           NSLog(@"x : [%1.10e;%1.10e]±[%@;%@] (%s)",[cp minD:v],[cp maxD:v],[cp minDQ:v],[cp maxDQ:v],[cp bound:v] ? "YES" : "NO");
+           NSLog(@"z : [%1.10e;%1.10e]±[%@;%@] (%s)",[cp minD:r],[cp maxD:r],[cp minDQ:r],[cp maxDQ:r],[cp bound:r] ? "YES" : "NO");
+        }];
+    }
+}
+
 int main(int argc, const char * argv[]) {
    LOO_MEASURE_TIME(@"foo"){
       //carbonGas_f(0, argc, argv);
       //carbonGas_d(0, argc, argv);
-      carbonGas_d_c(0, argc, argv);
+//      carbonGas_d_c(0, argc, argv);
+      simple(0, argc, argv);
       //motivating_d_c(0, argc, argv);
       //carbonGas_d_QF(1, argc, argv);
    }

@@ -15,15 +15,15 @@ void solve_cubic(int argc, const char * argv[]) {
       id<ORModel> mdl = [ORFactory createModel];
       id<ORRational> zero = [ORRational rationalWith_d:0.0];
       id<ORRational> tmp = [ORRational rationalWith_d:0.0];
-      id<ORDoubleVar> a = [ORFactory doubleVar:mdl low:14.0 up:16.0 elow:zero eup:zero name:@"a"];
-      id<ORDoubleVar> b = [ORFactory doubleVar:mdl low:-200.0 up:200.0 elow:zero eup:zero name:@"b"];
-      id<ORDoubleVar> c = [ORFactory doubleVar:mdl low:-200.0 up:200.0 elow:zero eup:zero name:@"c"];
+      id<ORDoubleVar> a = [ORFactory doubleInputVar:mdl low:14.0 up:16.0  name:@"a"];
+      id<ORDoubleVar> b = [ORFactory doubleInputVar:mdl low:-200.0 up:200.0  name:@"b"];
+      id<ORDoubleVar> c = [ORFactory doubleInputVar:mdl low:-200.0 up:200.0  name:@"c"];
       id<ORDoubleVar> q = [ORFactory doubleVar:mdl name:@"q"];
       id<ORDoubleVar> r = [ORFactory doubleVar:mdl name:@"r"];
       id<ORDoubleVar> Q = [ORFactory doubleVar:mdl name:@"Q"];
       id<ORDoubleVar> R = [ORFactory doubleVar:mdl name:@"R"];
       id<ORRationalVar> eQ = [ORFactory errorVar:mdl of:Q];
-//      id<ORRationalVar> eR = [ORFactory errorVar:mdl of:R];
+      id<ORRationalVar> eR = [ORFactory errorVar:mdl of:R];
       id<ORRationalVar> eQAbs = [ORFactory rationalVar:mdl name:@"eQAbs"];
 //      id<ORRationalVar> eRAbs = [ORFactory rationalVar:mdl name:@"eRAbs"];
       //[zero release];
@@ -53,35 +53,52 @@ void solve_cubic(int argc, const char * argv[]) {
       [mdl add:[R eq:@(0.0)]];
       [mdl add:[Q eq:@(0.0)]];
       
-      [zero set_d:3.15796771448933398412e-15];
-      [mdl add: [eQAbs eq:[eQ abs]]];
-      [mdl add:[eQAbs geq:zero]];
+//      [mdl add: [eR eq: zero]];
+//      [mdl add: [eQ eq: zero]];
       
-      [mdl maximize:eQAbs];
+//      2021-02-23 16:24:06.956632+0100 solve_cubic_error[91696:6087427] a : [1.60000000000000000000e+01;1.60000000000000000000e+01] (YES)
+//      2021-02-23 16:24:06.956746+0100 solve_cubic_error[91696:6087427] ea: [+0.00000000000000000000e+00;+0.00000000000000000000e+00]
+//      2021-02-23 16:24:06.956842+0100 solve_cubic_error[91696:6087427] b : [8.53333333333333428072e+01;8.53333333333333428072e+01] (YES)
+//      2021-02-23 16:24:06.956922+0100 solve_cubic_error[91696:6087427] eb: [+0.00000000000000000000e+00;+0.00000000000000000000e+00]
+//      2021-02-23 16:24:06.956948+0100 solve_cubic_error[91696:6087427] c : [1.51703703703703780548e+02;1.51703703703703780548e+02] (YES)
+//      2021-02-23 16:24:06.956993+0100 solve_cubic_error[91696:6087427] ec: [+0.00000000000000000000e+00;+0.00000000000000000000e+00]
+//      2021-02-23 16:24:06.957049+0100 solve_cubic_error[91696:6087427] Q : [0.00000000000000000000e+00;0.00000000000000000000e+00] (YES)
+//      2021-02-23 16:24:06.957158+0100 solve_cubic_error[91696:6087427] eQ: [-3.15796771448933398412e-15;-3.15796771448933398412e-15]
+//      2021-02-23 16:24:06.957219+0100 solve_cubic_error[91696:6087427] R : [0.00000000000000000000e+00;0.00000000000000000000e+00] (YES)
+//      2021-02-23 16:24:06.957269+0100 solve_cubic_error[91696:6087427] eR: [+1.31581988103722241450e-14;+1.31581988103722241450e-14]
+
+      
+//
+      
+//      [zero set_d:3.15796771448933398412e-15];
+//      [mdl add: [eQAbs eq:[eQ abs]]];
+//      [mdl add:[eQAbs geq:zero]];
+      
+      //[mdl maximize:eQAbs];
       
       //[mdl add:[[R error] geq:tmp]];
       //[mdl add:[[Q error] geq:tmp]];
       
       [tmp release];
       NSLog(@"model: %@",mdl);
-      //id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBBController proto]];
       id<ORDoubleVarArray> vs = [mdl doubleVars];
       id<ORDisabledVarArray> vars = [ORFactory disabledFloatVarArray:vs engine:[cp engine]];
       
       [cp solve:^{
-//         [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
-//            [cp floatSplit:i withVars:x];
-//         }];
-         [cp branchAndBoundSearchD:vars out:eQAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+         [cp lexicalOrderedSearch:vars do:^(ORUInt i, id<ORDisabledVarArray> x) {
             [cp floatSplit:i withVars:x];
          }];
+//         [cp branchAndBoundSearchD:vars out:eQAbs do:^(ORUInt i, id<ORDisabledVarArray> x) {
+//            [cp floatSplit:i withVars:x];
+//         }];
          NSLog(@"%@",cp);
-         NSLog(@"a : [%20.100e;%20.20e] (%s)",[cp minD:a],[cp maxD:a],[cp bound:a] ? "YES" : "NO");
+         NSLog(@"a : [%20.20e;%20.20e] (%s)",[cp minD:a],[cp maxD:a],[cp bound:a] ? "YES" : "NO");
          NSLog(@"ea: [%@;%@]",[cp minDQ:a],[cp  maxDQ:a]);
-         NSLog(@"b : [%20.100e;%20.20e] (%s)",[cp minD:b],[cp maxD:b],[cp bound:b] ? "YES" : "NO");
+         NSLog(@"b : [%20.20e;%20.20e] (%s)",[cp minD:b],[cp maxD:b],[cp bound:b] ? "YES" : "NO");
          NSLog(@"eb: [%@;%@]",[cp minDQ:b],[cp  maxDQ:b]);
-         NSLog(@"c : [%20.100e;%20.20e] (%s)",[cp minD:c],[cp maxD:c],[cp bound:c] ? "YES" : "NO");
+         NSLog(@"c : [%20.20e;%20.20e] (%s)",[cp minD:c],[cp maxD:c],[cp bound:c] ? "YES" : "NO");
          NSLog(@"ec: [%@;%@]",[cp minDQ:c],[cp  maxDQ:c]);
          NSLog(@"Q : [%20.20e;%20.20e] (%s)",[cp minD:Q],[cp maxD:Q],[cp bound:Q] ? "YES" : "NO");
          NSLog(@"eQ: [%@;%@]",[cp minDQ:Q],[cp  maxDQ:Q]);

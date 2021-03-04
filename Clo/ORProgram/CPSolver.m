@@ -1954,14 +1954,14 @@ onFailure: (ORInt2Void) onFailure
          ORInt iteration = 0;
          ORInt nbIteration = -1;
          if([((id<ORRational>)[[[_engine objective] primalBound] rationalValue]) lt: zero]){
-            nbIteration = 30;// 100; //30;
+            nbIteration = 100;// 100; //30;
          } else {
-            nbIteration = 20;//50; //20;
+            nbIteration = 50;//50; //20;
          }
          
          @autoreleasepool {
             for (iteration = 0; iteration < nbIteration; iteration++) {
-               if (0) { // New primal
+               if (RUN_NEW_PRIMAL) { // New primal
                   uint32_t nbvars = 0;
                   for (id<ORDoubleVar> v in x) {
                      /* Compute an error directly from expression */
@@ -2273,8 +2273,14 @@ onFailure: (ORInt2Void) onFailure
          else
             assignTRInt(&indexSplit, indexSplit._val+1, _trail);
       }
-   } while ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]]);
-   //} while ([[[[_objective dualBound] rationalValue] div: [[_objective primalBound] rationalValue]] geq: two]);
+   } while (
+            ([[[[_engine objective] primalBound] rationalValue] lt: [[[_engine objective] dualBound] rationalValue]] && (RUN_EQUAL_BOUND && !RUN_RATION_OF_2_BOUND))
+            ||
+            ([[[[_objective dualBound] rationalValue] div: [[_objective primalBound] rationalValue]] geq: two]  && (!RUN_EQUAL_BOUND && RUN_RATION_OF_2_BOUND))
+            );
+   
+   
+   // } while ([[[[_objective dualBound] rationalValue] div: [[_objective primalBound] rationalValue]] geq: two]);
    
    if([[[[_engine objective] dualValue] rationalValue] gt: boundRatioOfTwoBoxes])
       [boundRatioOfTwoBoxes set: [[[_engine objective] dualValue] rationalValue]];

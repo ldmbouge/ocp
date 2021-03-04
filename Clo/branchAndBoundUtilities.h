@@ -35,7 +35,10 @@
 
 extern ORBool RUN_IMPROVE_GUESS;
 extern ORBool RUN_SIDELINED_BOX;
+extern ORBool RUN_NEW_PRIMAL;
 extern ORBool RUN_3B_ERROR;
+extern ORBool RUN_EQUAL_BOUND;
+extern ORBool RUN_RATION_OF_2_BOUND;
 
 
 extern id<CPEngine> errorGroup;

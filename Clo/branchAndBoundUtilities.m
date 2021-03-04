@@ -83,7 +83,14 @@
 /* Try to improve computed error in GuessError, once all variables are set */
 ORBool RUN_IMPROVE_GUESS = true;
 /* Discard box if half-ulp limit is reached on all constraints */
-ORBool RUN_SIDELINED_BOX = true;
+ORBool RUN_SIDELINED_BOX = false;
+/* Execute new primal procedure */
+ORBool RUN_NEW_PRIMAL = true;
+
+/* Stop algorithm when lower bound == upper bound */
+ORBool RUN_EQUAL_BOUND = true;
+/* Stop algorithm when (upper bound / lower bound) == 2 */
+ORBool RUN_RATION_OF_2_BOUND = false;
 
 /* Run 3B filtering over errors - state constraint over rational to compute error operation at the constraint level */
 ORBool RUN_3B_ERROR = false;

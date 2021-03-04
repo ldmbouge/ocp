@@ -948,5 +948,13 @@ int main(int argc, const char * argv[]) {
 //   NSLog(@"");
 //   NSLog(@"Input Values:\nx: %10.20e %@\ny: %10.20e %@\noutput: %10.20e %@", x, exQ, y, eyQ, z, ezQ);
    
+//   fesetround(FE_TONEAREST);
+//   float x = 1.0f;
+//   float y = 10.0f;
+//
+//   NSLog(@"%.9e", x);
+//   NSLog(@"%.9e", y);
+//   NSLog(@"%.9e", x/y);
+   
    return 0;
 }
