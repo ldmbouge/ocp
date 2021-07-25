@@ -68,7 +68,7 @@
 -(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
    _fresh = notes;
-   [m applyOnVar: ^(id<ORVar> x) {
+   [m applyOnVar: ^(id<ORObject> x) {
       [_into addVariable: [self flattenIt:x]];
    }
    onMutables: ^(id<ORObject> x) {
@@ -77,12 +77,12 @@
    onImmutables: ^(id<ORObject> x) {
       [_into addImmutable:x];
    }
-   onConstraints: ^(id<ORConstraint> c) {
+   onConstraints: ^(id<ORObject> c) {
       [_into setCurrent:c];
       [self flattenIt:c];
       [_into setCurrent:nil];
    }
-   onObjective: ^(id<ORObjectiveFunction> o) {
+   onObjective: ^(id<ORObject> o) {
       [self flattenIt:o];
    }];
 }
@@ -281,7 +281,7 @@
    id<ORGroup> ng = [ORFactory cdisj:[_into tracker] vmap:cvm];
    id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:(id)[_into tracker] group:ng];
    __block int cn = 0;
-   [g enumerateObjectWithBlock:^(id<ORGroup> ck) {
+   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
       id<ORGroup> fg = [self flattenIt:ck into:a2g];
 
       // loop over the blocks inside the constructive disjunction
