@@ -36,12 +36,13 @@ int main(int argc, const char * argv[])
             
             printf("Violations: %d \n",[ls getViolations]);
             for(ORInt i = 1; i <= n; i++) {
-               printf("x[%d] = %d\n",i,[ls intValue:x[i]]);
+               printf("x[%d] = %d\t ",i,[ls intValue:x[i]]);
                printf("violations[%d] = %d\n",i,[ls getVarViolations: x[i]]);
             }
             while ([ls getViolations] > 0 && it < 50 * n) {
                [ls selectMax:D orderedBy:^ORFloat(ORInt i) { return [ls getVarViolations:x[i]];} do:^(ORInt i) {
                   [ls selectMin: D orderedBy:^ORFloat(ORInt v) { return [ls deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
+                     printf("x[%2d] changing from %2d to %2d\t violations:%d\tit=%d\n",i,[ls intValue:x[i]],v,ls.getViolations,it);
                      [ls label:x[i] with:v];
                   }];
                }];
