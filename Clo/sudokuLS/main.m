@@ -83,7 +83,7 @@ int main (int argc, const char * argv[])
                             ORInt delta = [cp deltaWhenSwap:x1 with:x2];
                             //printf("Delta for swap(%d,%d): %d\n",getId(x1),getId(x2),delta);
                             [ms neighbor:delta do:^{
-                               //printf("from %d swap(%d,%d) \tdelta = %d\n",[cp getViolations],getId(x1),getId(x2),delta);
+                               printf("from %d swap(%d,%d) \tdelta = %d\t it=%d\n",[cp getViolations],getId(x1),getId(x2),delta,it);
                                [cp swap:x1 with:x2];
                                [tabu set:it+tLen at:getId(x1) :getId(x2)];
                                [tabu set:it+tLen at:getId(x2) :getId(x1)];

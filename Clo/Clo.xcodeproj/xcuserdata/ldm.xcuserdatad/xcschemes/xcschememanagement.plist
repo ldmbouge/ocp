@@ -384,6 +384,11 @@
 			<key>orderHint</key>
 			<integer>96</integer>
 		</dict>
+		<key>magicSquareLS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>87</integer>
+		</dict>
 		<key>magicserie.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -703,6 +708,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>108</integer>
+		</dict>
+		<key>sudokuLS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>86</integer>
 		</dict>
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
