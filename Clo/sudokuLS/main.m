@@ -43,6 +43,7 @@ int main (int argc, const char * argv[])
          fscanf(f,"%d \n",&nb);
          printf("number of entries %d \n",nb);
          id<ORModel> mdl = [ORFactory createModel];
+         [ORStreamManager setRandomized];
          id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntRange> R = RANGE(mdl,1,9);
          id<ORIntVarMatrix> x = [ORFactory intVarMatrix: mdl range: R : R domain: R];
