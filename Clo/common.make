@@ -1,4 +1,4 @@
-OC = clang-3.5
+OC = clang
 CFLAGS = `gnustep-config --objc-flags` -msse4.1 -fblocks -fobjc-nonfragile-abi -fobjc-runtime=gnustep \
 	$(USER_DEFINES) -I. -I.. -I/opt/gurobi550/linux64/include \
 	-msse4.1 

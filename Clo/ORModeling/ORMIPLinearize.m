@@ -60,7 +60,7 @@
 
 -(void) apply: (id<ORModel>) m with:(id<ORAnnotation>)notes 
 {
-   [m applyOnVar: ^(id<ORVar> x) {
+   [m applyOnVar: ^(id<ORObject> x) {
       [_into addVariable: x];
    }
    onMutables: ^(id<ORObject> x) {
@@ -70,10 +70,10 @@
    onImmutables: ^(id<ORObject> x) {
       [_into addImmutable: x];
    }
-   onConstraints: ^(id<ORConstraint> c) {
+   onConstraints: ^(id<ORObject> c) {
       [self linearizeIt: c];
    }
-   onObjective: ^(id<ORObjectiveFunction> o) {
+   onObjective: ^(id<ORObject> o) {
       [self linearizeIt: o];
    }];
 }

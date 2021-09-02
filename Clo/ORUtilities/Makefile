@@ -1,7 +1,7 @@
 GNUSTEP_MAKEFILES=/opt/kitkit-1.0-rc1/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang-3.5
+OC = clang
 #GNUstep = /opt/kitkit-1.0-rc1
 GNUstep = /usr/include/GNUstep
 #CFLAGS = -I$(GNUstep) -I. -I.. -fPIC -msse4.1 \

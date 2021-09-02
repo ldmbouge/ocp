@@ -67,20 +67,20 @@
 {
    _notes = notes;
    _tau = m.tau;
-   [m applyOnVar:^(id<ORVar> x) {
+   [m applyOnVar:^(id<ORObject> x) {
       [_into addVariable: [self flattenIt: x]];
    }
-      onMutables:^(id<ORObject> x) {
-         [_into addMutable:[self flattenIt:x]];
-      }
-    onImmutables:^(id<ORObject> x) {
+   onMutables:^(id<ORObject> x) {
+       [_into addMutable:[self flattenIt:x]];
+     }
+   onImmutables:^(id<ORObject> x) {
        [_into addImmutable: x];
     }
-   onConstraints:^(id<ORConstraint> c) {
-      [_into addConstraint:[self flattenIt:c]];
-   }
-     onObjective:^(id<ORObjectiveFunction> o) {
-        [self flattenIt:o];
+   onConstraints:^(id<ORObject> c) {
+       [_into addConstraint:[self flattenIt:c]];
+     }
+   onObjective:^(id<ORObject> o) {
+       [self flattenIt:o];
      }];
 }
 

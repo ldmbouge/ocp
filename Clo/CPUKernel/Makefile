@@ -1,7 +1,7 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang-3.5
+OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \

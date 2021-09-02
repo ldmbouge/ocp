@@ -1,7 +1,7 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang-3.5
+OC = clang
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -msse4.1 \

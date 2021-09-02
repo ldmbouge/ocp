@@ -61,7 +61,7 @@
 -(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
    _fresh = notes;
-   [m applyOnVar: ^(id<ORVar> x) {
+   [m applyOnVar: ^(id<ORObject> x) {
       [_into addVariable: [self flattenIt:x]];
    }
    onMutables: ^(id<ORObject> x) {
@@ -70,10 +70,10 @@
    onImmutables: ^(id<ORObject> x) {
       [_into addImmutable:x];
    }
-   onConstraints: ^(id<ORConstraint> c) {
+   onConstraints: ^(id<ORObject> c) {
       [self flattenIt:c];
    }
-   onObjective: ^(id<ORObjectiveFunction> o) {
+   onObjective: ^(id<ORObject> o) {
       [self flattenIt:o];
    }];
 }
