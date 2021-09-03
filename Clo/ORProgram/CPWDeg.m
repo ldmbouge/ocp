@@ -100,7 +100,7 @@
    _cvs  = cvs;
    _nbVars = (ORUInt)[_cvs count];
    _cv = malloc(sizeof(NSSet*)*len);
-   memset(_cv,sizeof(NSSet*)*len,0);
+   memset(_cv,0,sizeof(NSSet*)*len);
    ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
       maxID = max(maxID,[[_cvs at:k] getId]);

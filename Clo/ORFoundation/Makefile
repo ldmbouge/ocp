@@ -2,10 +2,9 @@
 #include $(GNUSTEP_MAKEFILES)/common.make
 
 OC = clang
-GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks -fobjc-nonfragile-abi
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+CFLAGS = `gnustep-config --objc-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks 
+LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep   $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities -lORUtilities
 
 
@@ -15,14 +14,10 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 # 	-L../ORUtilities \
 # 	-lORUtilities $(USER_DEFINES)
 
-SRCS =  ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
-	ORFoundation.m  ORObject.m     ORSemBDSController.m  ORTracer.m \
-	ORCommand.m     ORDataI.m    ORError.m      ORFactoryI.m  \
-	ORLimit.m       ORParallel.m   ORSemDFSController.m  ORTrailI.m \
-	ORArrayI.m  ORController.m  ORData.m     ORExplorerI.m  ORFactory.m  \
-	ORSelectorI.m  ORSetI.m ORVisit.m   ORVarI.m ORConstraintI.m \
-	ORAnnotation.m
-
+SRCS = ORAVLTree.m     ORConstraintI.m  ORDataI.m      ORExprI.m       ORFunc.m      ORSelectorI.m         ORTracer.m \
+	ORAnnotation.m  ORControl.m      OREngine.m     ORFactory.m     ORLimit.m     ORSemBDSController.m  ORTrailI.m \
+	ORArrayI.m      ORController.m   ORError.m      ORFactoryI.m    ORObject.m    ORSemDFSController.m  ORVarI.m \
+	ORCommand.m     ORData.m         ORExplorerI.m  ORFoundation.m  ORParallel.m  ORSetI.m              ORVisit.m
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
@@ -36,15 +31,15 @@ all: $(LIBNAME)
 
 $(LIBNAME): $(OFILES)
 	@echo "Linking..." $<
-	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m" $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 %.$(OBJEXT): %.mm
 	@echo "compiling C++ / m"  $<
-	@$(OC) $(CFLAGS) -ObjC++ -c $< 
+	$(OC) $(CFLAGS) -ObjC++ -c $< 
 
 clean:
 	rm -rf *.o *~

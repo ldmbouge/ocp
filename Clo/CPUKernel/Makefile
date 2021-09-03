@@ -4,10 +4,10 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
+CFLAGS = `gnustep-config --objc-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -msse4.1 \
-	-fblocks -fobjc-nonfragile-abi
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+	-fblocks
+LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-lORUtilities -lORFoundation
@@ -33,11 +33,11 @@ all: $(LIBNAME)
 	fi
 
 $(LIBNAME): $(OFILES)
-	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	@rm -rf *.o *~

@@ -75,7 +75,7 @@
       rv = np;
    }
    else {
-      ORUInt sc = p.getId + 1;
+      ORInt sc = p.getId + 1;
       LSPriority* np =  (id)[self freshPriority:sc];
       np->_next = p->_next;
       p->_next->_prev = np;

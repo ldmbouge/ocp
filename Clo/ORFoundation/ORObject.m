@@ -29,12 +29,12 @@ static Class __orObjectClass = nil;
    _rc = 1;
    return self;
 }
--(void)setId:(ORUInt)name
+-(void)setId:(ORInt)name
 {
    assert(_name == -1);
    _name = name;
 }
--(ORUInt)getId
+-(ORInt)getId
 {
    return _name;
 }

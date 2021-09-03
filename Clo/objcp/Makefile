@@ -1,12 +1,13 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang-3.5
+OC = clang
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
+CFLAGS = `gnustep-config --objc-flags`  -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
-	-msse4.1  -fblocks -fobjc-nonfragile-abi
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+	-msse4.1  -fblocks 
+
+LFLAGS = `gnustep-config --base-libs`  -fobjc-runtime=gnustep $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-L../CPUKernel -Wl,-rpath=`pwd`/../CPUKernel \
@@ -28,9 +29,9 @@ SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \
 	CPBasicConstraint.m  CPFloatConstraint.m \
 	CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
 	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m \
-	CPFloatDom.m    \
-	CPCircuitI.m CPError.m  CPIntVarI.m CPFloatVarI.m \
-	CPStatisticsMonitor.m 
+	CPFloatDom.m CPTrailIntSet.m   \
+	CPCircuitI.m CPError.m  CPIntVarI.m CPFloatVarI.m CPISVarI.m \
+	CPStatisticsMonitor.m CPIntSetConstraint.m
 
 #	./NSBoardController.m
 
@@ -46,11 +47,11 @@ all: $(LIBNAME)
 
 
 $(LIBNAME): $(OFILES)
-	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

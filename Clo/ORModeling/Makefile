@@ -3,11 +3,11 @@
 
 OC = clang
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
+CFLAGS = `gnustep-config --objc-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -msse4.1 \
-	-fblocks -fobjc-nonfragile-abi
+	-fblocks
 
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-lORUtilities -lORFoundation
@@ -22,7 +22,7 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 SRCS = ORDecompose.m  ORFlatten.m  ORLinearize.m  ORIntLinear.m  \
 	ORFloatLinear.m ORFloatDecompose.m  \
 	ORLPFlatten.m  ORModelI.m  ORModeling.m  ORModelTransformation.m \
-	ORMIPLinearize.m ORMIPFlatten.m 
+	ORMIPLinearize.m ORMIPFlatten.m ORLSFlatten.m
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
@@ -41,7 +41,7 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

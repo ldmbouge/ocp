@@ -101,19 +101,19 @@
 }
 -(id) trackVariable: (id) var
 {
-   [var setId:_nbObjects++];
+  [var setId:(int)_nbObjects++];
    [_vars addObject:var];
    return var;
 }
 -(id) trackMutable:(id)obj
 {
-   [obj setId:_nbObjects++];
+  [obj setId:(int)_nbObjects++];
    [_objs addObject:obj];
    return obj;
 }
 -(id) trackObject: (id) obj
 {
-   [obj setId:_nbObjects++];
+  [obj setId:(int)_nbObjects++];
    [_objs addObject:obj];
    return obj;
 }

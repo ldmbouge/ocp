@@ -12,7 +12,7 @@
 #import <ORFoundation/ORSet.h>
 #import "CPProgram.h"
 #import "CPConcretizer.h"
-#import "ORvarI.h"
+#import "ORVarI.h"
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>

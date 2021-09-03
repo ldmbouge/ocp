@@ -27,7 +27,7 @@ enum CPVarClass {
 };
 
 @protocol CPVar <NSObject>
--(ORUInt) getId;
+-(ORInt) getId;
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
 -(ORBool) bound;

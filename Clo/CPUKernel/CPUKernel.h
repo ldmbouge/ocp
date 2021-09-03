@@ -30,7 +30,7 @@ typedef enum {
 @protocol CPGroup;
 
 @protocol CPConstraint <ORConstraint>
--(ORUInt)      getId;
+-(ORInt)       getId;
 -(void)        setGroup:(id<CPGroup>) g;
 -(id<CPGroup>) group;
 @end

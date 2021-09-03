@@ -163,6 +163,7 @@
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
+  [_into setCurrent:cstr];
    id<ORExprArray> ax = [cstr array];
    id<ORIntVarArray> cax = nil;
    BOOL av = YES;
@@ -182,6 +183,7 @@
       _result = [_into addConstraint:cstr];
    else
       _result = [_into addConstraint:[ORFactory alldifferent:cax]];
+   [_into setCurrent:nil];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {

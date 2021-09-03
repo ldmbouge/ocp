@@ -362,7 +362,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 -(id) trackVariable: (id) var
 {
-   [var setId:(ORUInt)[_vars count]];
+   [var setId:[_vars count]];
    if (_state != CPClosed) {
       [_vars addObject:var];
       [var release];
@@ -612,7 +612,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
    }
    else {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId: (ORUInt)[_mStore count]];
+      [cstr setId: [_mStore count]];
       [_mStore addObject: c];
       return ORSuspend;
    }
