@@ -27,7 +27,7 @@
 -(ORInt) up;
 -(ORBool) isBool;
 -(ORInt) literal;
--(id<ORIntVar>)base;
+-(id<ORIntVar>)baseVar;
 @end
 
 @protocol ORFloatVar <ORVar>

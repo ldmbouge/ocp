@@ -100,7 +100,7 @@
 -(void) visitAffineVar:(ORIntVarAffineI*) v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> mBase = [v base];
+      id<ORIntVar> mBase = [v baseVar];
       [mBase visit: self];
       ORInt a = [v scale];
       ORInt b = [v shift];
@@ -110,7 +110,7 @@
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> mBase = [v base];
+      id<ORIntVar> mBase = [v baseVar];
       [mBase visit:self];
       ORInt lit = [v literal];
       _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>) _gamma[mBase.getId] eqi:lit];
@@ -1227,7 +1227,7 @@
 -(void) visitAffineVar:(ORIntVarAffineI*) v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> mBase = [v base];
+      id<ORIntVar> mBase = [v baseVar];
       [mBase visit: self];
       ORInt a = [v scale];
       ORInt b = [v shift];
@@ -1237,7 +1237,7 @@
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> mBase = [v base];
+      id<ORIntVar> mBase = [v baseVar];
       [mBase visit:self];
       ORInt lit = [v literal];
       _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>) _gamma[mBase.getId] eqi:lit];

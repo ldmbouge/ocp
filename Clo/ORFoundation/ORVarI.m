@@ -114,7 +114,7 @@
 {
    return 0;
 }
--(id<ORIntVar>)base
+-(id<ORIntVar>)baseVar
 {
    return self;
 }
@@ -171,7 +171,7 @@
 {
    return _b;
 }
--(id<ORIntVar>)base
+-(id<ORIntVar>)baseVar
 {
    return _x;
 }
@@ -209,7 +209,7 @@
 {
    return _lit;
 }
--(id<ORIntVar>)base
+-(id<ORIntVar>)baseVar
 {
    return _x;
 }
