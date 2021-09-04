@@ -204,22 +204,31 @@
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
+  [_into setCurrent:cstr];
    _result = [_into addConstraint:cstr];
+   [_into setCurrent:nil];
 }
 -(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
 {
+  [_into setCurrent:cstr];
    _result = [_into addConstraint:cstr];
+   [_into setCurrent:nil];
 }
 -(void) visitMultiKnapsackOne: (id<ORMultiKnapsackOne>) cstr
 {
+  [_into setCurrent:cstr];
    _result = [_into addConstraint:cstr];
+   [_into setCurrent:nil];
 }
 -(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
 {
+  [_into setCurrent:cstr];
    _result = [_into addConstraint:cstr];
+   [_into setCurrent:nil];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
+  [_into setCurrent:cstr];
    id<ORIntVarArray> item     = [self flattenIt:[cstr item]];
    id<ORIntVarArray> binSize  = [self flattenIt:[cstr binSize]];
    id<ORIntArray>    itemSize = [self flattenIt:[cstr itemSize]];
@@ -243,6 +252,7 @@
    
    for(ORInt b = brlow; b <= brup; b++)
       [_into addConstraint: [ORFactory packOne:t item:item itemSize: itemSize bin: b binSize: binSize[b]]];
+   [_into setCurrent:nil];
 }
 
 -(void) visitGroup:(id<ORGroup>)g
@@ -257,11 +267,15 @@
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
+  [_into setCurrent:cstr];
    _result = [_into addConstraint:cstr];
+   [_into setCurrent:nil];
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
+  [_into setCurrent:cstr];
    _result = [_into addConstraint:cstr];
+   [_into setCurrent:nil];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
@@ -271,7 +285,9 @@
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
+  [_into setCurrent:cstr];
    _result = [_into addConstraint:cstr];
+   [_into setCurrent:nil];
 }
 -(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
 {

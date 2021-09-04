@@ -70,6 +70,7 @@
 
 -(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) d
 {
+  if (o == d) return;
    NSNumber* k = [[NSNumber alloc] initWithInt:[o getId]];
    NSMutableArray* na  = [_cstr objectForKey: k];
    if (na)
