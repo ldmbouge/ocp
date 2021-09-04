@@ -3,7 +3,7 @@
 
 OC = clang
 
-CFLAGS = `gnustep-config --objc-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
+CFLAGS = `gnustep-config --debug-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
 	-msse4.1 -fblocks
 LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep $(USER_DEFINES) \

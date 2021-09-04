@@ -3,16 +3,9 @@
 
 OC = clang
 
-CFLAGS = `gnustep-config --objc-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks 
+CFLAGS = `gnustep-config --debug-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks 
 LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep   $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities -lORUtilities
-
-
-# CFLAGS = -I$(GNUstep)/include -I. -I.. -fPIC -g -msse4.1 \
-# 	-fblocks -fobjc-nonfragile-abi  $(USER_DEFINES)
-# LFLAGS = -dynamic -g -L$(GNUstep)/lib -lgnustep-base -lobjc $(USER_DEFINES) \
-# 	-L../ORUtilities \
-# 	-lORUtilities $(USER_DEFINES)
 
 SRCS = ORAVLTree.m     ORConstraintI.m  ORDataI.m      ORExprI.m       ORFunc.m      ORSelectorI.m         ORTracer.m \
 	ORAnnotation.m  ORControl.m      OREngine.m     ORFactory.m     ORLimit.m     ORSemBDSController.m  ORTrailI.m \

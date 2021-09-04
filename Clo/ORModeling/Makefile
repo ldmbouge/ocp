@@ -3,7 +3,7 @@
 
 OC = clang
 
-CFLAGS = `gnustep-config --objc-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
+CFLAGS = `gnustep-config --debug-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -msse4.1 \
 	-fblocks
 
@@ -12,13 +12,6 @@ LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep $(USER_DEFINES) \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-lORUtilities -lORFoundation
 
-# CFLAGS = -I$(GNUstep)/include -I.. -I. -fPIC -g -msse4.1 \
-# 	-I../ORFoundation -I../ORUtilities \
-# 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
-# LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
-# 	-L../ORUtilities -L../ORFoundation \
-# 	-lORUtilities -lORFoundation \
-# 	-lgnustep-base -lobjc 	
 SRCS = ORDecompose.m  ORFlatten.m  ORLinearize.m  ORIntLinear.m  \
 	ORFloatLinear.m ORFloatDecompose.m  \
 	ORLPFlatten.m  ORModelI.m  ORModeling.m  ORModelTransformation.m \
