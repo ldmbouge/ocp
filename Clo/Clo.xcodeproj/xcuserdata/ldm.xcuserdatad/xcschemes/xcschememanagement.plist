@@ -109,6 +109,11 @@
 			<key>orderHint</key>
 			<integer>48</integer>
 		</dict>
+		<key>PentominoesSwift.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>88</integer>
+		</dict>
 		<key>Routing.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -693,6 +698,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>107</integer>
+		</dict>
+		<key>smoryLS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>89</integer>
 		</dict>
 		<key>sport.xcscheme_^#shared#^_</key>
 		<dict>
