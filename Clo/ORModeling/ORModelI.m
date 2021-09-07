@@ -29,8 +29,11 @@
 -(ORTau*) initORTau
 {
    self = [super init];
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+   /*   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
                                         valueOptions:NSPointerFunctionsOpaqueMemory
+					capacity:64];*/
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+                                        valueOptions:NSPointerFunctionsStrongMemory
                                             capacity:64];
    return self;
 }

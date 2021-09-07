@@ -53,13 +53,22 @@ int main(int argc, const char * argv[])
          __block BOOL found = NO;
          __block ORInt it = 0;
          [cp solve:^{
-            id<ORUniformDistribution> d = [ORFactory uniformDistribution:cp range:Digit];
+          printf("VIOL: %d\n",cp.getViolations);
+          for(int k=0;k < ca.count;k++) {
+            printf("\tviol(ca[%d]) = %d\n",k,[cp getCstrViolations:ca[k]]);
+          }
+
+	  id<ORUniformDistribution> d = [ORFactory uniformDistribution:cp range:Digit];
             for(id<ORIntVar> xi in x)
                [cp label:xi with:[d next]];
             ORBounds b = idRange(x,(ORBounds){FDMAXINT,0});
             id<ORIntArray> tabu = [ORFactory intArray:cp range:RANGE(cp,b.min,b.max) with:^ORInt(ORInt k) {return -1;}];
             id<ORSelector> sw = [ORFactory selectMin:cp];
             while([cp getViolations] > 0) {
+	      printf("VIOL: %d\n",cp.getViolations);
+	      for(int k=0;k < ca.count;k++) {
+		printf("\tviol(ca[%d]) = %d\n",k,[cp getCstrViolations:ca[k]]);
+	      }
                [cp selectRandom:car suchThat:^ORBool(ORInt i) { return [cp getCstrViolations:ca[i]] > 0;} do:^(ORInt i) {
                   id<ORConstraint> ci = ca[i];
                   [cp sweep:sw with:^{
