@@ -27,7 +27,7 @@
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
--(ORUInt)getId;
+-(ORInt)getId;
 @end
 
 @implementation LPFloatVarSnapshot
@@ -39,7 +39,7 @@
    _reducedCost = [v reducedCost];
    return self;
 }
--(ORUInt) getId
+-(ORInt) getId
 {
    return _name;
 }
@@ -100,7 +100,7 @@
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
--(ORUInt)getId;
+-(ORInt)getId;
 @end
 
 @implementation LPConstraintSnapshot
@@ -111,7 +111,7 @@
    _dual = [cstr dual];
    return self;
 }
--(ORUInt) getId
+-(ORInt) getId
 {
    return _name;
 }

@@ -1,28 +1,21 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang-3.5
+OC = clang
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
+CFLAGS = `gnustep-config --debug-flags` -fobjc-runtime=gnustep  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -msse4.1 \
-	-fblocks -fobjc-nonfragile-abi
+	-fblocks
 
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-lORUtilities -lORFoundation
 
-# CFLAGS = -I$(GNUstep)/include -I.. -I. -fPIC -g -msse4.1 \
-# 	-I../ORFoundation -I../ORUtilities \
-# 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
-# LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
-# 	-L../ORUtilities -L../ORFoundation \
-# 	-lORUtilities -lORFoundation \
-# 	-lgnustep-base -lobjc 	
 SRCS = ORDecompose.m  ORFlatten.m  ORLinearize.m  ORIntLinear.m  \
 	ORFloatLinear.m ORFloatDecompose.m  \
 	ORLPFlatten.m  ORModelI.m  ORModeling.m  ORModelTransformation.m \
-	ORMIPLinearize.m ORMIPFlatten.m 
+	ORMIPLinearize.m ORMIPFlatten.m ORLSFlatten.m
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
@@ -41,7 +34,7 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

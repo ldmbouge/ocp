@@ -61,7 +61,11 @@
 -(void) apply: (id<ORModel>) m with:(id<ORAnnotation>)notes 
 {
    [m applyOnVar: ^(id<ORObject> x) {
+<<<<<<< HEAD
       [_into addVariable: x];
+=======
+      [_into addVariable: (id<ORVar>) x];
+>>>>>>> b06321fb80cddb02e5113bb0dde62ad00d6425ca
    }
    onMutables: ^(id<ORObject> x) {
       if (![x isKindOfClass:[ORNEqual class]])

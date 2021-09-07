@@ -436,7 +436,7 @@
    else if (noy)
       return [self deltaWhenAssign:x to:yval];
    //Both are present in the sum.
-   ORInt* coefs = (ORInt*)[(id)_coefs base];
+   ORInt* coefs = (ORInt*)[(id)_coefs baseInt];
    ORInt *tx = _map[xid], *ty = _map[yid];
    ORInt nx = _msz[xid],ny = _msz[yid];
    ORInt i=0,j=0;

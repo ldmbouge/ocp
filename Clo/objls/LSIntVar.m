@@ -24,7 +24,7 @@
 -(NSString*) description;
 -(ORBool)isEqual: (id) object;
 -(NSUInteger) hash;
--(ORUInt)getId;
+-(ORInt)getId;
 @end
 
 @implementation LSIntVarSnapshot
@@ -35,7 +35,7 @@
    _value = v->_value;
    return self;
 }
--(ORUInt)getId
+-(ORInt)getId
 {
    return _name;
 }

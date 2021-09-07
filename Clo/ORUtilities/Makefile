@@ -1,18 +1,18 @@
 GNUSTEP_MAKEFILES=/opt/kitkit-1.0-rc1/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang-3.5
+OC = clang
 #GNUstep = /opt/kitkit-1.0-rc1
 GNUstep = /usr/include/GNUstep
 #CFLAGS = -I$(GNUstep) -I. -I.. -fPIC -msse4.1 \
 #	-fblocks -fobjc-nonfragile-abi  $(USER_DEFINES)
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. -fPIC -msse4.1 -fblocks -fobjc-nonfragile-abi
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES)
+CFLAGS = `gnustep-config --objc-flags`  -fobjc-runtime=gnustep $(USER_DEFINES) -I. -I.. -fPIC -msse4.1 -fblocks
+LFLAGS = `gnustep-config --base-libs` -fobjc-runtime=gnustep $(USER_DEFINES)
 
 #LFLAGS = -dynamic -g -L$(GNUstep)/lib -lgnustep-base -lobjc $(USER_DEFINES)
 
-SRCS = ORConcurrencyI.m  ORCrFactory.m  ORMallocWatch.m  ORInterval.mm cont.m context.m ORUtilities.m 
+SRCS = ORConcurrencyI.m  ORCrFactory.m  ORMallocWatch.m  ORInterval.mm cont.m context.m ORUtilities.m ORPQueue.m
 
 #	./NSBoardController.m
 

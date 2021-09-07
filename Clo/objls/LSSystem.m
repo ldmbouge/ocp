@@ -12,6 +12,7 @@
 #import "LSSystem.h"
 #import <objls/LSIntVar.h>
 #import "LSEngineI.h"
+#import "LSVar.h"
 #import "LSCount.h"
 
 typedef struct LSConstraintList {
@@ -138,7 +139,7 @@ typedef struct LSConstraintList {
       }
       [_engine add:[LSFactory sum:_vv[k] over:cvk]];
    }
-   _vvBase = (id*)[(id)_vv base];
+   _vvBase = (id*)[_vv base];
 }
 -(ORBool)isTrue
 {
@@ -376,7 +377,7 @@ typedef struct LSConstraintList {
          [_engine add: [LSFactory inv: lcvk[i] equal: ^{ return [_lambda[i] value] * [cvk[i] value];} vars:@[_lambda[i],cvk[i]]]];
       [_engine add:[LSFactory sum:_wvv[k] over:lcvk]];
    }
-   _vvBase = (id*)[(id)_vv base];
+   _vvBase = (id*)[_vv base];
 }
 -(ORBool)isTrue
 {
@@ -509,7 +510,7 @@ typedef struct LSConstraintList {
    } else {
       // We have x and y showing up somewhere in the system. Pick the constraints of x and y
       // and scan them, sending deltaWhenXXX messages as appropriate (whether x alone, y alone or both together)
-      id<LSIntVar>* lambda = (id<LSIntVar>*)[(id)_lambda base];
+      id<LSIntVar>* lambda = (id<LSIntVar>*)[_lambda base];
       ORInt ttl = 0;
       ORInt nx = _cstrOnVars[xid]._n,ny = _cstrOnVars[yid]._n;
       id<LSConstraint> *cx = _cstrOnVars[xid]._t,*cy = _cstrOnVars[yid]._t;

@@ -16,22 +16,22 @@
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
--(void)setId:(ORUInt)name;
+-(void)setId:(ORInt)name;
 -(void) visit: (ORVisitor*) visitor;
 @end;
 
 
 @interface ORObject : NSObject<ORObject> {
 @public
-   ORUInt  _name;
+   ORInt  _name;
 @package
    ORUInt  _rc;
    BOOL    _ba[4];
 }
 -(id) init;
--(void) setId:(ORUInt)name;
--(ORUInt) getId;
+-(void) setId:(ORInt)name;
+-(ORInt) getId;
 -(id) takeSnapshot: (ORInt) id;
 @end
 
-static inline ORUInt getId(const ORObject* ptr) { return ptr->_name;}
+static inline ORInt getId(const ORObject* ptr) { return ptr->_name;}

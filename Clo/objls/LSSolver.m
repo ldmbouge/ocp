@@ -244,7 +244,7 @@
 -(void)selectOpt:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block dir:(ORFloat)dir
 {
    ORRandomStreamI* stream = [[ORRandomStreamI alloc] init];
-   float bestFound = MAXFLOAT;
+   float bestFound = FLT_MAX;
    ORLong bestRand = 0x7fffffffffffffff;
    ORInt indexFound = MAXINT;
    const ORInt low = r.low,up = r.up;
@@ -269,7 +269,7 @@
 -(void)selectOpt:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block dir:(ORFloat)dir
 {
    ORRandomStreamI* stream = [[ORRandomStreamI alloc] init];
-   float bestFound = MAXFLOAT;
+   float bestFound = FLT_MAX;
    ORLong bestRand = 0x7fffffffffffffff;
    ORInt indexFound = MAXINT;
    const ORInt low = r.low,up = r.up;

@@ -99,31 +99,34 @@
    if (idx < [_varShots count])
       return [_varShots objectAtIndex:idx];
    else
-      return nil;
+     return nil;
 }
 -(ORInt) intValue: (id) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   id snap = [_varShots objectAtIndex:idx];
-   return [snap intValue];
+  ORInt vid = [var getId];
+  for(id obj in _varShots) {
+    if ([obj getId] == vid)
+      return [obj intValue];
+  }
+  return 0;
 }
 -(ORBool) boolValue: (id) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   id snap = [_varShots objectAtIndex:idx];
-   return [snap intValue];
+  ORInt vid = [var getId];
+  for(id obj in _varShots) {
+    if ([obj getId] == vid)
+      return [obj intValue];
+  }
+  return 0;
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   id<ORQueryFloatVar> snap = [_varShots objectAtIndex:idx];
-   return [snap floatValue];
+  ORInt vid = [var getId];
+  for(id obj in _varShots) {
+    if ([obj getId] == vid)
+      return [obj floatValue];
+  }
+  return 0;
 }
 -(NSUInteger) count
 {
@@ -149,9 +152,11 @@
    else
       [buf appendString:@"SOL("];
    NSUInteger last = [_varShots count] - 1;
-   [_varShots enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+   int idx=0;
+   for(id obj in _varShots) {
       [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
-   }];
+      ++idx;
+   }     
    return buf;
 }
 @end
@@ -187,9 +192,9 @@
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block
 {
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
-      block(obj);
-   }];
+  for(id obj in _all) {
+    block(obj);
+  }
 }
 
 -(id<ORInformer>)solutionAdded
@@ -201,9 +206,8 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+   for(id obj in _all)
       [buf appendFormat:@"\t%@\n",obj];
-   }];
    [buf appendFormat:@"]"];
    return buf;
 }
@@ -212,19 +216,19 @@
 {
    __block id<ORSolution> sel = nil;
    __block id<ORObjectiveValue> bestSoFar = nil;
-   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
-      if (bestSoFar == nil) {
-         bestSoFar = [obj objectiveValue];
-         sel = obj;
-      }
-      else {
-         id<ORObjectiveValue> nv = [obj objectiveValue];
-         if ([bestSoFar compare: nv] == 1) {
-            bestSoFar = nv;
-            sel = obj;
-         }
-      }
-   }];
+   for(id obj in _all) {
+     if (bestSoFar == nil) {
+       bestSoFar = [obj objectiveValue];
+       sel = obj;
+     }
+     else {
+       id<ORObjectiveValue> nv = [obj objectiveValue];
+       if ([bestSoFar compare: nv] == 1) {
+	 bestSoFar = nv;
+	 sel = obj;
+       }
+     }
+   }
    return [sel retain];
 }
 @end

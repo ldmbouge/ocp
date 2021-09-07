@@ -70,17 +70,24 @@
    [m applyOnVar:^(id<ORObject> x) {
       [_into addVariable: [self flattenIt: x]];
    }
-      onMutables:^(id<ORObject> x) {
-         [_into addMutable:[self flattenIt:x]];
-      }
-    onImmutables:^(id<ORObject> x) {
+   onMutables:^(id<ORObject> x) {
+       [_into addMutable:[self flattenIt:x]];
+     }
+   onImmutables:^(id<ORObject> x) {
        [_into addImmutable: x];
     }
    onConstraints:^(id<ORObject> c) {
+<<<<<<< HEAD
       [_into addConstraint:[self flattenIt:c]];
    }
      onObjective:^(id<ORObject> o) {
         [self flattenIt:o];
+=======
+       [_into addConstraint:[self flattenIt:c]];
+     }
+   onObjective:^(id<ORObject> o) {
+       [self flattenIt:o];
+>>>>>>> b06321fb80cddb02e5113bb0dde62ad00d6425ca
      }];
 }
 

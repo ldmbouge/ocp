@@ -22,7 +22,6 @@
    LSPriority* _prev;
 }
 -(id)init:(LSPrioritySpace*)ps;
-
 @end
 
 @interface LSPrioritySpace : NSObject {

@@ -21,7 +21,7 @@
 @protocol LSIntVar;
 
 @protocol LSVar <LSObject>
--(ORUInt)getId;
+-(ORInt)getId;
 -(id<LSEngine>)engine;
 -(NSUInteger)inDegree;
 -(id<LSPriority>)rank;
@@ -72,6 +72,7 @@
 -(id<LSIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<LSIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
+-(id*)base;
 @end
 
 id<LSIntVarArray> sortById(id<LSIntVarArray> array);

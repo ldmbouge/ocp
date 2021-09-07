@@ -16,7 +16,13 @@
 #include <stdio.h>
 #include <math.h>
 #include <fenv.h>
+<<<<<<< HEAD
 //#include <limits>
+=======
+#if !defined(__APPLE__)
+#include <limits>
+#endif
+>>>>>>> b06321fb80cddb02e5113bb0dde62ad00d6425ca
 #include <immintrin.h> 
 #include <smmintrin.h>
 #include <assert.h>

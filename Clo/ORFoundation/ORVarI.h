@@ -25,7 +25,7 @@
 -(ORInt) value;
 -(ORInt)scale;
 -(ORInt)shift;
--(id<ORIntVar>)base;
+-(id<ORIntVar>)baseVar;
 -(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
@@ -36,7 +36,7 @@
 -(ORIntVarAffineI*)initORIntVarAffineI:(id<ORTracker>)tracker var:(id<ORIntVar>)x scale:(ORInt)a shift:(ORInt)b;
 -(ORInt)scale;
 -(ORInt)shift;
--(id<ORIntVar>)base;
+-(id<ORIntVar>)baseVar;
 -(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
@@ -45,7 +45,7 @@
 @interface ORIntVarLitEQView : ORIntVarI
 -(ORIntVarLitEQView*)initORIntVarLitEQView:(id<ORTracker>)tracker var:(id<ORIntVar>)x eqi:(ORInt)lit;
 -(ORInt)literal;
--(id<ORIntVar>)base;
+-(id<ORIntVar>)baseVar;
 -(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
