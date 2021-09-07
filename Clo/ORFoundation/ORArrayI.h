@@ -37,10 +37,10 @@
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
--(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
+-(void)enumInterateWith:(void(^)(ORInt obj,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
--(int*)base;
+-(int*)baseInt;
 @end
 
 @interface ORFloatArrayI : ORObject<NSCoding,ORFloatArray>

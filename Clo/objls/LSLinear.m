@@ -55,7 +55,7 @@ typedef struct LSOccurrence {
    _c = c;
    _t = ty;
    _posted = NO;
-   _cBase  = (ORInt*)[(id)_coefs base];
+   _cBase  = (ORInt*)[(id)_coefs baseInt];
    return self;
 }
 -(void)dealloc

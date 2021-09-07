@@ -1,5 +1,5 @@
 OC = clang
-CFLAGS = `gnustep-config --debug-flags` -msse4.1 -fblocks -fobjc-nonfragile-abi -fobjc-runtime=gnustep \
+CFLAGS = `gnustep-config --debug-flags` -msse4.1 -fblocks -fobjc-runtime=gnustep \
 	$(USER_DEFINES) -I. -I.. \
 	-msse4.1 
 

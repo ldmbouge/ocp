@@ -108,7 +108,7 @@
    free(_array);
    [super dealloc];
 }
--(int*)base
+-(int*)baseInt
 {
    return _array;
 }
