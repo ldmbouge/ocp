@@ -11,28 +11,28 @@ all: $(TARGETS)
 	@mkdir -p bin
 	@cp -ar ../data/* bin
 	@python bench.py
-	@make -s -j$(PAR) -f bench.make
+	+@$(MAKE) -s -j$(PAR) -f bench.make
 	@echo "Done all..."
 
 objcp:
-	@make -s -C objcp -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+	$(MAKE) -s -C objcp -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 ORUtilities:
-	@make -s -C ORUtilities -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS)  $(CFL)'
+	$(MAKE) -s -C ORUtilities -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS)  $(CFL)'
 ORFoundation:
-	@make -s -C ORFoundation -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+	$(MAKE) -s -C ORFoundation -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 ORModeling:
-	@make -s -C ORModeling -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+	$(MAKE) -s -C ORModeling -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 CPUKernel:
-	@make -s -C CPUKernel -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+	$(MAKE) -s -C CPUKernel -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 ORProgram:
-	@make -s -C ORProgram -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+	+$(MAKE) -s -C ORProgram -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 
 clean:
-	@make -C objcp clean
-	@make -C ORUtilities clean
-	@make -C ORFoundation clean
-	@make -C ORModeling clean
-	@make -C ORProgram clean
-	@make -C CPUKernel clean
-	@make -f bench.make clean
+	@$(MAKE) -C objcp clean
+	@$(MAKE) -C ORUtilities clean
+	@$(MAKE) -C ORFoundation clean
+	@$(MAKE) -C ORModeling clean
+	@$(MAKE) -C ORProgram clean
+	@$(MAKE) -C CPUKernel clean
+	@$(MAKE) -f bench.make clean
 	rm -rf bin

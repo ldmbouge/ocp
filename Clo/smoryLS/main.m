@@ -53,12 +53,11 @@ int main(int argc, const char * argv[])
          __block BOOL found = NO;
          __block ORInt it = 0;
          [cp solve:^{
-          printf("VIOL: %d\n",cp.getViolations);
-          for(int k=0;k < ca.count;k++) {
-            printf("\tviol(ca[%d]) = %d\n",k,[cp getCstrViolations:ca[k]]);
-          }
-
-	  id<ORUniformDistribution> d = [ORFactory uniformDistribution:cp range:Digit];
+	     printf("VIOL: %d\n",cp.getViolations);
+	     for(int k=0;k < ca.count;k++) {
+	       printf("\tviol(ca[%d]) = %d\n",k,[cp getCstrViolations:ca[k]]);
+	     }
+	     id<ORUniformDistribution> d = [ORFactory uniformDistribution:cp range:Digit];
             for(id<ORIntVar> xi in x)
                [cp label:xi with:[d next]];
             ORBounds b = idRange(x,(ORBounds){FDMAXINT,0});
@@ -69,22 +68,22 @@ int main(int argc, const char * argv[])
 	      for(int k=0;k < ca.count;k++) {
 		printf("\tviol(ca[%d]) = %d\n",k,[cp getCstrViolations:ca[k]]);
 	      }
-               [cp selectRandom:car suchThat:^ORBool(ORInt i) { return [cp getCstrViolations:ca[i]] > 0;} do:^(ORInt i) {
-                  id<ORConstraint> ci = ca[i];
-                  [cp sweep:sw with:^{
-                     for(id<ORIntVar> xv in [ci allVars]) {
-                        if ([tabu at:getId(xv)] > it) continue;
-                        for(ORInt val = xv.domain.low; val <= xv.domain.up; val++) {
-                           if ([cp deltaWhenAssign:xv to:val inConstraint:ci] >= 0) continue;
-                           [sw neighbor:[cp deltaWhenAssign:xv to:val] do:^{
-                              [cp label:xv with:val];
-                              [tabu set:it+5 at:getId(xv)];
-                              printf("(%d)",[cp getViolations]);fflush(stdout);
-                           }];
-                        }
-                     }
-                  }];
-               }];
+	      [cp selectRandom:car suchThat:^ORBool(ORInt i) { return [cp getCstrViolations:ca[i]] > 0;} do:^(ORInt i) {
+		    id<ORConstraint> ci = ca[i];
+		    [cp sweep:sw with:^{
+			for(id<ORIntVar> xv in [ci allVars]) {
+			  if ([tabu at:getId(xv)] > it) continue;
+			  for(ORInt val = xv.domain.low; val <= xv.domain.up; val++) {
+			    if ([cp deltaWhenAssign:xv to:val inConstraint:ci] >= 0) continue;
+			    [sw neighbor:[cp deltaWhenAssign:xv to:val] do:^{
+				  [cp label:xv with:val];
+				  [tabu set:it+5 at:getId(xv)];
+				  printf("(%d)",[cp getViolations]);fflush(stdout);
+				}];
+			  }
+			}
+		      }];
+		  }];
                it++;
             }
             if ([cp intValue:M] == 0) {

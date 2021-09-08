@@ -43,6 +43,7 @@ int main (int argc, const char * argv[])
          fscanf(f,"%d \n",&nb);
          printf("number of entries %d \n",nb);
          id<ORModel> mdl = [ORFactory createModel];
+         [ORStreamManager setRandomized];
          id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntRange> R = RANGE(mdl,1,9);
          id<ORIntVarMatrix> x = [ORFactory intVarMatrix: mdl range: R : R domain: R];
@@ -83,7 +84,7 @@ int main (int argc, const char * argv[])
                             ORInt delta = [cp deltaWhenSwap:x1 with:x2];
                             //printf("Delta for swap(%d,%d): %d\n",getId(x1),getId(x2),delta);
                             [ms neighbor:delta do:^{
-                               //printf("from %d swap(%d,%d) \tdelta = %d\n",[cp getViolations],getId(x1),getId(x2),delta);
+                               printf("from %d swap(%d,%d) \tdelta = %d\t it=%d\n",[cp getViolations],getId(x1),getId(x2),delta,it);
                                [cp swap:x1 with:x2];
                                [tabu set:it+tLen at:getId(x1) :getId(x2)];
                                [tabu set:it+tLen at:getId(x2) :getId(x1)];

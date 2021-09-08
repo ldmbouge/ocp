@@ -21,20 +21,139 @@
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
 
+typedef struct HTNode {
+    void* key;
+    void* data;
+    struct HTNode* next;
+} HTNode;
+
+@interface HashPointerMap : NSObject {
+    HTNode** _tab;
+    int _mxs;
+    int _sz;
+}
+-(HashPointerMap*)init:(int)sz;
+-(void)clear;
+-(void)insertObject:(void*)obj forKey:(void*)key;
+-(void*)getObject:(void*)key;
+@end
+
+@implementation HashPointerMap
+-(HashPointerMap*)init:(int)sz
+{
+    static const int _primes[] = {
+        2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,
+        73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,
+        163,167,173,179,181,191,193,197,199,211,223,227,229,233,
+        239,241,251,257,263,269,271,277,281,283,293,307,311,313,317
+    };
+    static const int tsz = sizeof(_primes)/sizeof(int);
+    int low = 0,up = tsz - 1;
+    while (low <= up) {
+        int m = (low + up)/2;
+        if (sz < _primes[m])
+            up = m - 1;
+        else if (sz > _primes[m])
+            low = m + 1;
+        else {
+            low = up = m;
+            break;
+        }
+    }
+    self = [super init];
+    _mxs = low >= tsz ? sz : _primes[low];
+    _sz  = 0;
+    _tab = malloc(sizeof(void*)*_mxs);
+    bzero(_tab, sizeof(void*)*_mxs);
+    return self;
+}
+-(void)dealloc
+{
+    [self clear];
+    free(_tab);
+    [super dealloc];
+}
+-(HashPointerMap*)copy
+{
+    HashPointerMap* m = [[HashPointerMap alloc] init:_mxs];
+    for(int k=0;k < _mxs;k++) {
+        HTNode* cur = _tab[k];
+        while (cur) {
+            HTNode* nxt = cur->next;
+            [m insertObject:cur->data forKey:cur->key];
+            cur = nxt;
+        }
+    }
+    return m;
+}
+-(int)size
+{
+    return _sz;
+}
+-(void)clear
+{
+    for(int k=0;k < _mxs;k++) {
+        HTNode* cur = _tab[k];
+        while (cur) {
+            HTNode* nxt = cur->next;
+            free(cur);
+            cur = nxt;
+        }
+        _tab[k] = 0;
+    }
+}
+-(void)insertObject:(void*)obj forKey:(void*)key
+{
+    int at = ((long)key >> 2) % _mxs;
+    HTNode* head = _tab[at];
+    HTNode* cur  = head;
+    while(cur != 0) {
+        if (cur->key == key) {
+            cur->data = obj;
+            return;
+        }
+        cur = cur->next;
+    }
+    HTNode* link = _tab[at];
+    _tab[at] = malloc(sizeof(HTNode));
+    _tab[at]->next = link;
+    _tab[at]->data = obj;
+    _tab[at]->key  = key;
+    _sz++;
+}
+-(void*)getObject:(void*)key
+{
+    int at = ((long)key >> 2) % _mxs;
+    HTNode* cur = _tab[at];
+    while (cur != 0) {
+        if (cur->key == key)
+            return cur->data;
+        cur = cur->next;
+    }
+    return 0;
+}
+-(void)enumerateKeyValue:(void(^)(void* key,void* value))body
+{
+    for(int k=0;k < _mxs;k++) {
+        HTNode* cur = _tab[k];
+        while (cur) {
+            HTNode* nxt = cur->next;
+            body(cur->key,cur->data);
+            cur = nxt;
+        }
+    }
+}
+@end
 
 @implementation ORTau
 {
-   NSMapTable* _mapping;
+   //NSMapTable* _mapping;
+    HashPointerMap* _mapping;
 }
 -(ORTau*) initORTau
 {
    self = [super init];
-   /*   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
-                                        valueOptions:NSPointerFunctionsOpaqueMemory
-					capacity:64];*/
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
-                                        valueOptions:NSPointerFunctionsStrongMemory
-                                            capacity:64];
+    _mapping = [[HashPointerMap alloc] init:64];
    return self;
 }
 -(void) dealloc
@@ -44,11 +163,11 @@
 }
 -(void) set: (id) value forKey: (id) key
 {
-   [_mapping setObject: value forKey: key];
+   [_mapping insertObject: (void*) value forKey: (void*) key];
 }
 -(id) get: (id) key
 {
-   return [_mapping objectForKey: key];
+   return (id)[_mapping getObject:(void*) key];
 }
 -(id) copyWithZone: (NSZone*) zone
 {
@@ -60,14 +179,11 @@
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
    @autoreleasepool {
-      NSEnumerator* i = [_mapping keyEnumerator];
-      id key;
-      [buf appendString:@"{"];
-      while ((key = [i nextObject]) !=nil) {
-         id obj = [_mapping objectForKey:key];
-         [buf appendFormat:@"%@ -> %@,",key,obj];
-      }
-      [buf appendString:@"}"];
+       [buf appendString:@"{"];
+       [_mapping enumerateKeyValue:(void (^)(void*,void*))^(id key, id obj) {
+            [buf appendFormat:@"%@ -> %@,",key,obj];
+       }];
+       [buf appendString:@"}"];
    }
    return buf;
 }
