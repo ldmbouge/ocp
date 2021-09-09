@@ -1,4 +1,4 @@
-LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram 
+LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram objls objmp
 TARGETS = $(LIBS) 
 PAR=3
 VIEWS=1
@@ -16,6 +16,10 @@ all: $(TARGETS)
 
 objcp:
 	$(MAKE) -s -C objcp -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+objls:
+	$(MAKE) -s -C objls -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+objmp:
+	$(MAKE) -s -C objmp -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 ORUtilities:
 	$(MAKE) -s -C ORUtilities -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS)  $(CFL)'
 ORFoundation:
