@@ -21,44 +21,52 @@ typedef struct _CPBitAssignment CPBitAssignment;
 
 @interface BitLiteral : NSObject{
    @public
-   CPBitAssignment    *_a;
-   ORDouble         _count;
+   CPBitVarI       *_var;
+   ORUInt           _index;
+   ORDouble         _tCount;
+   ORDouble         _fCount;
 }
--(id) initBitLiteral:(CPBitAssignment*)a withCount:(ORDouble)c;
+-(id) initBitLiteral:(CPBitVarI*)v at:(ORUInt)i withTCount:(ORDouble)tc andFCount:(ORDouble)fc;
 -(BOOL) isEqual:(BitLiteral*)object;
+-(ORDouble) maxCount;
 -(NSUInteger) hash;
 -(NSString*)description;
 @end
 
 @implementation BitLiteral
--(id) initBitLiteral:(CPBitAssignment*)a withCount:(ORDouble)c
+-(id) initBitLiteral:(CPBitVarI*)v at:(ORUInt)i withTCount:(ORDouble)tc andFCount:(ORDouble)fc
 {
-   _a = a;
-   _count = c;
+   _var = v;
+   _index = i;
+   _tCount = tc;
+   _fCount = fc;
    return self;
 }
 -(BOOL) isEqual:(BitLiteral*)object
 {
-   return ([_a->var getId] == [object->_a->var getId]) &&
-            (_a->index == object->_a->index) &&
-            (_a->value == object->_a->value);
+   return ([_var getId] == [object->_var getId]) &&
+            (_index == object->_index);
 }
 -(NSUInteger)hash {
-   NSUInteger bvId = [_a->var getId];
-   NSUInteger h = (bvId << 32) + (_a->index <<1) + (_a->value ? 1 : 0);
+   NSUInteger bvId = [_var getId];
+   NSUInteger h = (bvId << 32) + _index;
    
    return h;
 }
+
+-(ORDouble) maxCount {
+   return max(_tCount, _fCount);
+}
+
 -(NSString*)description
 {
-   NSUInteger bvId = [_a->var getId];
-   NSUInteger h = (bvId << 32) + (_a->index <<1) + (_a->value ? 1 : 0);
+   NSUInteger bvId = [_var getId];
+   NSUInteger h = (bvId << 32) + _index;
    
    NSMutableString* string = [NSMutableString stringWithString:@"Bit Literal with var: "];
-   [string appendString:[NSString stringWithFormat:@"%@ ",_a->var]];
-   [string appendString:[NSString stringWithFormat:@"[%d] ", _a->index]];
-   [string appendString:[NSString stringWithFormat:@"= %d,  ",_a->value]];
-   [string appendString:[NSString stringWithFormat:@"with key:%ld and count: %.6f", h, _count]];
+   [string appendString:[NSString stringWithFormat:@"%@ ",_var]];
+   [string appendString:[NSString stringWithFormat:@"[%d] ", _index]];
+   [string appendString:[NSString stringWithFormat:@"with key:%ld t-count %.6f and f-count: %.6f", h, _tCount, _fCount]];
    
    return string;
 
@@ -70,18 +78,18 @@ void heapSiftDown(BitLiteral** heap, ORUInt index, ORUInt size)
    ORUInt leftChild = (2*index)+1;
    ORUInt rightChild = (2*index)+2;
    
-   ORBool leftBigger = (leftChild < size) && (heap[leftChild]->_count > heap[index]->_count);
-   ORBool rightBigger = (rightChild < size) && (heap[rightChild]->_count > heap[index]->_count);
+   ORBool leftBigger = (leftChild < size) && ([heap[leftChild] maxCount] > [heap[index] maxCount]);
+   ORBool rightBigger = (rightChild < size) && ([heap[rightChild] maxCount] > [heap[index] maxCount]);
    
    BitLiteral* tempLiteral;
    
-   if(leftBigger && (!rightBigger || heap[leftChild]->_count >= heap[rightChild]->_count)){
+   if(leftBigger && (!rightBigger || [heap[leftChild] maxCount] >= [heap[rightChild] maxCount])){
       tempLiteral = heap[index];
       heap[index] = heap[leftChild];
       heap[leftChild] = tempLiteral;
       heapSiftDown(heap, leftChild, size);
    }
-   else if(rightBigger && (!leftBigger || heap[rightChild]->_count >= heap[leftChild]->_count)){
+   else if(rightBigger && (!leftBigger || [heap[rightChild] maxCount] >= [heap[leftChild] maxCount])){
       tempLiteral = heap[index];
       heap[index] = heap[rightChild];
       heap[rightChild] = tempLiteral;
@@ -99,7 +107,7 @@ void heapRemove(BitLiteral** heap, ORUInt* size){
 }
 void heapSiftUp(BitLiteral** heap, ORUInt index){
    ORUInt parent = floor((index-1)/2);
-   if(index == 0 || heap[parent]->_count > heap[index]->_count)
+   if(index == 0 || [heap[parent] maxCount] > [heap[index] maxCount])
       return;
    BitLiteral* tempLiteral = heap[parent];
    heap[parent] = heap[index];
@@ -128,13 +136,14 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
 @implementation CPBitVarVSIDS {
    id<CPEngine>    _engine;
    
-   ORBool   _alternateHeuristic;
-   
-   //DDeg alternate heuristic
    ORUInt*          _map;
 //   id<CPCommonProgram>     _cp;
    ORULong          _nbv;
    NSSet* __strong*     _cv;
+   
+   ORDouble _reduction;
+   
+   id<ORZeroOneStream>   _valStream;
 }
 -(CPBitVarVSIDS*)initCPBitVarVSIDS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
@@ -143,9 +152,11 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
-   _countMax = 16;
+   _countMax = 1;
    _count = _countMax;
-   _alternateHeuristic = false;
+   _reduction = 0.75;
+   
+//   _valStream = [ORFactory zeroOneStream:_engine];
    
    _heapCap = 0x1 << 20;
    _heap = malloc(sizeof(BitLiteral*)*_heapCap);
@@ -191,9 +202,16 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    
    CPBitAssignment* a = malloc(sizeof(CPBitAssignment));
    do {
-      a->var = _heap[0]->_a->var;
-      a->index = _heap[0]->_a->index;
-      a->value = _heap[0]->_a->value;
+      
+      for(BitLiteral* lit in _assignedLiterals)
+         assert(![lit->_var isFree:lit->_index]);
+
+      a->var = _heap[0]->_var;
+      a->index = _heap[0]->_index;
+//      if(_heap[0]->_tCount == _heap[0]->_fCount)
+//         a->value = [_valStream next] > 0.5;
+//      else
+         a->value = _heap[0]->_tCount > _heap[0]->_fCount;
       
       [_assignedLiterals addObject:_heap[0]];
       
@@ -221,8 +239,8 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
       maxID = max(maxID,[t at:k].getId);
    _cv = malloc(sizeof(NSSet*)*len);
    _map = malloc(sizeof(ORUInt)*(maxID+1));
-   memset(_cv,sizeof(NSSet*)*len,0);
-   memset(_map,sizeof(ORUInt)*(maxID+1),0);
+   memset(_cv,0,sizeof(NSSet*)*len);
+   memset(_map,0,sizeof(ORUInt)*(maxID+1));
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
       _map[_cvs[k].getId] = k - low;
@@ -230,12 +248,16 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    }
    _nbv = len;
    
-   NSUInteger bvId;
-   NSUInteger key;
+   ORULong bvId;
+   ORULong key;
    BitLiteral* lit;
-   CPBitAssignment* a;
+//   CPBitAssignment* a;
    ORDouble count;
-
+   ORDouble tBoost, fBoost;
+   ORUInt freeBits;
+   ORUInt i, bit,  mask;
+   NSSet* constraints;
+   
 //   NSEnumerator *iter = [[_engine variables] objectEnumerator];
    CPBitVarI* x;
 
@@ -247,47 +269,44 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
       if([x bound])
          continue;
       count=0.0;
+      ULRep xr = getULVarRep(x);
+      TRUInt *xLow = xr._low, *xUp = xr._up;
+      
+      constraints = [(CPBitVarI*)x constraints];
+      
+      for(ORInt k=0;k<[x getWordLength];k++){
+         freeBits = xLow[k]._val ^ xUp[k]._val;
+         bvId = [(CPBitVarI*)x getId];
+         
+         while(freeBits != 0){
+            bit  =  BITSPERWORD - __builtin_clz(freeBits) - 1;
+            i = (k * BITSPERWORD) + bit;
 
-      NSSet* constraints = [(CPBitVarI*)x constraints];
-      count = [constraints count];
-
-      ORDouble tBoost, fBoost;
-   
-      for(ORInt i=[(CPBitVarI*)x bitLength]-1; i>=0;i--){
-//      for(ORInt i=0; i<[(CPBitVarI*)x bitLength];i++){
-         if([(CPBitVarI*)x isFree:i]){
             tBoost = fBoost = 0.0;
             for(id obj in constraints) {
+//               count += [obj nbUVars]-1;
                tBoost += [obj prefer:x at:i with:true];
                fBoost += [obj prefer:x at:i with:false];
             }
 
-            bvId = [(CPBitVarI*)x getId];
-            key = (bvId << 32) + (i << 1);
+            key = (bvId << 32) + i;
+            
+//            ORUInt   d = [(CPBitVarI*)x domsize];
+            ORDouble t = (count+tBoost);//log2(d);
+            ORDouble f = (count+fBoost);//log2(d);
 
-            a = malloc(sizeof(CPBitAssignment));
-            a->var = x;
-            a->index = i;
-            a->value = true;
-            lit = [[BitLiteral alloc] initBitLiteral:a withCount:(count+tBoost)/log2([(CPBitVarI*)x domsize])];
-//            lit = [[BitLiteral alloc] initBitLiteral:a withCount:count+tBoost];
-            [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key+1]];
-            heapInsert(_heap, &_heapSize, &_heapCap, lit);
-
-            a = malloc(sizeof(CPBitAssignment));
-            a->var = x;
-            a->index = i;
-            a->value = false;
-            lit = [[BitLiteral alloc] initBitLiteral:a withCount:(count+fBoost)/log2([(CPBitVarI*)x domsize])];
-//            lit = [[BitLiteral alloc] initBitLiteral:a withCount:count+fBoost];
+            lit = [[BitLiteral alloc] initBitLiteral:x at:i withTCount:t andFCount:f];
             [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key]];
             heapInsert(_heap, &_heapSize, &_heapCap, lit);
+
+            mask = 0x1 << bit;
+            freeBits &= ~mask;
          }
       }
       [constraints dealloc];
    }
    
-   NSLog(@"Tracking %ld literals at start",(unsigned long)[_countedBits count]);
+   NSLog(@"Tracking %ld literal pairs at start",(unsigned long)[_countedBits count]);
 
    [[_engine callingContinuation] wheneverNotifiedDo:^{
 //      _heapSize = 0;
@@ -297,7 +316,7 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
 //      }];
       NSMutableSet *toRemove = [[NSMutableSet alloc] init];
       for(BitLiteral* lit in _assignedLiterals){
-         if([lit->_a->var isFree:lit->_a->index]){
+         if([lit->_var isFree:lit->_index]){
             heapInsert(_heap, &_heapSize, &_heapCap, lit);
             [toRemove addObject:lit];
          }
@@ -312,7 +331,8 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
       {
          //Reduce count for all currently counted literals
          [_countedBits enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            ((BitLiteral*)obj)->_count *= 0.5;
+                        ((BitLiteral*)obj)->_tCount *= _reduction;
+                        ((BitLiteral*)obj)->_fCount *= _reduction;
          }];
          _count = _countMax;
       }
@@ -328,36 +348,56 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
          for(ORUInt i=0;i<ants->numAntecedents;i++)
          {
             NSUInteger bvId = [ants->antecedents[i]->var getId];
-            NSUInteger key = (bvId << 32) + (ants->antecedents[i]->index << 1) + (ants->antecedents[i]->value ? 0 : 1);
+            NSUInteger key = (bvId << 32) + ants->antecedents[i]->index;
             
             BitLiteral* lit = (BitLiteral*)[_countedBits objectForKey:[NSNumber numberWithUnsignedLong:key]];
             
             if(lit){
-               (lit->_count) += (1.0 + [constraint nbUVars])/log2([lit->_a->var domsize]);
-//               (lit->_count) += 1.0 + [constraint prefer:lit->_a->var at:lit->_a->index with:lit->_a->value];
+
+               if (ants->antecedents[i]->value)
+                  (lit->_tCount)++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
+               else
+                  (lit->_fCount)++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
+               
             }
             //any unlocated literal counts should be for bits set before search started when branching on concrete variables,
             // must add if branching on model variables
             else if ((ORInt)[ants->antecedents[i]->var getLevelBitWasSet:ants->antecedents[i]->index]>4){
                NSSet* constraints = [ants->antecedents[i]->var constraints];
 
-               ORDouble count = 1.0;
-               
-               CPBitAssignment* a = malloc(sizeof(CPBitAssignment));
-               a->var = ants->antecedents[i]->var;
-               a->index = ants->antecedents[i]->index;
-               a->value = !ants->antecedents[i]->value;
+               ORDouble count = 0;
 
-               count += [constraints count];
+               ORDouble tc = 0.0;
+               ORDouble fc = 0.0;
+
                for(id obj in constraints) {
-                     count += [obj prefer:a->var at:a->index with:a->value];
+                  //count = [obj nbUVars]-1;
+                  if(obj == constraint)
+                     continue;
+                  tc += count + [obj prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
+                  fc += count + [obj prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
                }
-               count /= log2([a->var domsize]);
-//               lit = [[BitLiteral alloc] initBitLiteral:ants->antecedents[i] withCount: count];
-              lit = [[BitLiteral alloc] initBitLiteral:a withCount: count];
-               [_assignedLiterals addObject:lit];
+
+               ORUInt numReductions = [[ants->antecedents[i]->var engine] nbFailures] / _countMax;
+               ORDouble reduction = pow(_reduction, numReductions);
+               tc *= reduction;
+               fc *= reduction;
+               if (ants->antecedents[i]->value)
+                  fc++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
+               else
+                  tc++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
+
+//               ORUInt domsize = log2([ants->antecedents[i]->var domsize]);
+//               tc/=domsize;
+//               fc/=domsize;
+                lit = [[BitLiteral alloc] initBitLiteral:ants->antecedents[i]->var at:ants->antecedents[i]->index withTCount:tc andFCount:fc];
+
+               if([lit->_var isFree:lit->_index])
+                  heapInsert(_heap, &_heapSize, &_heapCap, lit);
+               else
+                  [_assignedLiterals addObject:lit];
+
                [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key]];
-//               [_countedBits setObject:lit forKey:[NSNumber numberWithUnsignedLong:key]];
                [constraints dealloc];
             }
          }

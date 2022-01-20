@@ -120,20 +120,18 @@
 {
    ORInt faillevel = (ORInt)[_tracer level];
    ORInt level = faillevel;
-   ORInt jumplevel = (ORInt)[((CPLearningEngineI*)_engine) getBackjumpLevel];
+   ORInt jumplevel = (ORInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
 
    id<ORCheckpoint> cp;
    NSCont* k;
    ORInt ofs = _sz-1;
    ORStatus status;
-//    ORStatus lastStatus = ORSuspend;
 
     if (jumplevel > 4){
         while ((level > jumplevel) && (_sz > 1)){
             ofs = _sz-1;
             if (ofs >= 0) {
                 cp = _cpTab[ofs];
-//               status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
                 level = [cp level];
                 [cp letgo];
                 [_tab[ofs] letgo];
@@ -144,8 +142,7 @@
     }
 
    do {
-       ofs = _sz-1;
-      
+      ofs = _sz-1;
       if (ofs >= 0) {
          cp = _cpTab[ofs];
          status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
@@ -157,23 +154,14 @@
           
 //          NSLog(@"Jumping from level %i back to level %i",faillevel, level);
 
-          if (k &&  (k.admin || status != ORFailure)) {
-             
-             
+         if (k &&  (k.admin || status != ORFailure)) {
              [[_engine callingContinuation] notify];
-//              if ((jumplevel > 0) && (level < faillevel) && !k.admin){
-//              if (((jumplevel > 0) && (level < faillevel-1)) &&  (lastStatus != ORFailure)){
-             
-              if ((jumplevel > 0) && (faillevel != jumplevel)) {
-
-//                 if (jumplevel > 0) {
-//             if((jumplevel > 0) && (lastStatus!=ORFailure)){
+//              if ((jumplevel > 0) && (faillevel > jumplevel))
+              if (jumplevel > 0)
                   [k callInvisible];
-              }
               else
                   [k call];
           } else {
-//            lastStatus = status;
             jumplevel = -1;
             if (k==nil)
                @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];

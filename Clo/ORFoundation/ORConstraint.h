@@ -609,6 +609,13 @@ enum ORGroupType {
 -(id<ORBitVar>) right;
 @end
 
+@protocol  ORBitXor3 <ORConstraint>
+-(id<ORBitVar>) res2;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @protocol  ORBitShiftL <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;

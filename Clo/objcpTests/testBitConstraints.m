@@ -13,6 +13,8 @@
 #import "testBitConstraints.h"
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORFactory.h>
+
 #import <ORFoundation/ORAVLTree.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
@@ -20,7 +22,12 @@
 #import <objcp/CPFactory.h>
 
 #import <objcp/CPConstraint.h>
+#import <ORProgram/CPProgram.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/CPProgram.h>
+
 #import <objcp/CPBitMacros.h>
+#import <objcp/CPFactory.h>
 #import <objcp/CPBitArray.h>
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPBitConstraint.h>
@@ -3959,6 +3966,150 @@ char *int2bin(int a, char *buffer, int buf_size) {
    
 }
 
+-(void) testBitDivide5
+{
+   NSLog(@"Begin Test 5 of bit divide constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[2];
+   unsigned int max[2];
+   
+   min[0] = 0;
+   min[1] = 0;
+   max[0] = 0xFFFFFFFF;
+   max[1] = 0xFFFFFFFF;
+   
+   unsigned int xval[1];
+   unsigned int yval[1];
+   xval[0] = 0;
+   yval[0] = 3;
+   
+   id<ORBitVar> x = [ORFactory bitVar:m low:xval up:xval bitLength:32];
+   id<ORBitVar> y = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> z = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> r = [ORFactory bitVar:m low:min up:max bitLength:32];
+   
+   id<ORBitVar> xprime = [ORFactory bitVar:m low:min up:max bitLength:64];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   NSLog(@"z = %@\n", z);
+   NSLog(@"r = %@\n", r);
+   NSLog(@"x' = %@\n", xprime);
+   
+   [m add:[ORFactory bit:x dividedbysigned:y eq:z rem:r]];
+   //   [m add:[ORFactory bit:x signExtendTo:xprime]];
+   [m add:[ORFactory bit:y times:z eq:xprime]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[z.getId] at:0];
+   [o set:gamma[r.getId] at:1];
+   [o set:gamma[xprime.getId] at:2];
+   
+   
+   id<CPBitVarHeuristic> h = (id<CPBitVarHeuristic>)[cp createDDeg];
+   [cp solve: ^(){
+      //      @try {
+      NSLog(@"After Posting:");
+      NSLog(@"x = %@\n", gamma[x.getId]);
+      NSLog(@"y = %@\n", gamma[y.getId]);
+      NSLog(@"z = %@\n", gamma[z.getId]);
+      NSLog(@"r = %@\n", gamma[r.getId]);
+      NSLog(@"x' = %@\n", gamma[xprime.getId]);
+      [cp labelBitVarHeuristic:h];
+      NSLog(@"Solution Found:");
+      NSLog(@"x = %@\n", gamma[x.getId]);
+      NSLog(@"y = %@\n", gamma[y.getId]);
+      NSLog(@"z = %@\n", gamma[z.getId]);
+      NSLog(@"r = %@\n", gamma[r.getId]);
+      NSLog(@"x' = %@\n", gamma[xprime.getId]);
+      //XCTAssertTrue([[x7 stringValue] isEqualToString:@"11111111111111111111111111111111"],@"testBitSUMConstraint: Bit Pattern for Cout is incorrect.");
+      NSLog(@"%@",[cp engine]);
+      NSLog(@"%@",cp);
+      //      }
+      //      @catch (NSException *exception) {
+      //         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      //      }
+   }];
+   NSLog(@"End Test 5 of bit divide constraint.\n");
+   
+}
+
+-(void) testBitDivide6
+{
+   NSLog(@"Begin Test 6 of bit divide constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[2];
+   unsigned int max[2];
+   
+   min[0] = 0;
+   min[1] = 0;
+   max[0] = 0xFFFFFFFF;
+   max[1] = 0xFFFFFFFF;
+   
+   unsigned int xval[1];
+   unsigned int yval[1];
+   xval[0] = 536869888;
+   yval[0] = 65535;
+   
+   id<ORBitVar> x = [ORFactory bitVar:m low:xval up:xval bitLength:32];
+   id<ORBitVar> y = [ORFactory bitVar:m low:yval up:yval bitLength:32];
+   id<ORBitVar> z = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> r = [ORFactory bitVar:m low:min up:max bitLength:32];
+   
+//   id<ORBitVar> xprime = [ORFactory bitVar:m low:min up:max bitLength:64];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   NSLog(@"z = %@\n", z);
+   NSLog(@"r = %@\n", r);
+//   NSLog(@"x' = %@\n", xprime);
+   
+   [m add:[ORFactory bit:x dividedbysigned:y eq:z rem:r]];
+   //   [m add:[ORFactory bit:x signExtendTo:xprime]];
+//   [m add:[ORFactory bit:y times:z eq:xprime]];
+   
+//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[z.getId] at:0];
+   [o set:gamma[r.getId] at:1];
+//   [o set:gamma[xprime.getId] at:2];
+   
+//   id<CPBitVarHeuristic> h = (id<CPBitVarHeuristic>)[cp createDDeg];
+   __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
+//   __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
+   [cp solve: ^(){
+      //      @try {
+      NSLog(@"After Posting:");
+      NSLog(@"x = %@\n", gamma[x.getId]);
+      NSLog(@"y = %@\n", gamma[y.getId]);
+      NSLog(@"z = %@\n", gamma[z.getId]);
+      NSLog(@"r = %@\n", gamma[r.getId]);
+//      NSLog(@"x' = %@\n", gamma[xprime.getId]);
+      //      [cp labelBitVarHeuristic:h];
+      [cp labelBitVarHeuristicVSIDS:h];
+      NSLog(@"Solution Found:");
+      NSLog(@"z = %@\n", gamma[z.getId]);
+      NSLog(@"r = %@\n", gamma[r.getId]);
+//      NSLog(@"x' = %@\n", gamma[xprime.getId]);
+      //XCTAssertTrue([[x7 stringValue] isEqualToString:@"11111111111111111111111111111111"],@"testBitSUMConstraint: Bit Pattern for Cout is incorrect.");
+      NSLog(@"%@",[cp engine]);
+      NSLog(@"%@",cp);
+      //      }
+      //      @catch (NSException *exception) {
+      //         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      //      }
+   }];
+   NSLog(@"End Test 6 of bit divide constraint.\n");
+   
+}
 
 
 //-(void) testBitLTx

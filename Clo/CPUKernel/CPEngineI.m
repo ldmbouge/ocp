@@ -439,7 +439,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",
+   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%llu propagations\n",
       [_vars count],[_cStore count],_nbpropag];
 }
 -(id) trail

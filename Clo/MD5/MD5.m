@@ -212,9 +212,10 @@
                   break;
       case BVIBS: h = [cp createBitVarIBS:(id<CPBitVarArray>)o];
          break;
-       case BVFF: //h =[cp createBitVarFF];
-                  //break;
-      default:    h =[cp createBitVarVSIDS];
+       case BVFF: h =[cp createBitVarFF];
+                  break;
+      default:    //h =[cp createBitVarVSIDS];
+          h =[cp createBitVarFF];
                   break;
    }
    
@@ -226,7 +227,8 @@
          NSLog(@"%@\n\n",[cp stringValue:digestVars[i]]);
       }
       clock_t searchStart = clock();
-      [cp labelBitVarHeuristicVSIDS:h];
+//      [cp labelBitVarHeuristicVSIDS:h];
+      [cp labelBitVarHeuristic:h];
       clock_t searchFinish = clock();
 
       for(int j=0;j<16;j++){

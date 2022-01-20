@@ -202,6 +202,7 @@
 -(void) visitBitAnd:(id<ORConstraint>)c;
 -(void) visitBitNot:(id<ORConstraint>)c;
 -(void) visitBitXor:(id<ORConstraint>)c;
+-(void) visitBitXor3:(id<ORConstraint>)c;
 -(void) visitBitShiftL:(id<ORConstraint>)c;
 -(void) visitBitShiftL_BV:(id<ORConstraint>)c;
 -(void) visitBitShiftR:(id<ORConstraint>)c;

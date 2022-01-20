@@ -1454,7 +1454,7 @@
 -(void) labelBitVarHeuristicVSIDS:(id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
 {
    do{
-      CPBitAssignment* lit = (CPBitAssignment*)[h getNextLiteral];
+      CPBitAssignment* lit = (CPBitAssignment*)[(CPBitVarVSIDS*) h getNextLiteral];
       
       if(!lit)
          return;

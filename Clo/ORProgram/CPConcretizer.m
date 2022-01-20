@@ -245,7 +245,7 @@
       [_engine add:cg];
       id<CPEngine> old = _engine;
       _engine = (id)cg;
-      [g enumerateObjectWithBlock:^(id<ORGroup> ck) {
+      [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
          [ck visit:self];
       }];
       _engine = old;
@@ -1279,6 +1279,19 @@
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
       id<CPConstraint> concreteCstr = [CPFactory bitXOR:x bxor:y equals:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitXor3:(id<ORBitXor3>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> w = [self concreteVar:[cstr res2]];
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitXOR:w bxor:x xor:y equals:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

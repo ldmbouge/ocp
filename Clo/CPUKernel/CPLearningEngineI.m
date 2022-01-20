@@ -89,14 +89,14 @@
 {
    ORStatus s;
    ORInt currLevel = [_tracer level];
-   //   NSLog(@"Restoring constraints at level %d",currLevel);
+//      NSLog(@"Restoring constraints at level %d",currLevel);
    // Add missing constraints back to constraint store here
    s = tryfail(^ORStatus{
       ORStatus status;
       for (int n = 0; n<_size; n++) {
-         if (_globalStore[n]->level > currLevel){
+         if (_globalStore[n]->level >  currLevel){
             status = [self addInternal:_globalStore[n]->constraint];
-            //            status=[self post:_globalStore[n]->constraint];
+                       // status=[self post:_globalStore[n]->constraint];
             if(status==ORFailure){
                return ORFailure;
             }
@@ -111,9 +111,12 @@
       return ORFailure;
    });
    
-   if (s==ORFailure)
+   if (s==ORFailure){
+//      _size--;
+//      [_globalStore[_size]->constraint dealloc];
+//      _backjumpLevel = -1;
       return ORFailure;
-   
+   }
    if (_objective == nil)
       return ORSuspend;
    return tryfail(^ORStatus{

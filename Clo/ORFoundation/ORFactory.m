@@ -1506,6 +1506,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker]trackObject:o];
    return o;
 }
++(id<ORConstraint>) bit:(id<ORBitVar>)w bxor:(id<ORBitVar>)x xor:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitXor3 alloc] initORBitXor:w bxor:x xor:y eq:z];
+   [[x tracker]trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) bit:(id<ORBitVar>)x shiftLBy:(ORInt)p eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitShiftL alloc] initORBitShiftL:x by:p eq:y];

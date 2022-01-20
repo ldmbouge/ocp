@@ -38,7 +38,7 @@
 -(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
     ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
-    [m applyOnVar:^(id<ORVar> x) {
+    [m applyOnVar:^(id<ORObject> x) {
         [x visit: lc];
     } onMutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
@@ -48,9 +48,9 @@
     } onImmutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
         [_into addImmutable: x];
-    } onConstraints:^(id<ORConstraint> c) {
+    } onConstraints:^(id<ORObject> c) {
         [c visit: lc];
-    } onObjective:^(id<ORObjectiveFunction> o) {
+    } onObjective:^(id<ORObject> o) {
         ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
         [o visit: lo];
     }];

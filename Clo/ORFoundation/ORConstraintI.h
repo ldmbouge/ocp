@@ -669,6 +669,14 @@
 -(id<ORBitVar>) right;
 @end
 
+@interface ORBitXor3 : ORConstraintI<ORBitXor3>
+-(ORBitXor3*)initORBitXor: (id<ORBitVar>) w bxor: (id<ORBitVar>) x xor:(id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) res2;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @interface ORBitShiftL : ORConstraintI<ORBitShiftL>
 -(ORBitShiftL*)initORBitShiftL: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
 -(ORInt) places;

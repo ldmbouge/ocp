@@ -69,7 +69,7 @@ static BOOL _alreadyAdded;
 {
     _notes = notes;
     _tau = [_into modelMappings].tau;
-    [m applyOnVar:^(id<ORVar> x) {
+    [m applyOnVar:^(id<ORObject> x) {
        [_into addVariable: [self flattenIt: x]];
     }
        onMutables:^(id<ORObject> x) {
@@ -78,14 +78,14 @@ static BOOL _alreadyAdded;
      onImmutables:^(id<ORObject> x) {
         [_into addImmutable: x];
      }
-    onConstraints:^(id<ORConstraint> c) {
+    onConstraints:^(id<ORObject> c) {
        _alreadyAdded = NO;
        id<ORConstraint> fc = [self flattenIt:c];
        if (!_alreadyAdded)
           [_into addConstraint:fc];
        //assert(_alreadyAdded == YES);
     }
-      onObjective:^(id<ORObjectiveFunction> o) {
+      onObjective:^(id<ORObject> o) {
          [self flattenIt:o];
       }];
 }

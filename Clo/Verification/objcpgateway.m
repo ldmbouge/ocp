@@ -314,19 +314,21 @@
 
 -(ORBool) objcp_check:(objcp_context) ctx{
    
-   clock_t start;
+   __block clock_t start;
    start = clock();
 
    __block ORBool sat = false;
    __block clock_t searchStart;
    __block clock_t searchFinish;
+   __block clock_t finish;
+
    double totalTime, searchTime;
    mallocWatch();
 
     id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:_model];
 //    id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgram:_model];
    
-//    __block id<CPBitVarHeuristic> h =[cp createBitVarFF];
+//   __block id<CPBitVarHeuristic> h =[cp createBitVarFF];
    __block id<CPBitVarHeuristic> h =[cp createBitVarVSIDS];
 //        __block id<CPBitVarHeuristic> h =[cp createSDeg];
 //   __block id<CPBitVarHeuristic> h =[cp createDDeg];
@@ -334,7 +336,7 @@
 //       __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
 
 //    __block NSMutableArray* engineVars = [[cp engine] variables];
-////    NSLog(@"%@",engineVars);
+//   NSLog(@"%@",engineVars);
 //    __block CPBitAntecedents* ants;
 //    __block CPBitAssignment** vars;
 //    __block id<CPBVConstraint> c;
@@ -349,12 +351,12 @@
 //           for (id var in _declarations)
 //              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
           searchStart = clock();
-//      [cp labelBitVarHeuristic:h];
+//           [cp labelBitVarHeuristic:h];
+//           [cp labelBitVarHeuristic:h restricted:[_model bitVars]];
       [cp labelBitVarHeuristicVSIDS:h];
           searchFinish = clock();
            for (id var in _declarations)
              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
-
 //          NSString *sep = @" ,";
 //          char binvalue[512];
 //          NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:sep];
@@ -376,9 +378,9 @@
    if(!sat && ((searchFinish - searchStart) < timeLimit))
       NSLog(@"Search Failure");
    
-   searchFinish = clock();
+   finish = clock();
    NSLog(@"%@",mallocReport());
-   totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+   totalTime =((double)(finish - start))/CLOCKS_PER_SEC;
    searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
    NSLog(@"      Search Time (s): %f",searchTime);
    NSLog(@"       Total Time (s): %f\n\n",totalTime);

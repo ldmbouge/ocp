@@ -122,12 +122,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    ORBool               _learningOn;
    ORUInt*              _bitChanges;
    ORUInt*              _lvls;
-   ORUInt*              _props;
+   ORULong*              _props;
    CPCoreConstraint**   _constraints;
    TRUInt               _top;
    ORUInt               _cap;
    ORUInt               _wordLength;
-   ORFloat*              _vsids;
+//   ORFloat*              _vsids;
 
 
    
@@ -151,18 +151,19 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    _learningOn = [_engine conformsToProtocol:@protocol(CPLEngine)];
    if (_learningOn) {
       _cap = len;
-      _bitChanges = malloc(sizeof(ORUInt)*_wordLength* _cap);
-      _lvls = malloc(sizeof(ORUInt)*_cap);
-      _props = malloc(sizeof(ORUInt)*_wordLength);
-      _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
+      _bitChanges = calloc(_cap*_wordLength,sizeof(ORUInt));
+      _lvls = calloc(_cap,sizeof(ORUInt));
+      _props = calloc(_cap,sizeof(ORULong));
+      _constraints= calloc(_cap,sizeof(CPCoreConstraint*));
       _top = makeTRUInt(_trail, 0);
-      _vsids = calloc(len, sizeof(ORFloat));
+//      _vsids = calloc(len, sizeof(ORFloat));
 //      _scratch = malloc(sizeof(ORUInt*)*_wordLength);
 
     } else {
       _cap = 0;
       _lvls = nil;
       _props = nil;
+      _constraints=nil;
 //      _implications = nil;
    }
    _vc = CPVCBare;
@@ -747,10 +748,11 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    [_dom setUp: newUp for:self];
 }
 
--(void) setUp:(unsigned int *)newUp andLow:(unsigned int *)newLow for:(CPCoreConstraint*) constraint
-{
+-(void) setUp:(ORUInt*)newUp andLow:(ORUInt*)newLow for:(CPCoreConstraint*) constraint
+{ 
    ULRep dr = getULDomRep(_dom);
-   TRUInt* oldUp = dr._up, *oldLow = dr._low;
+   TRUInt* oldUp = dr._up;
+   TRUInt* oldLow = dr._low;
    ORUInt bitLength = [_dom getLength];
    ORUInt wordLength = getWordLength(_dom);
    ORUInt mask = CP_UMASK;
@@ -760,6 +762,14 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
        
    newUp[wordLength-1]  &= mask;
    newLow[wordLength-1] &= mask;
+   
+//   if([self getId]==69){
+////      NSLog(@"%@",self);
+//      NSLog(@"");
+//   }
+   
+   if (newLow[0] > pow(2, [self bitLength]))
+      NSLog(@"");
    
    if(_learningOn) {
       ORUInt* changed = alloca(sizeof(ORUInt)*_wordLength);
@@ -773,6 +783,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
               NSLog(@"Fixed bit flipped in constraint");
          if(changed[i] & (newLow[i] ^ newUp[i]))
             NSLog(@"Fixed bit cleared in constraint");
+         if(changed[i] & (~newUp[i] & newLow[i]))
+            NSLog(@"Inconsistent bit set in constraint");
 
          wasChanged |= changed[i];
       }
@@ -842,6 +854,30 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    return [_dom remove:val];
 }
 
+- (ORFloat)getVSIDSActivity:(ORUInt)i {
+   
+   //stub
+   return 0.0;
+   
+}
+
+
+- (ORFloat)getVSIDSCount {
+   //stub
+   return 0.0;
+}
+
+
+- (void)incrementActivity:(ORUInt)i {
+   //stub
+}
+
+
+- (void)reduceVSIDS {
+   //stub
+}
+
+
 
 -(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)engine withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
 {
@@ -866,12 +902,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    _learningOn = [_engine conformsToProtocol:@protocol(CPLEngine)];
    if (_learningOn) {
       _cap = len;
-      _bitChanges = malloc(sizeof(ORUInt)*_wordLength* _cap);
-      _lvls = malloc(sizeof(ORUInt)*_cap);
-      _props = malloc(sizeof(ORUInt)*_cap);
-      _constraints= malloc(sizeof(CPCoreConstraint*)*_cap);
+      _bitChanges = calloc(_wordLength* _cap,sizeof(ORUInt));
+      _lvls = calloc(_cap,sizeof(ORUInt));
+      _props = calloc(_cap,sizeof(ORULong));
+      _constraints= calloc(_cap,sizeof(CPCoreConstraint*));
       _top = makeTRUInt(_trail, 0);
-      _vsids = calloc(len, sizeof(ORFloat));
+//      _vsids = calloc(len, sizeof(ORFloat));
        ORUInt boundBits=0;
        for(int i=0;i<_wordLength;i++){
            _bitChanges[i]=~(up[i]^low[i]);
