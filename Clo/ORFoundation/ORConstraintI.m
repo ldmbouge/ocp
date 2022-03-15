@@ -4597,6 +4597,53 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORBitXor3 {
+   id<ORBitVar> _w;
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitXor3*)initORBitXor: (id<ORBitVar>) w bxor:(id<ORBitVar>) x xor:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _w = w;
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(id<ORBitVar>) res2
+{
+   return _w;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ ^ %@ ^ %@ = %@)",[self class],self,_w,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitXor3:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_w,_x,_y,_z, nil] autorelease];
+}
+@end
+
 @implementation ORBitShiftL {
    id<ORBitVar> _x;
    id<ORBitVar> _y;

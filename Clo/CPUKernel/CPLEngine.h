@@ -22,6 +22,5 @@
 -(void) addConstraint:(CPCoreConstraint*)c;
 -(void) addConstraint:(CPCoreConstraint *)c withJumpLevel:(ORUInt) level;
 -(ORUInt) getLevel;
--(ORUInt) getBackjumpLevel;
--(ORBool) retry;
+-(ORInt) getBackjumpLevel;
 @end

@@ -281,7 +281,7 @@
    id<ORGroup> ng = [ORFactory cdisj:[_into tracker] vmap:cvm];
    id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:(id)[_into tracker] group:ng];
    __block int cn = 0;
-   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+   [g enumerateObjectWithBlock:^(id<ORObject> ck) {
       id<ORGroup> fg = [self flattenIt:ck into:a2g];
 
       // loop over the blocks inside the constructive disjunction
@@ -598,6 +598,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    _result = [_into addConstraint:c];
 }
 -(void) visitBitXor:(id<ORBitXor>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitXor3:(id<ORBitXor3>)c
 {
    _result = [_into addConstraint:c];
 }

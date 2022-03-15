@@ -39,7 +39,7 @@ enum CPEngineState {
    CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
    ORInt                    _propagating;
-   ORUInt                   _nbpropag;
+   ORULong                   _nbpropag;
    ORUInt                   _nbFailures;
    TRInt                    _iStat;
    id<CPConstraint>         _last;
@@ -47,6 +47,7 @@ enum CPEngineState {
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
+   id<ORVoidInformer>       _callingContinuation;
    ORFailException*         _fex;
    id<ORIntRange>           _br;
 }
@@ -81,12 +82,13 @@ enum CPEngineState {
 -(ORBool)     closed;
 -(void)       open;
 -(ORUInt) nbFailures;
--(ORUInt) nbPropagation;
+-(ORULong) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+-(id<ORInformer>) callingContinuation;
 
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;

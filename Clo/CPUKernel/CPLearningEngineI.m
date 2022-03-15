@@ -20,8 +20,8 @@
    _capacity = 32;
    _globalStore = malloc(sizeof(CPBVConflict*)*_capacity);
    _size = 0;
+   _toIncrement = 0;
    _backjumpLevel = -1;
-   _retry = false;
    return self;
 }
 
@@ -42,11 +42,7 @@
       _globalStore = newStore;
    }
    _globalStore[_size] = newConflict;
-   _size++;
-   
-   _retry = true;
-   for (id<CPBitVar> var in self.variables)
-       [var reduceVSIDS];
+   _size++;   
 }
 -(void) addConstraint:(CPCoreConstraint*) c withJumpLevel:(ORUInt) level
 {
@@ -55,14 +51,6 @@
     if ((ORInt)level < 5){
       level = [_tracer level];
     }
-    //if backjumpLevel hasn't been set yet or if this constraint jumps higher
-    //then level is the new level to jump back to
-//    if ((ORInt)level < 5){
-//        _backjumpLevel =[_tracer level];
-//    }
-//   else if ((_backjumpLevel < 4) || ((ORInt)level < _backjumpLevel))
-//       _backjumpLevel = level;
-    
       _backjumpLevel = (((ORInt)level > _backjumpLevel) && ((ORInt)level > 4)) ? level:_backjumpLevel;
 }
 -(ORUInt) getLevel
@@ -70,32 +58,44 @@
    return [_tracer level];
 }
 
--(ORUInt) getBackjumpLevel
+-(ORInt) getBackjumpLevel
 {
-   ORUInt tmp = _backjumpLevel;
+   ORInt tmp = _backjumpLevel;
    _backjumpLevel = -1;
    return tmp;
 }
 
--(ORBool) retry
+-(NSSet*) getNewConstraints
 {
-   ORBool tmp = _retry;
-   _retry = false;
-   return tmp;
+   ORUInt numConstraints = _size - _toIncrement;
+   
+   CPBitConflict** newVars = malloc(sizeof(CPBitConflict*)*(numConstraints));
+   
+   for(ORUInt i=-0;i<numConstraints;i++)
+   {
+      newVars[i] = (CPBitConflict*)_globalStore[_toIncrement++]->constraint;
+   }
+   return [[[NSSet alloc] initWithObjects:newVars count:numConstraints] autorelease];;
 }
+//-(ORBool) retry
+//{
+//   ORBool tmp = _retry;
+//   _retry = false;
+//   return tmp;
+//}
 
 -(ORStatus) enforceObjective
 {
    ORStatus s;
    ORInt currLevel = [_tracer level];
-//   NSLog(@"Restoring constraints at level %d",currLevel);
+//      NSLog(@"Restoring constraints at level %d",currLevel);
    // Add missing constraints back to constraint store here
    s = tryfail(^ORStatus{
       ORStatus status;
       for (int n = 0; n<_size; n++) {
-         if (_globalStore[n]->level > currLevel){
-             status = [self addInternal:_globalStore[n]->constraint];
-//            status=[self post:_globalStore[n]->constraint];
+         if (_globalStore[n]->level >  currLevel){
+            status = [self addInternal:_globalStore[n]->constraint];
+                       // status=[self post:_globalStore[n]->constraint];
             if(status==ORFailure){
                return ORFailure;
             }
@@ -103,16 +103,19 @@
          }
       }
       status = propagateFDM(self);
-       if (status == ORFailure)
-           return status;
+      if (status == ORFailure)
+         return status;
       return status;
    }, ^ORStatus{
       return ORFailure;
    });
    
-   if (s==ORFailure)
+   if (s==ORFailure){
+//      _size--;
+//      [_globalStore[_size]->constraint dealloc];
+//      _backjumpLevel = -1;
       return ORFailure;
-
+   }
    if (_objective == nil)
       return ORSuspend;
    return tryfail(^ORStatus{
@@ -124,5 +127,7 @@
       return ORFailure;
    });
 }
+
+
 
 @end

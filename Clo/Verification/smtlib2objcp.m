@@ -1034,14 +1034,14 @@ SMTLIB2_OBJCP_DECLHANDLER(implies)// { return NULL; /* TODO */ }
     objcp_context yctx = YCTX(ctx);
     objcp_expr ret = (objcp_expr)smtlib2_vector_last(args);
     long i;
-    
+
     for (i = smtlib2_vector_size(args)-2; i >= 0; --i) {
         objcp_expr a = (objcp_expr)smtlib2_vector_at(args, i);
        objcp_expr aa[2] = { [objcpgw objcp_mk_not:yctx withArg:a], ret };
        ret = [objcpgw objcp_mk_or:yctx withArgs:aa andNumArgs:2];
     }
     return ret;
-    
+
 }
 
 

@@ -228,7 +228,7 @@
 
    id<CPBitVarHeuristic> h;
 //   h =[cp createBitVarFF];
-   h =[cp createBitVarVSIDS:o];
+   h =[cp createBitVarVSIDS];
 //   h =[cp createDDeg];
 
    [cp solve: ^{
@@ -240,7 +240,8 @@
       }
       //      NSLog(@"Message Blocks (With Data Recovered)");
       clock_t searchStart = clock();
-      [cp labelBitVarHeuristic:h];
+//      [cp labelBitVarHeuristic:h];
+      [cp labelBitVarHeuristicVSIDS:h];
       clock_t searchFinish = clock();
       
       for(int j=0;j<16;j++){

@@ -144,6 +144,7 @@
 -(void) visitBitAnd:(id<ORBitAnd>)c;
 -(void) visitBitNot:(id<ORBitNot>)c;
 -(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitXor3:(id<ORBitXor3>)c;
 -(void) visitBitShiftL:(id<ORBitShiftL>)c;
 -(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c;
 -(void) visitBitShiftR:(id<ORBitShiftR>)c;
@@ -368,6 +369,13 @@
    [[c left] visit:self];
    [[c right] visit:self];
    [[c res] visit:self];
+}
+-(void) visitBitXor3:(id<ORBitXor3>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+   [[c res2] visit:self];
 }
 -(void) visitBitShiftL:(id<ORBitShiftL>)c
 {

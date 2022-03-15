@@ -1284,6 +1284,19 @@
    }
 }
 
+-(void) visitBitXor3:(id<ORBitXor3>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> w = [self concreteVar:[cstr res2]];
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitXOR:w bxor:x xor:y equals:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitBitShiftL:(id<ORBitShiftL>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {

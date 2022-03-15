@@ -51,6 +51,8 @@
 @end
 
 // This factorizes all the common stuff
+struct _CPBitAssignment;
+typedef struct _CPBitAssignment CPBitAssignment;
 
 @interface CPCoreSolver : ORGamma<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
@@ -165,4 +167,5 @@
 -(id<ORIdxIntInformer>) failGT;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+-(id<ORInformer>) callingContinuation;
 @end

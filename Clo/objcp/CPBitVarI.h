@@ -95,14 +95,15 @@
 -(ORBool) member:(ORUInt*)v;
 -(ORBool) getBit:(ORUInt) index;
 -(ORUInt) getLevelBitWasSet:(ORUInt)bit;
+-(ORULong) getPropBitWasSet:(ORUInt)bit;
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l;
 -(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i;
 -(void) getState:(ORUInt*)state whenBitSet:(ORUInt)pos;
 -(void) getState:(ORUInt*)state afterLevel:(ORUInt)lvl;
--(void) incrementActivityAll;
--(void) incrementActivityBySignificance;
--(void) increaseActivity:(ORUInt)i by:(ORUInt)amt;
--(void) incrementActivityAllBy:(ORFloat)amt;
+//-(void) incrementActivityAll;
+//-(void) incrementActivityBySignificance;
+//-(void) increaseActivity:(ORUInt)i by:(ORUInt)amt;
+//-(void) incrementActivityAllBy:(ORFloat)amt;
 
 // update
 -(ORStatus)     updateMin: (ORULong) newMin;

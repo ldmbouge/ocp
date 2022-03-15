@@ -361,7 +361,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 {
    return _nbFailures;
 }
--(ORUInt) nbPropagation
+-(ORULong) nbPropagation
 {
    return _nbpropag;
 }
@@ -439,7 +439,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",
+   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%llu propagations\n",
       [_vars count],[_cStore count],_nbpropag];
 }
 -(id) trail
@@ -547,6 +547,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
          while (!done) {
             status = executeClosure(ClosureQueueDequeue(cQueue[p]),last);
             nbp += status !=ORSkip;
+            
+            //Added for testing of tracing bitvector antecedents
+            fdm->_nbpropag += status != ORSkip;
+
             if (ISLOADED(vcQueue))
                break;
             p = HIGHEST_PRIO;
@@ -561,7 +565,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       }
       if (fdm->_propagDone)
          [fdm->_propagDone notify];
-      fdm->_nbpropag += nbp;
+//      fdm->_nbpropag += nbp;
       --fdm->_propagating;
       assignTRInt(&fdm->_iStat, status, fdm->_trail);
    ONFAIL(status);
@@ -780,6 +784,12 @@ ORStatus propagateFDM(CPEngineI* fdm)
    if (_propagDone == nil)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
+}
+-(id<ORInformer>) callingContinuation
+{
+   if (_callingContinuation == nil)
+      _callingContinuation = [ORConcurrency  voidInformer];
+   return _callingContinuation;
 }
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {

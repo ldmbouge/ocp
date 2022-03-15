@@ -456,6 +456,10 @@
 {
    _result = c;
 }
+-(void) visitBitXor3:(id<ORBitXor3>)c
+{
+   _result = c;
+}
 -(void) visitBitShiftL:(id<ORBitShiftL>)c
 {
    _result = c;
