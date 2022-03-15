@@ -187,7 +187,7 @@
 		<key>SMTLIB2.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>114</integer>
+			<integer>110</integer>
 		</dict>
 		<key>SequentialCombinatorExample.xcscheme</key>
 		<dict>
@@ -217,7 +217,7 @@
 		<key>TASCA-Keeloq.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>111</integer>
+			<integer>113</integer>
 		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
@@ -228,6 +228,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>139</integer>
+		</dict>
+		<key>TestAll.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>111</integer>
 		</dict>
 		<key>TestAssignment.xcscheme_^#shared#^_</key>
 		<dict>
@@ -343,6 +348,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>25</integer>
+		</dict>
+		<key>diet.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>112</integer>
 		</dict>
 		<key>driver.xcscheme</key>
 		<dict>

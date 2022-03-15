@@ -163,7 +163,7 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon;
       [taskVarsMap setObject: [(id<ORTaskVar>)x getStartVar] forKey: x];
    
    ORLinearizeSchedConstraint* lc = [[ORLinearizeSchedConstraint alloc] init: _into];
-   [m applyOnVar:^(id<ORVar> x) {
+   [m applyOnVar:^(id<ORObject> x) {
       if(![x conformsToProtocol: @protocol(ORTaskVar)]) {
          [_into addVariable: x];
          //[[[_into modelMappings] tau] set: x forKey: x];
@@ -172,9 +172,9 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon;
       //NSLog(@"Got an object: %@",x);
    } onImmutables:^(id<ORObject> x) {
       //NSLog(@"Got an object: %@",x);
-   } onConstraints:^(id<ORConstraint> c) {
+   } onConstraints:^(id<ORObject> c) {
       [c visit: lc];
-   } onObjective:^(id<ORObjectiveFunction> o) {
+   } onObjective:^(id<ORObject> o) {
       ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
       [o visit: lo];
    }];
@@ -343,7 +343,7 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon {
 {
    ORInt horizon = [self initializeMapping: m];
    ORLinearizeSchedConstraintTI* lc = [[ORLinearizeSchedConstraintTI alloc] init: _into taskMapping: _taskVarMap resourceMapping: _resMap indexVars: _y horizon: horizon];
-   [m applyOnVar:^(id<ORVar> x) {
+   [m applyOnVar:^(id<ORObject> x) {
       if(![x conformsToProtocol: @protocol(ORTaskVar)]) {
          [_into addVariable: x];
       }
@@ -351,9 +351,9 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon {
       //NSLog(@"Got an object: %@",x);
    } onImmutables:^(id<ORObject> x) {
       //NSLog(@"Got an object: %@",x);
-   } onConstraints:^(id<ORConstraint> c) {
+   } onConstraints:^(id<ORObject> c) {
       [c visit: lc];
-   } onObjective:^(id<ORObjectiveFunction> o) {
+   } onObjective:^(id<ORObject> o) {
       ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
       [o visit: lo];
    }];
