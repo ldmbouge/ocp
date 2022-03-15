@@ -128,7 +128,7 @@
    ORStatus status;
 
     if (jumplevel > 4){
-        while ((level > jumplevel) && (_sz > 1)){
+        while ((level > jumplevel+1) && (_sz > 1)){
             ofs = _sz-1;
             if (ofs >= 0) {
                 cp = _cpTab[ofs];

@@ -135,15 +135,12 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
 
 @implementation CPBitVarVSIDS {
    id<CPEngine>    _engine;
-   
    ORUInt*          _map;
-//   id<CPCommonProgram>     _cp;
    ORULong          _nbv;
    NSSet* __strong*     _cv;
-   
    ORDouble _reduction;
    
-   id<ORZeroOneStream>   _valStream;
+//   id<ORZeroOneStream>   _valStream;
 }
 -(CPBitVarVSIDS*)initCPBitVarVSIDS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
@@ -152,11 +149,11 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
-   _countMax = 1;
+   _countMax = 256;
    _count = _countMax;
-   _reduction = 0.75;
+   _reduction = 2;
    
-//   _valStream = [ORFactory zeroOneStream:_engine];
+   //_valStream = [ORFactory zeroOneStream:_engine];
    
    _heapCap = 0x1 << 20;
    _heap = malloc(sizeof(BitLiteral*)*_heapCap);
@@ -202,21 +199,14 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    
    CPBitAssignment* a = malloc(sizeof(CPBitAssignment));
    do {
-      
-      for(BitLiteral* lit in _assignedLiterals)
-         assert(![lit->_var isFree:lit->_index]);
-
       a->var = _heap[0]->_var;
       a->index = _heap[0]->_index;
 //      if(_heap[0]->_tCount == _heap[0]->_fCount)
-//         a->value = [_valStream next] > 0.5;
+//         a->value = [_valStream next];
 //      else
          a->value = _heap[0]->_tCount > _heap[0]->_fCount;
-      
       [_assignedLiterals addObject:_heap[0]];
-      
       heapRemove(_heap,&_heapSize);
-      
    } while ((_heapSize>0) && (![a->var isFree:a->index]));
    
    if(![a->var isFree:a->index]){
@@ -258,14 +248,14 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    ORUInt i, bit,  mask;
    NSSet* constraints;
    
-//   NSEnumerator *iter = [[_engine variables] objectEnumerator];
+   NSEnumerator *iter = [[_engine variables] objectEnumerator];
    CPBitVarI* x;
 
-//   while((x = [iter nextObject]))
+   while((x = [iter nextObject]))
 //   for(CPBitVarI* x in [_engine variables])
-   for(ORInt k=low;k <= up;k++)
+//   for(ORInt k=low;k <= up;k++)
    {
-      x=(CPBitVarI*)_cvs[k];
+//      x=(CPBitVarI*)_cvs[k];
       if([x bound])
          continue;
       count=0.0;
@@ -309,11 +299,6 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    NSLog(@"Tracking %ld literal pairs at start",(unsigned long)[_countedBits count]);
 
    [[_engine callingContinuation] wheneverNotifiedDo:^{
-//      _heapSize = 0;
-//      [_countedBits enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-//         if([((BitLiteral*)obj)->_a->var isFree:((BitLiteral*)obj)->_a->index])
-//            heapInsert(_heap, &_heapSize, &_heapCap, obj);
-//      }];
       NSMutableSet *toRemove = [[NSMutableSet alloc] init];
       for(BitLiteral* lit in _assignedLiterals){
          if([lit->_var isFree:lit->_index]){
@@ -331,8 +316,8 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
       {
          //Reduce count for all currently counted literals
          [_countedBits enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-                        ((BitLiteral*)obj)->_tCount *= _reduction;
-                        ((BitLiteral*)obj)->_fCount *= _reduction;
+                        ((BitLiteral*)obj)->_tCount /= _reduction;
+                        ((BitLiteral*)obj)->_fCount /= _reduction;
          }];
          _count = _countMax;
       }
@@ -355,9 +340,9 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
             if(lit){
 
                if (ants->antecedents[i]->value)
-                  (lit->_tCount)++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
+                  (lit->_tCount) += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
                else
-                  (lit->_fCount)++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
+                  (lit->_fCount) += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
                
             }
             //any unlocated literal counts should be for bits set before search started when branching on concrete variables,
@@ -371,21 +356,21 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
                ORDouble fc = 0.0;
 
                for(id obj in constraints) {
-                  //count = [obj nbUVars]-1;
+                  count = [obj nbUVars]-1;
                   if(obj == constraint)
                      continue;
                   tc += count + [obj prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
                   fc += count + [obj prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
                }
 
-               ORUInt numReductions = [[ants->antecedents[i]->var engine] nbFailures] / _countMax;
-               ORDouble reduction = pow(_reduction, numReductions);
-               tc *= reduction;
-               fc *= reduction;
-               if (ants->antecedents[i]->value)
-                  fc++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
-               else
-                  tc++;// += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
+//               ORUInt numReductions = [[ants->antecedents[i]->var engine] nbFailures] / _countMax;
+//               ORDouble reduction = pow(_reduction, numReductions);
+//               tc *= reduction;
+//               fc *= reduction;
+//               if (ants->antecedents[i]->value)
+//                  fc += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:true];
+//               else
+//                  tc += [constraint prefer:ants->antecedents[i]->var at:ants->antecedents[i]->index with:false];
 
 //               ORUInt domsize = log2([ants->antecedents[i]->var domsize]);
 //               tc/=domsize;

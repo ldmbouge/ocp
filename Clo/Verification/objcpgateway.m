@@ -223,7 +223,7 @@
 }
 
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name{
-//   NSLog(@"Make type with name not implemented. Name was %s",name);
+   NSLog(@"Make type with name not implemented. Name was %s",name);
    return NULL;
 }
 
@@ -248,12 +248,12 @@
    NSLog(@"Make function type not implemented");
    return NULL;
 }
-/*
+
 -(int)  objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value{
    NSLog(@"Get mpq value not implemented");
    return 0;
 }
-*/
+
 
 /**
  \brief Create a backtracking point in the given logical context.
@@ -334,19 +334,20 @@
 //   __block id<CPBitVarHeuristic> h =[cp createDDeg];
 //        __block id<CPBitVarHeuristic> h =[cp createWDeg];
 //       __block id<CPBitVarHeuristic> h =[cp createBitVarABS];
+//       __block id<CPBitVarHeuristic> h =[cp createBitVarIBS];
 
 //    __block NSMutableArray* engineVars = [[cp engine] variables];
 //   NSLog(@"%@",engineVars);
 //    __block CPBitAntecedents* ants;
 //    __block CPBitAssignment** vars;
 //    __block id<CPBVConstraint> c;
-   __block ORUInt timeLimit = 30000;
+   __block ORUInt timeLimit = 45000;
 
 
    [cp solve:^{
 //      [cp limitTime:60000 in: ^{
 //      [cp repeat:^{
-        [cp limitTime:timeLimit in: ^{
+//        [cp limitTime:timeLimit in: ^{
 //                    NSLog(@"%@", [[cp engine] model]);
 //           for (id var in _declarations)
 //              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
@@ -368,7 +369,7 @@
 //          }
           sat = true;
 //                           NSLog(@"%@", [[cp engine] model]);
-      }];
+//      }];
 //        }onRepeat:^{
 //            printf("Restarting...\n");
 //        }];

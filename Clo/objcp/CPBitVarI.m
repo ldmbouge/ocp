@@ -763,8 +763,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    newUp[wordLength-1]  &= mask;
    newLow[wordLength-1] &= mask;
    
-//   if([self getId]==69){
-////      NSLog(@"%@",self);
+//   if([self getId]==15 && (~newUp[0] & (0x1<<29))){
+//      NSLog(@"%@",self);
 //      NSLog(@"");
 //   }
    
