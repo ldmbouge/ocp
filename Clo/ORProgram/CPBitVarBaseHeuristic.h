@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPBitVarHeuristic.h"
+#import <ORProgram/CPBitVarHeuristic.h>
 
 @interface CPBitVarBaseHeuristic : NSObject<CPBitVarHeuristic>
 -(ORDouble) varOrdering: (id<CPBitVar>)x;

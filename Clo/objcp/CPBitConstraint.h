@@ -193,7 +193,7 @@ typedef struct _CPBitAntecedents {
    CPBitVarI* _z;
    
 }
--(id) initCPBitAND: (CPBitVarI*) w band: (CPBitVarI*) x and:(CPBitVarI*)y equals: (CPBitVarI*) z;
+-(id) initCPBitAND3: (CPBitVarI*) w band: (CPBitVarI*) x and:(CPBitVarI*)y equals: (CPBitVarI*) z;
 -(void) dealloc;
 -(NSString*) description;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment forConflict:(ORBool) conflict;

@@ -1948,7 +1948,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 @end
 
 @implementation CPBitAND3
--(id) initCPBitAND3:(CPBitVarI*)w band:(CPBitVarI*)x and:(CPBitVarI*)y equals:(CPBitVarI*)z{
+-(id) initCPBitAND3:(CPBitVarI*)w band:(CPBitVarI*)x and:(CPBitVarI*)y equals:(CPBitVarI*)z
+{
    self = [super initCPBitCoreConstraint:[x engine]];
    _w = w;
    _x = x;
