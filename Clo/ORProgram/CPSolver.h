@@ -89,6 +89,7 @@ typedef struct _CPBitAssignment CPBitAssignment;
 //-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
 //-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 //-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarVSIDS;
 -(id<CPBitVarHeuristic>) createBitVarVSIDS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;

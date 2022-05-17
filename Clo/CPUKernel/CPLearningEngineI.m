@@ -17,7 +17,7 @@
    self = [super init];
    [super initEngine:trail memory:mt];
    _tracer = tr;
-   _capacity = 32;
+   _capacity = 256;
    _globalStore = malloc(sizeof(CPBVConflict*)*_capacity);
    _size = 0;
    _toIncrement = 0;
@@ -127,7 +127,4 @@
       return ORFailure;
    });
 }
-
-
-
 @end

@@ -347,7 +347,7 @@
    [cp solve:^{
 //      [cp limitTime:60000 in: ^{
 //      [cp repeat:^{
-//        [cp limitTime:timeLimit in: ^{
+        [cp limitTime:timeLimit in: ^{
 //                    NSLog(@"%@", [[cp engine] model]);
 //           for (id var in _declarations)
 //              NSLog(@"%@, %@", [cp stringValue:[[_declarations objectForKey:var] getVariable]], var);
@@ -369,7 +369,7 @@
 //          }
           sat = true;
 //                           NSLog(@"%@", [[cp engine] model]);
-//      }];
+      }];
 //        }onRepeat:^{
 //            printf("Restarting...\n");
 //        }];
@@ -607,7 +607,11 @@
    return result;
 }
 
-//objcp_mk_num_from_string
+-(objcp_expr) objcp_mk_num_from_string:(objcp_context)ctx withString:(char *)cstr{
+   NSLog(@"Make number from string not implemented.\n");
+   return NULL;
+}
+
 -(objcp_expr) objcp_mk_diseq:(objcp_context)ctx var:(objcp_expr)arg1 neq:(objcp_expr)arg2{
    ORUInt* low = alloca(sizeof(ORUInt));
    ORUInt* up = alloca(sizeof(ORUInt));

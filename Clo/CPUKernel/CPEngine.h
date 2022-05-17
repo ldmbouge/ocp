@@ -41,14 +41,14 @@
 -(void)incNbFailures:(ORUInt)inc;
 -(ORBool) isPropagating;
 -(ORUInt) nbFailures;
--(ORUInt) nbPropagation;
+-(ORULong) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
 -(id<ORBasicModel>) model;
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
--(id<ORInformer>) callingContinuation;
+-(id<ORVoidInformer>) callingContinuation;
 -(id<ORIntRange>)boolRange;
 -(ORBool)holdsVertical;
 @end

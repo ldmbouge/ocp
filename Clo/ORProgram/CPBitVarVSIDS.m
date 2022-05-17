@@ -234,7 +234,7 @@ BitLiteral** heapInsert(BitLiteral** heap, ORUInt* size, ORUInt* cap, BitLiteral
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
       _map[_cvs[k].getId] = k - low;
-      _cv[k-low] = [[_cvs[k] constraints] retain];
+      _cv[k-low] = [[(CPBitVarI*)_cvs[k] constraints] retain];
    }
    _nbv = len;
    

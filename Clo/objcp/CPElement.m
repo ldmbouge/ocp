@@ -643,7 +643,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 -(void) post
 {
    unsigned int xwl = [_x getWordLength];
-   assert(xwl==1);
+   assert(xwl==1); 
+   
    
    id<CPEngine> engine = [_x engine];
    
