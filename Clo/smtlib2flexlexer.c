@@ -2087,11 +2087,13 @@ YY_BUFFER_STATE smtlib2_parser__scan_bytes  (yyconst char * yybytes, yy_size_t  
 	BEGIN(yyg->yy_start_stack[yyg->yy_start_stack_ptr]);
 }
 
-//    static int yy_top_state  (yyscan_t yyscanner)
-//{
-//    struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-//	return yyg->yy_start_stack[yyg->yy_start_stack_ptr - 1];
-//}
+/*
+static int yy_top_state  (yyscan_t yyscanner)
+{
+    struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
+	return yyg->yy_start_stack[yyg->yy_start_stack_ptr - 1];
+}
+*/
 
 #ifndef YY_EXIT_FAILURE
 #define YY_EXIT_FAILURE 2
