@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5BFF681F1860D98E00B50286"
-               BuildableName = "slab copy"
+               BuildableName = "slabIP"
                BlueprintName = "slabIP"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
@@ -31,7 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5BFF681F1860D98E00B50286"
-            BuildableName = "slab copy"
+            BuildableName = "slabIP"
             BlueprintName = "slabIP"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
@@ -54,7 +54,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5BFF681F1860D98E00B50286"
-            BuildableName = "slab copy"
+            BuildableName = "slabIP"
             BlueprintName = "slabIP"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
@@ -71,7 +71,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5BFF681F1860D98E00B50286"
-            BuildableName = "slab copy"
+            BuildableName = "slabIP"
             BlueprintName = "slabIP"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>

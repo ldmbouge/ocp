@@ -7,7 +7,7 @@
 //
 
 #import "objcpgateway.h"
-#include "/usr/local/include/gmp.h"
+#include "gmp.h"
 
 #include "objcp/CPBitConstraint.h"
 

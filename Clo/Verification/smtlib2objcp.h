@@ -33,7 +33,7 @@
 
 #include <Verification/smtlib2abstractparser.h>
 #include <Verification/smtlib2abstractparser_private.h>
-#include "/usr/local/include/gmp.h"
+//#include "gmp.h"
 #import <Verification/objcpgateway.h>
 
 

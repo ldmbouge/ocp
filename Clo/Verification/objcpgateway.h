@@ -23,7 +23,7 @@
 
 
 
-#include "/usr/local/include/gmp.h"
+//#include "gmp.h"
 
 
 
