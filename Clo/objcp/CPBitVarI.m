@@ -776,8 +776,10 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       ORUInt wasChanged = 0;
       //      ORUInt level = [(CPLearningEngineI*)_engine getLevel];
       for (int i=0; i<wordLength; i++) {
-         changed[i] = oldUp[i]._val ^ newUp[i];
-         changed[i] |= oldLow[i]._val ^ newLow[i];
+//          changed[i] = oldUp[i]._val ^ newUp[i];
+//          changed[i] |= oldLow[i]._val ^ newLow[i];
+         changed[i] = oldUp[i]._val ^ (newUp[i] & oldUp[i]._val);
+         changed[i] |= oldLow[i]._val ^ (newLow[i] | oldLow[i]._val);
           //debugging
           if((oldUp[i]._val ^ newUp[i]) & (oldLow[i]._val ^ newLow[i]))
               NSLog(@"Fixed bit flipped in constraint");

@@ -7294,7 +7294,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    ORUInt yWordLength = [_y getWordLength];
    ORUInt zWordLength = [_z getWordLength];
    
-//   ORUInt xBitLength = [_x bitLength];
+   ORUInt xBitLength = [_x bitLength];
    ORUInt yBitLength = [_y bitLength];
    ORUInt zBitLength = [_z bitLength];
    
@@ -7421,14 +7421,14 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 //   if(yUp[0]._val != 0xFFFFFFFF){
 //   NSLog(@"*******************************************");
-//   NSLog(@"x|y = z");
-//   NSLog(@"x=%@\n",_x);
-//   NSLog(@"y=%@\n",_y);
-//   NSLog(@"z=%@\n\n",_z);
-//   NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, xBitLength));
-//   NSLog(@"newY = %@",bitvar2NSString(newYLow, newYUp, yBitLength));
-//   NSLog(@"newZ = %@",bitvar2NSString(newZLow, newZUp, zBitLength));
-//   NSLog(@"");
+//    NSLog(@"x|y = z");
+//    NSLog(@"x=%@\n",_x);
+//    NSLog(@"y=%@\n",_y);
+//    NSLog(@"z=%@\n\n",_z);
+//    NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, xBitLength));
+//    NSLog(@"newY = %@",bitvar2NSString(newYLow, newYUp, yBitLength));
+//    NSLog(@"newZ = %@",bitvar2NSString(newZLow, newZUp, zBitLength));
+//    NSLog(@"");
 //   }
 //   if(newZUp[0] != 0xFFFFFFFF)
 //      NSLog(@"");
