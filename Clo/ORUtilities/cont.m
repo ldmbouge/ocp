@@ -73,6 +73,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 
 -(ORInt) nbCalls { return _used;}
 
+static NSCont* __tlsPointer = NULL;
+
 -(void)call 
 {
    self->_used++;
@@ -82,7 +84,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    restoreCtx(ctx,_start,_data,_length);
 #else
    _used++;
-   _longjmp(_target,(long)self); // dot not save signal mask --> overhead
+    __tlsPointer = self;
+   _longjmp(_target,1); // dot not save signal mask --> overhead
 #endif
 }
 
@@ -94,9 +97,35 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    ctx->rax = (long)self;
    restoreCtx(ctx,_start,_data,_length);
 #else
-   _longjmp(_target,(long)self); // dot not save signal mask --> overhead
+    __tlsPointer = self;
+   _longjmp(_target,1); // dot not save signal mask --> overhead
 #endif
 }
+/*
+__attribute__((always_inline)) void memcpy_words(int *src, int *dst,int len)
+{
+  assert((len % 4) == 0);
+  int tmp;
+
+  // This uses the "%=" template string to create a label which can be used
+  // elsewhere inside the assembly block, but which will not conflict with
+  // inlined copies of it.
+  __asm
+  (
+    ".Lloop%=:\n\t"
+      "ldr %w[tmp], %[src], #4 \n\t"
+      "str %w[tmp], %[dst], #4 \n"
+      "subs %w[len], #4\n"
+      "bne .Lloop%="
+
+    : [dst] "=&m" (*dst),
+      [tmp] "=&r" (tmp),
+      [len] "+r" (len)
+    : [src] "m" (*src)
+  );
+}
+ */
+
 
 +(NSCont*)takeContinuation
 {
@@ -109,16 +138,33 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
       return resume;      
    } else return k;
 #else
-   int len = getContBase() - (char*)&k;
+   long len = getContBase() - (char*)&k;
    [k saveStack:len startAt:&k];
-   register NSCont* jmpval = (NSCont*)_setjmp(k->_target);   
-   if (jmpval != 0) {
-      fastmemcpy(jmpval->_start,(ORUInt*)jmpval->_data,jmpval->_length);
-      return jmpval;
+   register int way = _setjmp(k->_target);
+   if (way != 0) {
+       register NSCont* x = __tlsPointer;
+       register int l = (int)x->_length;
+       register ORUInt* dst = x->_start;
+       register ORUInt* src = (ORUInt*)x->_data;
+
+       __asm volatile(".Lloop%=:"
+                       "ldr w10, %[src], #4\n"
+                       "str w10, %[dst], #4\n"
+                       "subs %w[len], %w[len], #4\n"
+                       "bne .Lloop%="
+               : [dst] "=&m" (*dst),[len] "+r" (l)
+               : [src] "m" (*src)
+                      : "w10"
+                      );
+
+       //fastmemcpy(x->_start,(ORUInt*)x->_data,x->_length);
+      //fastmemcpy(jmpval->_start,(ORUInt*)jmpval->_data,jmpval->_length);
+      return x;
    } else 
       return k;   
 #endif
 }
+
 
 #if TARGET_OS_IPHONE==1
 static __declspec(thread) ContPool* _thePool = 0;
@@ -126,7 +172,7 @@ static __declspec(thread) ContPool* _thePool = 0;
 static __thread ContPool* _thePool = 0;
 #endif
 
-void contCleanup()
+static void contCleanup()
 {
   [NSCont shutdown];
 }

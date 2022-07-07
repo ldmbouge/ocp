@@ -11689,7 +11689,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       ORBool zVal = [_z getBit:0];
       ORUInt bitLength = [_x bitLength];
       //If _x == _y was expected to be false, all bits contribute
-      if (!zVal) {
+      if (zVal) { // Cpjm: changed (! zVal) to (zVal)
          vars  = malloc(sizeof(CPBitAssignment*)*bitLength*2);
          for(int i=0;i<bitLength;i++){
             vars[i] = malloc(sizeof(CPBitAssignment));
@@ -11707,13 +11707,17 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          //get index of least significant dissimilar bit
          vars  = malloc(sizeof(CPBitAssignment*)*2);
          TRUInt *xLow, *yLow;
+         TRUInt *xUp, *yUp; // Cpjm added
          ORUInt wordLength = [_x getWordLength];
          ORUInt xXORy;
          xLow = [_x getLow];
          yLow = [_y getLow];
+         xUp = [_x getUp]; // Cpjm added
+         yUp = [_y getUp]; // Cpjm added
          
          for (int i = 0; i<wordLength; i++) {
-            xXORy = xLow->_val ^ yLow->_val;
+             //xXORy = xLow->_val ^ yLow->_val;
+             xXORy = (xLow->_val & (~ yUp->_val)) | ((~ xUp->_val) & yLow->_val); // Claude fix
             if (xXORy != 0) {
                index = __builtin_ctz(xXORy) + (i * BITSPERWORD);
                break;
