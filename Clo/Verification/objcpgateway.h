@@ -23,7 +23,7 @@
 
 
 
-#include "/usr/local/include/gmp.h"
+//#include "gmp.h"
 
 
 
@@ -149,7 +149,7 @@ typedef int assertion_id;
 //-(objcp_expr) objcp_mk_ge
 //-(objcp_expr) objcp_mk_gt
 -(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr) c then:(objcp_expr) t else:(objcp_expr)e ;
-//-(objcp_expr) objcp_mk_num_from_string
+-(objcp_expr) objcp_mk_num_from_string:(objcp_context)ctx withString:(char *)cstr;
 -(objcp_expr) objcp_mk_diseq:(objcp_context)ctx var:(objcp_expr)arg1 neq:(objcp_expr)arg2;
 -(objcp_expr) objcp_mk_bv_concat:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_context)arg2;
 -(objcp_expr) objcp_mk_bv_not:(objcp_context) ctx withArg:(objcp_expr) a1;

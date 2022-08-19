@@ -88,7 +88,7 @@ enum CPEngineState {
 -(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
--(id<ORInformer>) callingContinuation;
+-(id<ORVoidInformer>) callingContinuation;
 
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;

@@ -17,7 +17,7 @@
    self = [super init];
    [super initEngine:trail memory:mt];
    _tracer = tr;
-   _capacity = 32;
+   _capacity = 256;
    _globalStore = malloc(sizeof(CPBVConflict*)*_capacity);
    _size = 0;
    _toIncrement = 0;
@@ -94,11 +94,7 @@
       ORStatus status;
       for (int n = 0; n<_size; n++) {
          if (_globalStore[n]->level >  currLevel){
-            status = [self addInternal:_globalStore[n]->constraint];
-                       // status=[self post:_globalStore[n]->constraint];
-            if(status==ORFailure){
-               return ORFailure;
-            }
+            [self addInternal:_globalStore[n]->constraint];
             _globalStore[n]->level = currLevel;
          }
       }
@@ -127,7 +123,4 @@
       return ORFailure;
    });
 }
-
-
-
 @end

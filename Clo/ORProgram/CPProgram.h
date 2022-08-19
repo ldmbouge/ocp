@@ -224,7 +224,7 @@ PORTABLE_BEGIN
 //-(void) labelBitVarsFirstFail: (NSArray*)vars;
 -(void) labelBitVarHeuristic:(id<CPBitVarHeuristic>) h;
 -(void) labelBitVarHeuristicCDCL:(id<CPBitVarHeuristic>) h;
--(void) labelBitVarsHeuristicVSIDS:(id<CPBitVarHeuristic>) h;
+-(void) labelBitVarHeuristicVSIDS:(id<CPBitVarHeuristic>) h;
 
 -(id<CPBitVarHeuristic>) createBitVarFF;
 -(id<CPBitVarHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;
@@ -232,6 +232,8 @@ PORTABLE_BEGIN
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarIBS;
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarVSIDS;
+-(id<CPBitVarHeuristic>) createBitVarVSIDS:(id<ORVarArray>)rvars;
 
 -(NSString*)stringValue:(id<ORBitVar>)x;
 -(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x;

@@ -12,7 +12,11 @@
 
 #import <ORUtilities/ORTypes.h>
 
+#if defined(__x86_64__)
 #include <emmintrin.h>
+#else
+#include "sse2neon.h"
+#endif
 #include <float.h>
 
 #pragma clang diagnostic push 
@@ -225,6 +229,7 @@ static inline ORInterval ORIAbs(ORInterval a)
    ORInterval mx0= _mm_max_sd(mx,_mm_setzero_pd());
    return _mm_unpacklo_pd(mn,mx0);
 }
+#define _MM_SHUFFLE2(x, y) (((x) << 1) | (y))
 static inline ORInterval ORISqrt(ORInterval a)
 {
    if (ORISureNegative(a))

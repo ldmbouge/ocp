@@ -932,13 +932,20 @@ static inline void updateFreeBitCount(CPBitArrayDom* dom)
          failNow();
       if(_low[i]._val & ~newUp[i])
          failNow();
-
-      isChanged[i]  = (_up[i]._val ^ newUp[i]);
-      isChanged[i] |= (_low[i]._val ^ newLow[i]);
-      umod |= _up[i]._val != newUp[i];
-      assignTRUInt(&_up[i], newUp[i], _trail);
-      lmod |= _low[i]._val != newLow[i];
-      assignTRUInt(&_low[i], newLow[i], _trail);
+/*
+       isChanged[i]  = (_up[i]._val ^ newUp[i]);
+       isChanged[i] |= (_low[i]._val ^ newLow[i]);
+       umod |= _up[i]._val != newUp[i];
+       assignTRUInt(&_up[i], newUp[i], _trail);
+       lmod |= _low[i]._val != newLow[i];
+       assignTRUInt(&_low[i], newLow[i], _trail);
+*/
+       isChanged[i]  = (_up[i]._val ^ (_up[i]._val & newUp[i]));
+      isChanged[i] |= (_low[i]._val ^ (_low[i]._val | newLow[i]));
+      umod |= _up[i]._val != (newUp[i] & _up[i]._val);
+      assignTRUInt(&_up[i], newUp[i] & _up[i]._val, _trail);
+      lmod |= _low[i]._val != (newLow[i] | _low[i]._val);
+      assignTRUInt(&_low[i], newLow[i] | _low[i]._val, _trail);
    }
    updateFreeBitCount(self);
    if (umod || lmod){

@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORConstraint.h>
 #import <CPUKernel/CPLEngine.h>
-#import "CPEngineI.h"
+#import <CPUKernel/CPEngineI.h>
 
 
 @protocol CPBitVar;

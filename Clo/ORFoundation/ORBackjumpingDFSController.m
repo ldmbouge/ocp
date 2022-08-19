@@ -9,10 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORBackjumpingDFSController.h"
-
-
-@class CPLearningEngineI;
+#import <ORFoundation/ORBackjumpingDFSController.h>
+#import <CPUKernel/CPLearningEngineI.h>
 
 @implementation ORBackjumpingDFSController{
 @protected
@@ -121,7 +119,7 @@
 {
    ORInt faillevel = (ORInt)[_tracer level];
    ORInt level = faillevel;
-   ORInt jumplevel = (ORInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
+   ORInt jumplevel = (ORInt)[((CPLearningEngineI*)_engine) getBackjumpLevel];
 
    id<ORCheckpoint> cp;
    NSCont* k;
@@ -156,7 +154,8 @@
 //          NSLog(@"Jumping from level %i back to level %i",faillevel, level);
 
          if (k &&  (k.admin || status != ORFailure)) {
-             [[_engine callingContinuation] notify];
+             [[(CPLearningEngineI*)_engine callingContinuation] notify];
+
 //              if ((jumplevel > 0) && (faillevel > jumplevel))
               if (jumplevel > 0)
                   [k callInvisible];

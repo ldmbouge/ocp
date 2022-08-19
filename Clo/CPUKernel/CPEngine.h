@@ -31,7 +31,7 @@
 
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>) objective;
--(ORStatus) addInternal: (id<ORConstraint>) c;
+-(void) addInternal: (id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
 -(ORStatus) enforce: (ORClosure) cl;
@@ -41,14 +41,14 @@
 -(void)incNbFailures:(ORUInt)inc;
 -(ORBool) isPropagating;
 -(ORUInt) nbFailures;
--(ORUInt) nbPropagation;
+-(ORULong) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
 -(id<ORBasicModel>) model;
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
--(id<ORInformer>) callingContinuation;
+-(id<ORVoidInformer>) callingContinuation;
 -(id<ORIntRange>)boolRange;
 -(ORBool)holdsVertical;
 @end

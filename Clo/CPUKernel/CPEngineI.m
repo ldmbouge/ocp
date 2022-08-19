@@ -785,7 +785,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
--(id<ORInformer>) callingContinuation
+-(id<ORVoidInformer>) callingContinuation
 {
    if (_callingContinuation == nil)
       _callingContinuation = [ORConcurrency  voidInformer];

@@ -17,8 +17,8 @@
 #include <math.h>
 #include <fenv.h>
 #include <limits>
-#include <immintrin.h> 
-#include <smmintrin.h>
+//#include <immintrin.h>
+//#include <smmintrin.h>
 #include <assert.h>
 
 #if !defined(__APPLE__)

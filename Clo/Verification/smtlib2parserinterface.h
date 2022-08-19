@@ -27,7 +27,7 @@
 #ifndef SMTLIB2PARSERINTERFACE_H_INCLUDED
 #define SMTLIB2PARSERINTERFACE_H_INCLUDED
 
-#include "smtlib2types.h"
+#include <Verification/smtlib2types.h>
 #include "smtlib2utils.h"
 
 

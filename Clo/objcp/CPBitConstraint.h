@@ -699,7 +699,7 @@ typedef struct _CPBitAntecedents {
 
 -(void) post;
 -(void) propagate;
--(ORInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
+-(ORUInt) prefer:(CPBitVarI*)var at:(ORUInt)index with:(ORBool)lit;
 @end
 
 @interface CPBitLogicalOr : CPBitCoreConstraint<CPBVConstraint>{
