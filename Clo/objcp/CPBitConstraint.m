@@ -7054,68 +7054,69 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
             low[i] &= UP_MASK >> (32 - ([_y bitLength]%32));
          }
       }
-      //      else{
-      //         up[i] = 0;
-      //         low[i] = 0;
-      //      }
    }
-   ORUInt upperBitMask = CP_UMASK<<(_lsb%BITSPERWORD);
-   ORUInt lowerBitMask = ~ upperBitMask;
-   for(int i=_lsb/BITSPERWORD;i<=_msb/BITSPERWORD;i++){
-      newXUp[i] = xUp[i]._val & ((yUpForX[i-(_lsb/BITSPERWORD)]<<_lsb%BITSPERWORD) | lowerBitMask);
-      newXLow[i] = xLow[i]._val | ((yLowForX[i-(_lsb/BITSPERWORD)]<<_lsb%BITSPERWORD) & upperBitMask);
-      if((_lsb%BITSPERWORD != 0)&&(i-(_lsb/BITSPERWORD)+1) < yWordLength){
-         newXUp[i]  &= (yUpForX[i-(_lsb/BITSPERWORD)+1] >> (BITSPERWORD - (_lsb%BITSPERWORD))) | upperBitMask;
-         newXLow[i] |= (yLowForX[i-(_lsb/BITSPERWORD)+1] >> (BITSPERWORD - (_lsb%BITSPERWORD))) & upperBitMask;
+    if (0) { // Cpjm: Old
+      ORUInt upperBitMask = CP_UMASK<<(_lsb%BITSPERWORD);
+      ORUInt lowerBitMask = ~ upperBitMask;
+      for(int i=_lsb/BITSPERWORD;i<=_msb/BITSPERWORD;i++){
+        newXUp[i] = xUp[i]._val & ((yUpForX[i-(_lsb/BITSPERWORD)]<<_lsb%BITSPERWORD) | lowerBitMask);
+        newXLow[i] = xLow[i]._val | ((yLowForX[i-(_lsb/BITSPERWORD)]<<_lsb%BITSPERWORD) & upperBitMask);
+        if((_lsb%BITSPERWORD != 0)&&(i-(_lsb/BITSPERWORD)+1) < yWordLength){
+          newXUp[i]  &= (yUpForX[i-(_lsb/BITSPERWORD)+1] >> (BITSPERWORD - (_lsb%BITSPERWORD))) | upperBitMask;
+          newXLow[i] |= (yLowForX[i-(_lsb/BITSPERWORD)+1] >> (BITSPERWORD - (_lsb%BITSPERWORD))) & upperBitMask;
+        }
       }
-   }
-   
-//   for(int i=0;i<yWordLength;i++){
-//      if ((i-(int)_lsb/32) >= 0) {
-//         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUpForX[i-_lsb/32], yLowForX[i-_lsb/32])<<(_lsb%32))));
-//         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUpForX[i-_lsb/32], yLowForX[i-_lsb/32])<<(_lsb%32)));
-//         //         NSLog(@"i=%i",i-_places/32);
-//         if(((_msb - _lsb)>BITSPERWORD) && (i-(int)_lsb/32-1) >= 0) {
-//            newXUp[i] &= ~(ISFALSE(yUpForX[(i-(int)_lsb/32-1)],yLowForX[(i-(int)_lsb/32-1)])>>(32-(_lsb%32)));
-//            newXLow[i] |= ISTRUE(yUpForX[(i-(int)_lsb/32-1)],yLowForX[(i-(int)_lsb/32-1)])>>(32-(_lsb%32));
-//            //            NSLog(@"i=%i",i-(int)_places/32-1);
-//         }
-//      }
-//      else{
-//         newXUp[i] = xUp[i]._val;
-//         newXLow[i] = xLow[i]._val;
-//      }
-//   }
-   //clear unused upper bits
-//   ORUInt mask = ~(CP_UMASK << (_msb-_lsb+1)%BITSPERWORD);
-   ORUInt mask = (((_msb-_lsb+1)%BITSPERWORD)==0)? CP_UMASK : ~(CP_UMASK << (_msb-_lsb+1)%BITSPERWORD);
-   if(mask){
-      up[yWordLength-1] &= mask;
-      low[yWordLength-1] &= mask;
-   }
-//   if((_msb-_lsb+1)==32)
-//      NSLog(@"");
-   
-   
-//   NSLog(@"");
-//   NSLog(@"x = %@",_x);
-//   NSLog(@"y = %@",_y);
-//
-//   NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, xBitLength));
-//   NSLog(@"newY = %@\n\n",bitvar2NSString(low, up, yBitLength));
-//   NSLog(@"");
-   //check domain consistency
-//   for(int i=0;i<xWordLength;i++){
-//      upXORlow = newXUp[i] ^ newXLow[i];
-//      inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-
-//   }
-
-      inconsistencyFound = checkDomainConsistency(_x, newXLow, newXUp, xWordLength, self);
-      inconsistencyFound |= checkDomainConsistency(_y, low, up, yWordLength, self);
-      if (inconsistencyFound){
-         failNow();
+    } else { // CPjm: new ?
+      ORUInt next_pos = (_lsb + (BITSPERWORD-(_lsb%BITSPERWORD))); // Cpjm
+      ORUInt upperBitMask = CP_UMASK<<(_lsb%BITSPERWORD);
+      if (_msb < next_pos)
+        upperBitMask &= (CP_UMASK >> (BITSPERWORD - ((_msb%BITSPERWORD==0)?0:(_msb%BITSPERWORD+1))));
+      ORUInt lowerBitMask = ~ upperBitMask;
+      ORUInt upperBitMaskFromUpper = upperBitMask;
+      ORUInt lowerBitMaskFromUpper = lowerBitMask;
+      ORUInt upperBitMaskFromLower = upperBitMask;
+      ORUInt lowerBitMaskFromLower = lowerBitMask;
+      ORUInt lsbshift = _lsb%BITSPERWORD;
+      for(int i=_lsb/BITSPERWORD;i<=_msb/BITSPERWORD;i++){
+        int yi = i-(_lsb/BITSPERWORD);
+        newXUp[i] = xUp[i]._val & ((yUpForX[yi]<<_lsb%BITSPERWORD) | lowerBitMaskFromUpper);
+        newXLow[i] = xLow[i]._val | ((yLowForX[yi]<<_lsb%BITSPERWORD) & upperBitMaskFromUpper);
+        //if((_lsb%BITSPERWORD != 0)&&(yi+1) < yWordLength){
+        if ((_lsb%BITSPERWORD != 0) && (yi > 0)){
+          //newXUp[i]  &= (yUpForX[yi+1] >> (BITSPERWORD - (_lsb%BITSPERWORD))) | upperBitMask;
+          newXUp[i]  &= (yUpForX[yi-1] >> (BITSPERWORD - (_lsb%BITSPERWORD))) | lowerBitMaskFromLower;
+          newXLow[i] |= (yLowForX[yi-1] >> (BITSPERWORD - (_lsb%BITSPERWORD))) & upperBitMaskFromLower;
+        }
+        //lsbshift = 0;
+        next_pos += BITSPERWORD; // Cpjm
+        if (next_pos < _msb) {
+          upperBitMask =  CP_UMASK;
+          lowerBitMask = 0;
+          upperBitMaskFromUpper = CP_UMASK << lsbshift;
+          lowerBitMaskFromUpper = ~upperBitMaskFromUpper;
+          upperBitMaskFromLower = lowerBitMaskFromUpper;
+          lowerBitMaskFromLower = ~upperBitMaskFromLower;
+        } else {
+          upperBitMask = CP_UMASK>>((_msb%BITSPERWORD==0)?0:(BITSPERWORD-(_msb%BITSPERWORD+1)));
+          lowerBitMask = ~ upperBitMask;
+          upperBitMaskFromUpper = upperBitMask & (CP_UMASK << lsbshift);
+          lowerBitMaskFromUpper = ~upperBitMaskFromUpper;
+          upperBitMaskFromLower = upperBitMask & lowerBitMaskFromUpper;
+          lowerBitMaskFromLower = ~upperBitMaskFromLower;
+        }
       }
+    }
+    
+    ORUInt mask = (((_msb-_lsb+1)%BITSPERWORD)==0)? CP_UMASK : ~(CP_UMASK << (_msb-_lsb+1)%BITSPERWORD);
+    if(mask){
+        up[yWordLength-1] &= mask;
+        low[yWordLength-1] &= mask;
+    }
+    inconsistencyFound = checkDomainConsistency(_x, newXLow, newXUp, xWordLength, self);
+    inconsistencyFound |= checkDomainConsistency(_y, low, up, yWordLength, self);
+    if (inconsistencyFound){
+        failNow();
+    }
    
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:up andLow:low for:self];
