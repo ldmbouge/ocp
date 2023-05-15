@@ -217,7 +217,7 @@
 		<key>TASCA-Keeloq.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>112</integer>
+			<integer>113</integer>
 		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
@@ -343,6 +343,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>22</integer>
+		</dict>
+		<key>crossRE.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>112</integer>
 		</dict>
 		<key>debruijn.xcscheme_^#shared#^_</key>
 		<dict>

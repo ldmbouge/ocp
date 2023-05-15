@@ -28,15 +28,15 @@ func show(cp : CPProgram,_ x : ORIntVarMatrix)
  * The code create a transition table of triplets giving (StartState, Symbol, EndState)
  * On the edge, you do not have to start of finish with a blank.
  */
-func readRE(scan : NSScanner,alphabet al : ORIntRange,forModel m: ORModel) -> ORAutomaton {
+func readRE(scan : Scanner,alphabet al : ORIntRange,forModel m: ORModel) -> ORAutomaton {
    var n : Int = 0
    var lState : ORInt = 1
    var f : [ORTransition] = []
    f.append((1, 0, 1))
-   scan.scanInteger(&n)
+   scan.scanInt(&n)
    for i in 0..<n {
       var k : Int = 0
-      scan.scanInteger(&k)
+      scan.scanInt(&k)
       for _ in 0..<k {
          f.append((lState,1,lState+1))
          lState = lState + 1
@@ -52,7 +52,7 @@ func readRE(scan : NSScanner,alphabet al : ORIntRange,forModel m: ORModel) -> OR
    let S = range(m,1...Int(lState))
    let F = ORFactory.intSet(m)
    F.insert(lState)
-   let a  = ORFactory.automaton(m, alphabet: al, states: S, transition: UnsafeMutablePointer<ORTransition>(f) ,
+   let a  = ORFactory.automaton(m, alphabet: al, states: S, transition: UnsafeMutablePointer<ORTransition>(mutating: f) ,
       size: ORInt(f.count), initial: 1, final: F)
    return a
 }
@@ -60,37 +60,37 @@ func readRE(scan : NSScanner,alphabet al : ORIntRange,forModel m: ORModel) -> OR
 autoreleasepool {
    do {
       let t0 =  ORRuntimeMonitor.cputime()
-      let buf = try String(contentsOfFile: "crypto.txt", encoding: NSASCIIStringEncoding)
-      let scan = NSScanner(string: buf)
+      let buf = try String(contentsOfFile: "crypto.txt", encoding: String.Encoding.ascii)
+      let scan = Scanner(string: buf)
       var n : Int = 0,f : Int = 0
-      scan.scanInteger(&n)
-      scan.scanInteger(&f)
+      scan.scanInt(&n)
+      scan.scanInt(&f)
       let model = ORFactory.createModel()
       let R     = range(model, 1...n)
       let B     = range(model, 0...1)
       let x     = ORFactory.boolVarMatrix(model, range: R, R)
       print("board: \(n) x \(n)\t fixed=\(f)\n")
-      for i in 0..<f {
+      for _ in 0..<f {
          var r : ORInt = 0,c : ORInt = 0
-         scan.scanInt(&r)
-         scan.scanInt(&c)
+         scan.scanInt32(&r)
+         scan.scanInt32(&c)
          model.add(x.at(r,c) == 1)
       }
       for r in 1...ORInt(n) {
          let row = all(model, R) { c in x.at(r,c) }
-         let dfa = readRE(scan, alphabet: B, forModel: model)
+         let dfa = readRE(scan: scan, alphabet: B, forModel: model)
          model.add(ORFactory.regular(row, belongs: dfa))
       }
       for c in 1...ORInt(n) {
          let col = all(model, R) { r in x.at(r,c) }
-         let dfa = readRE(scan, alphabet: B, forModel: model)
+         let dfa = readRE(scan: scan, alphabet: B, forModel: model)
          model.add(ORFactory.regular(col, belongs: dfa))
       }
       
       let cp = ORFactory.createCPProgram(model)
       cp.search {
          firstFail(cp, model.intVars()) » Do(cp) {
-            show(cp,x)
+            show(cp: cp,x)
          }
       }
       print("Solver status: \(cp)\n")

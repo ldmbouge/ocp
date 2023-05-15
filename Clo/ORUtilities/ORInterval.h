@@ -12,8 +12,11 @@
 
 #import <ORUtilities/ORTypes.h>
 
-#include "sse2neon.h"
-//#include <emmintrin.h>
+#if defined(__x86_64__)
+#include <emmintrin.h>
+#else
+#include <ORUtilities/sse2neon.h>
+#endif
 #include <float.h>
 
 #pragma clang diagnostic push 
